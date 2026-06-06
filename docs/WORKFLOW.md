@@ -4,12 +4,17 @@
 
 1. Create a folder under `footage/<slug>/`.
 2. Put source clips, screen recordings, B-roll, logos, and notes there.
-3. Ask Codex to use Video Use to inventory and transcribe.
-4. Review the proposed editorial strategy.
-5. Approve the cut plan.
-6. Build HyperFrames scenes for moments that need visual explanation.
-7. Render or export HyperFrames overlays/assets.
-8. Let Video Use assemble, subtitle, grade, and verify.
+3. Run local Whisper transcription and pack transcripts.
+4. Ask Codex to use Video Use to inventory `edit/takes_packed.md`.
+5. Review the proposed editorial strategy.
+6. Approve the cut plan.
+7. Build HyperFrames scenes for moments that need visual explanation.
+8. Render or export HyperFrames overlays/assets.
+9. Let Video Use assemble, subtitle, grade, and verify.
+
+```bash
+.venv/bin/python scripts/transcribe-local-whisper.py footage/<slug> --model large --pack
+```
 
 ## Folder Pattern
 
@@ -46,8 +51,8 @@ video-projects/<slug>-graphics/
 - Cut decisions
 - Removing filler words and dead air
 - Transcript packing
+- Planning from local Whisper transcripts
 - Audio fades
 - Subtitle burn-in on the final timeline
 - Color grade per segment
 - Final assembly and self-eval
-

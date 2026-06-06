@@ -1,5 +1,8 @@
 .DS_Store
 .env
+.venv/
+.cache/
+__pycache__/
 node_modules/
 renders/
 *.mp4
@@ -16,4 +19,3 @@ footage/**
 video-projects/**/renders/
 video-projects/**/node_modules/
 video-projects/**/.env
-

@@ -31,6 +31,8 @@ cd ~/Downloads
 BRAND_WORKSPACE="gustav-online-youtube-kit"
 rsync -a \
   --exclude ".git" \
+  --exclude ".venv" \
+  --exclude ".cache" \
   --exclude "footage/*" \
   --exclude "video-projects/*/renders/" \
   ai-agent-youtube-kit/ "$BRAND_WORKSPACE/"
@@ -151,7 +153,7 @@ Codex has an official HyperFrames plugin, but Video Use should be created as a l
 Paste this into Codex:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, validate the plugin, and tell me where to add ELEVENLABS_API_KEY. Do not transcribe anything yet.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
 ```
 
 Expected local shape:
@@ -177,22 +179,46 @@ Expected marketplace file:
 
 More detail: `docs/CODEX_PLUGIN_SETUP.md`.
 
-## 8. Add Transcription Credentials
+## 8. Set Up Local Whisper Transcription
 
-Video Use uses ElevenLabs Scribe for transcription.
+This kit uses local Whisper transcription by default. No transcription API key
+is required for the standard workflow.
 
-Add the key only when you are ready to transcribe real footage:
+Install the repo-local transcription runtime:
 
 ```bash
-ELEVENLABS_API_KEY=...
+./scripts/setup-local-transcription.sh
 ```
 
-Use either:
+This creates `.venv/` for Python packages and `.cache/whisper/` for downloaded
+Whisper models. Both live inside the repo clone and are ignored by git. Deleting
+the clone removes the local runtime and model cache.
 
-- a `.env` file in the local Video Use plugin skill root, or
-- an exported shell environment variable.
+To clean repo-local runtime/cache artifacts later:
 
-Do not put API keys in this repo.
+```bash
+./scripts/clean-local-artifacts.sh
+```
+
+Transcribe footage from the repo root:
+
+```bash
+.venv/bin/python scripts/transcribe-local-whisper.py footage/<video-slug> --model large --pack
+```
+
+For Danish footage:
+
+```bash
+.venv/bin/python scripts/transcribe-local-whisper.py footage/<video-slug> --model large --language da --pack
+```
+
+The command writes cached transcripts to
+`footage/<video-slug>/edit/transcripts/` and creates
+`footage/<video-slug>/edit/takes_packed.md`. The first `--model large` run also
+downloads the Whisper model to `.cache/whisper/`.
+
+Do not put API keys in this repo. ElevenLabs/Scribe can still be used as a
+deliberate cloud alternative, but it is not the default for this kit.
 
 ## 9. Check Starter Projects
 
@@ -236,17 +262,18 @@ Do not start by rendering. Start with inventory and strategy.
 Codex prompt:
 
 ```text
-Use video-use and HyperFrames. Inventory footage/<video-slug>, propose a YouTube edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
+Use local Whisper transcripts from footage/<video-slug>/edit/takes_packed.md, then use video-use and HyperFrames. Inventory footage/<video-slug>, propose a YouTube edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
 ```
 
 ## 12. Production Loop
 
 1. Drop raw footage in `footage/<slug>/`.
-2. Use Video Use to inventory, transcribe, and propose an edit.
-3. Approve the strategy.
-4. Use HyperFrames for motion graphics, UI explainers, lower thirds, title cards, and transitions.
-5. Let Video Use assemble, subtitle, grade, and self-check the final timeline.
-6. Keep final outputs under `footage/<slug>/edit/`.
+2. Run local Whisper transcription with `.venv/bin/python scripts/transcribe-local-whisper.py footage/<slug> --model large --pack`.
+3. Use Video Use to inventory the packed transcript and propose an edit.
+4. Approve the strategy.
+5. Use HyperFrames for motion graphics, UI explainers, lower thirds, title cards, and transitions.
+6. Let Video Use assemble, subtitle, grade, and self-check the final timeline.
+7. Keep final outputs under `footage/<slug>/edit/`.
 
 ## 13. Pre-Commit Brand Check
 

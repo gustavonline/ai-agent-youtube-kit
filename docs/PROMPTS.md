@@ -3,7 +3,7 @@
 ## Inventory And Strategy
 
 ```text
-Use video-use. Inventory footage/<slug>, transcribe if needed, pack the transcripts, and propose a YouTube edit strategy. Include target runtime, structure, best takes, risky cuts, and where HyperFrames motion graphics would help. Wait for my approval before cutting.
+Use local Whisper transcripts from footage/<slug>/edit/takes_packed.md, then use video-use. Inventory footage/<slug>, propose a YouTube edit strategy, and include target runtime, structure, best takes, risky cuts, and where HyperFrames motion graphics would help. Wait for my approval before cutting.
 ```
 
 ## Build Motion Graphics
@@ -26,4 +26,3 @@ Tone: technical, direct, credible.
 Structure: hook -> problem -> agent workflow -> proof/demo -> takeaway -> CTA.
 Avoid: vague AI hype, generic b-roll, unreadable captions, and overexplaining setup.
 ```
-

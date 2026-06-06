@@ -9,14 +9,14 @@ You want:
 - Official HyperFrames plugin available in Codex.
 - Local Video Use plugin installed from `browser-use/video-use`.
 - FFmpeg available on `PATH`.
-- `ELEVENLABS_API_KEY` ready before transcription.
+- Local Whisper available for transcription.
 
 ## Fast Codex Prompt
 
 Use this in Codex after cloning this repo:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, validate the plugin, and tell me where to add ELEVENLABS_API_KEY. Do not transcribe anything yet.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
 ```
 
 That is the preferred workflow because Codex can use its local `plugin-creator` validator and marketplace conventions.
@@ -79,13 +79,16 @@ ffprobe -version
 npx --yes hyperframes doctor
 ```
 
-For transcription, Video Use needs ElevenLabs Scribe:
+Install local Whisper for transcription:
 
 ```bash
-ELEVENLABS_API_KEY=...
+./scripts/setup-local-transcription.sh
 ```
 
-You can keep the key in the Video Use plugin skill root `.env` or export it in your shell. Do not put API keys in this repo.
+This kit transcribes footage locally through
+`scripts/transcribe-local-whisper.py`, stores Whisper models in repo-local
+`.cache/whisper/`, then lets Video Use consume the packed transcript. Do not put
+API keys in this repo.
 
 ## First-Run Order
 
@@ -93,8 +96,9 @@ You can keep the key in the Video Use plugin skill root `.env` or export it in y
 2. Create/install the local `video-use` plugin using the Codex prompt above.
 3. Confirm the official HyperFrames plugin is available in Codex.
 4. Install FFmpeg.
-5. Customize `DESIGN.md` and `assets/brand-tokens.css`.
-6. Drop raw footage into `footage/<slug>/`.
-7. Ask Video Use to inventory and propose a strategy.
-8. Use HyperFrames for motion graphics after the edit plan is approved.
-
+5. Install local Whisper.
+6. Customize `DESIGN.md` and `assets/brand-tokens.css`.
+7. Drop raw footage into `footage/<slug>/`.
+8. Run local Whisper transcription and packing.
+9. Ask Video Use to inventory the packed transcript and propose a strategy.
+10. Use HyperFrames for motion graphics after the edit plan is approved.

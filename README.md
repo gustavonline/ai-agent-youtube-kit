@@ -43,7 +43,7 @@ Read:
 Fast prompt:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, validate the plugin, and tell me where to add ELEVENLABS_API_KEY. Do not transcribe anything yet.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
 ```
 
 ### 2. Install Runtime Dependencies
@@ -52,10 +52,15 @@ From this repo:
 
 ```bash
 brew install ffmpeg
+./scripts/setup-local-transcription.sh
 npx --yes hyperframes doctor
 ```
 
-For Video Use transcription, set `ELEVENLABS_API_KEY` in the Video Use plugin skill root or in your shell environment when you are ready to transcribe real footage.
+This repo uses local Whisper transcription by default. Read `docs/LOCAL_TRANSCRIPTION.md` and transcribe footage with:
+
+```bash
+.venv/bin/python scripts/transcribe-local-whisper.py footage/<video-slug> --model large --pack
+```
 
 ### 3. Tailor Branding
 
@@ -73,11 +78,12 @@ The goal is to make new HyperFrames scenes and Video Use edit decisions inherit 
 1. Confirm HyperFrames and Video Use are available in Codex.
 2. Confirm branding files are tailored enough for the video.
 3. Put raw footage in `footage/<video-slug>/`.
-4. Ask Codex to use `video-use` to inventory the footage and propose an edit strategy.
-5. Approve the strategy before it cuts anything.
-6. Use HyperFrames for title cards, lower thirds, animated diagrams, UI explainers, and transitions.
-7. Let Video Use assemble the final edit and run its self-eval.
-8. Store finished motion projects under `video-projects/<video-slug>/` and final exports under the related `edit/` folder.
+4. Run local Whisper transcription and pack transcripts.
+5. Ask Codex to use `video-use` to inventory the footage and propose an edit strategy.
+6. Approve the strategy before it cuts anything.
+7. Use HyperFrames for title cards, lower thirds, animated diagrams, UI explainers, and transitions.
+8. Let Video Use assemble the final edit and run its self-eval.
+9. Store finished motion projects under `video-projects/<video-slug>/` and final exports under the related `edit/` folder.
 
 ## HyperFrames Commands
 
@@ -95,13 +101,14 @@ npm run render
 ## Good First Codex Prompt
 
 ```text
-Use video-use and HyperFrames. Inventory footage/my-video, propose a YouTube edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
+Use local Whisper transcripts from footage/my-video/edit/takes_packed.md, then use video-use and HyperFrames. Inventory the footage, propose a YouTube edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
 ```
 
 ## Useful Docs
 
 - `SETUP.md` - fresh setup from clone to first footage drop.
 - `docs/CODEX_PLUGIN_SETUP.md` - create the local Video Use plugin after clone.
+- `docs/LOCAL_TRANSCRIPTION.md` - local Whisper transcription workflow.
 - `docs/BRANDING.md` - tailor assets, tokens, captions, and identity.
 - `docs/WORKFLOW.md` - production flow from raw footage to final render.
 - `docs/PROMPTS.md` - reusable Codex prompts.
