@@ -34,5 +34,5 @@ Sharp, technical, credible, and fast. The videos should feel like a capable oper
 - No generic blue-purple gradients as the main identity.
 - No tiny captions or dense paragraphs in a 9:16 frame.
 - No animated decorations that compete with the speaker or key idea.
-- No default brand names, placeholder logos, or borrowed identity from example projects.
+- No default brand names, temporary logos, or borrowed identity from example projects.
 - No render handoff before visual inspection.

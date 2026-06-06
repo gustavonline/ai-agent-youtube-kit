@@ -13,7 +13,7 @@ This project is a 9:16 YouTube Shorts starter for AI agent tutorials and short e
 
 ## Edit Notes
 
-- Replace `.face-placeholder` with A-roll, a Video Use export, or a product capture.
+- Replace `.face-temporary` with A-roll, a Video Use export, or a product capture.
 - Keep captions large enough to read on a phone.
 - Motion should land on the hook, keyword, or proof moment.
 

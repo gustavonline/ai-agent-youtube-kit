@@ -65,7 +65,7 @@ Then update:
 - Use CSS tokens from `assets/brand-tokens.css` before adding new hex values.
 - Keep project-local copies of `brand-tokens.css` in each HyperFrames project so old projects keep rendering even if the root brand evolves.
 - Use local fonts with `@font-face` for final renders when typography matters.
-- Do not ship borrowed placeholder names, handles, logos, or colors from example projects.
+- Do not ship borrowed temporary names, handles, logos, or colors from example projects.
 
 ## Video Use Rules
 
@@ -85,5 +85,5 @@ Then update:
 - No old brand strings found:
 
 ```bash
-rg -n "placeholder|TODO|YourLogo|example.com|figma.com" .
+rg -n "temporary|TODO|YourLogo|example.com|your-channel" .
 ```

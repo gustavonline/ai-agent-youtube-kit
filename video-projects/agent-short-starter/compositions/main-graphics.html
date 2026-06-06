@@ -5,9 +5,9 @@
     data-height="1080"
     data-duration="14.72"
   >
-    <!-- Local placeholder. Replace with a muted timed video when needed. -->
+    <!-- Local temporary. Replace with a muted timed video when needed. -->
     <div
-      id="a-roll-placeholder"
+      id="a-roll-temporary"
       style="
         position: absolute;
         width: 100%;
@@ -64,25 +64,25 @@
       </div>
     </div>
 
-    <!-- Scene 3: Figma Config Style -->
+    <!-- Scene 3: Agent Canvas Style -->
     <div id="scene-3" class="scene">
       <div class="dark-overlay"></div>
-      <div class="figma-container">
-        <div class="figma-item" id="figma-animations">
+      <div class="agent-container">
+        <div class="agent-item" id="agent-animations">
           <div class="glyph-container">
             <div class="glyph-ring ring-unified"></div>
             <div class="glyph-diamond"></div>
           </div>
-          <div class="figma-label">animations</div>
+          <div class="agent-label">animations</div>
         </div>
-        <div class="figma-item" id="figma-transitions">
+        <div class="agent-item" id="agent-transitions">
           <div class="glyph-container">
             <div class="glyph-rect rect-unified"></div>
             <div class="glyph-wipe"></div>
           </div>
-          <div class="figma-label">transitions</div>
+          <div class="agent-label">transitions</div>
         </div>
-        <div class="figma-item" id="figma-typography">
+        <div class="agent-item" id="agent-typography">
           <div class="glyph-container">
             <div class="glyph-tri tri-unified"></div>
             <div class="glyph-lines">
@@ -91,9 +91,9 @@
               <div class="line"></div>
             </div>
           </div>
-          <div class="figma-label">typography</div>
+          <div class="agent-label">typography</div>
         </div>
-        <div class="figma-footer">all generated from a single prompt</div>
+        <div class="agent-footer">all generated from a single prompt</div>
       </div>
     </div>
 
@@ -287,7 +287,7 @@
         opacity: 0;
       }
 
-      /* Scene 3: Figma Config Style */
+      /* Scene 3: Agent Canvas Style */
       .dark-overlay {
         position: absolute;
         width: 100%;
@@ -295,7 +295,7 @@
         background: rgba(0, 0, 0, 0.55);
         z-index: 1;
       }
-      .figma-container {
+      .agent-container {
         position: relative;
         z-index: 2;
         width: 1200px;
@@ -304,7 +304,7 @@
         align-items: center;
         flex-wrap: wrap;
       }
-      .figma-item {
+      .agent-item {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -368,11 +368,11 @@
         background: white;
         width: 0;
       }
-      .figma-label {
+      .agent-label {
         font-size: 40px;
         font-weight: bold;
       }
-      .figma-footer {
+      .agent-footer {
         width: 100%;
         text-align: center;
         font-size: 22px;
@@ -511,7 +511,7 @@
       // --- Transition to Scene 2 (2.0s - 2.4s) ---
       tl.to("#white-wipe", { xPercent: 0, duration: 0.2, ease: "power2.in" }, 2.0);
       tl.set("#scene-1", { opacity: 0 }, 2.2);
-      tl.set("#a-roll-placeholder", { opacity: 1 }, 2.2);
+      tl.set("#a-roll-temporary", { opacity: 1 }, 2.2);
       tl.to("#white-wipe", { xPercent: 100, duration: 0.2, ease: "power2.out" }, 2.2);
 
       // --- Scene 2: Swiss Style (2.0s - 5.0s) ---
@@ -530,18 +530,18 @@
       tl.to(".swiss-panel", { xPercent: 120, duration: 0.7, ease: "expo.in" }, 4.7);
       tl.to("#scene-2", { opacity: 0, duration: 0.1 }, 5.0);
 
-      // --- Scene 3: Figma Config Style (5.3s - 9.6s) ---
+      // --- Scene 3: Agent Canvas Style (5.3s - 9.6s) ---
       tl.to("#scene-3", { opacity: 1, duration: 0.3 }, 5.3);
-      tl.to("#figma-animations", { opacity: 1, y: 0, duration: 0.6 }, 5.5);
+      tl.to("#agent-animations", { opacity: 1, y: 0, duration: 0.6 }, 5.5);
       tl.to(".glyph-diamond", { rotation: 225, duration: 2, repeat: 1, ease: "power2.inOut" }, 5.5);
 
-      tl.to("#figma-transitions", { opacity: 1, y: 0, duration: 0.6 }, 6.2);
+      tl.to("#agent-transitions", { opacity: 1, y: 0, duration: 0.6 }, 6.2);
       tl.to(".glyph-wipe", { width: "100%", duration: 1, ease: "power2.inOut" }, 6.2);
 
-      tl.to("#figma-typography", { opacity: 1, y: 0, duration: 0.6 }, 6.9);
+      tl.to("#agent-typography", { opacity: 1, y: 0, duration: 0.6 }, 6.9);
       tl.to(".glyph-lines .line", { width: "100%", stagger: 0.2, duration: 0.5 }, 7.1);
 
-      tl.to(".figma-footer", { opacity: 1, y: -20, duration: 0.8 }, 7.8);
+      tl.to(".agent-footer", { opacity: 1, y: -20, duration: 0.8 }, 7.8);
       tl.to("#scene-3", { opacity: 0, duration: 0.5 }, 9.1);
 
       // --- Scene 4: David Carson Style (9.6s - 11.7s) ---
@@ -552,7 +552,7 @@
       tl.to("#scene-4", { opacity: 0, duration: 0.1 }, 11.7);
 
       // --- Scene 5: Wes Anderson (11.7s - 13.5s) ---
-      tl.to("#a-roll-placeholder", { opacity: 0, duration: 0.4 }, 11.7);
+      tl.to("#a-roll-temporary", { opacity: 0, duration: 0.4 }, 11.7);
       tl.to("#scene-5", { opacity: 1, duration: 0.1 }, 11.7);
       tl.to(".wes-text-top", { y: 0, duration: 0.6, ease: "back.out(1.2)" }, 12.0);
       tl.to(".wes-rule", { width: 400, duration: 0.6 }, 12.3);
@@ -560,7 +560,7 @@
       tl.to("#scene-5", { opacity: 0, duration: 0.5 }, 13.0);
 
       // --- Scene 6: Vignelli Style (13.5s - 14.72s) ---
-      tl.set("#a-roll-placeholder", { opacity: 1 }, 13.5);
+      tl.set("#a-roll-temporary", { opacity: 1 }, 13.5);
       tl.set("#scene-6", { opacity: 1 }, 13.5);
       tl.set("#scene-6-overlay", { opacity: 1 }, 13.5);
 
