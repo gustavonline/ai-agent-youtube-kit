@@ -5,6 +5,7 @@ Do this before producing your first real video. The goal is to make every new pr
 ## Brand Files
 
 - `DESIGN.md` - human-readable brand and motion direction.
+- `PROJECT_MEMORY.md` - reusable lessons from finished projects.
 - `assets/brand-tokens.css` - reusable CSS variables for HyperFrames projects.
 - `assets/` - shared logos, background plates, screenshots, sound beds, and reference stills.
 - `video-projects/<project>/DESIGN.md` - project-specific notes that should point back to the root design system.
@@ -56,8 +57,9 @@ Examples to avoid:
 Then update:
 
 1. `DESIGN.md`
-2. `assets/brand-tokens.css`
-3. Each active `video-projects/<project>/DESIGN.md`
+2. `PROJECT_MEMORY.md`
+3. `assets/brand-tokens.css`
+4. Each active `video-projects/<project>/DESIGN.md`
 
 ## HyperFrames Rules
 
@@ -77,6 +79,7 @@ Then update:
 ## Brand Change Checklist
 
 - Root `DESIGN.md` updated.
+- `PROJECT_MEMORY.md` updated with durable lessons only.
 - `assets/brand-tokens.css` updated.
 - Logo and mark assets added.
 - Project `DESIGN.md` files updated.

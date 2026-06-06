@@ -2,6 +2,9 @@
 
 This is the default brand direction for new AI agent YouTube videos. Replace it with your own brand once you know the channel identity.
 
+Use `PROJECT_MEMORY.md` for lessons from finished projects. Promote a lesson
+into this design system only when it becomes a stable brand decision.
+
 ## Style Prompt
 
 Sharp, technical, credible, and fast. The videos should feel like a capable operator explaining useful automation systems, not a generic crypto or SaaS hype reel. Use dense information, clean hierarchy, crisp typography, and motion that clarifies the point.

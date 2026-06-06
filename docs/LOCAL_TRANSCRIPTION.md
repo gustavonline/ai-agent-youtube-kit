@@ -3,13 +3,6 @@
 This kit uses local Whisper transcription by default. Do not add transcription
 API keys to this repo.
 
-If the local Video Use plugin has just been created, apply this repo's policy so
-the plugin also treats local Whisper as the default:
-
-```bash
-./scripts/harden-video-use-plugin.sh
-```
-
 ## Install
 
 FFmpeg is required:

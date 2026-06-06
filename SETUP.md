@@ -70,6 +70,7 @@ Update these files inside the branded clone:
 ```text
 README.md
 DESIGN.md
+PROJECT_MEMORY.md
 assets/brand-tokens.css
 assets/README.md
 docs/BRANDING.md
@@ -80,6 +81,7 @@ At minimum, set:
 - channel/client name
 - channel promise
 - target audience
+- reusable project memory
 - colors
 - fonts
 - caption style
@@ -153,7 +155,7 @@ Codex has an official HyperFrames plugin, but Video Use should be created as a l
 Paste this into Codex:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet. After the plugin exists, run ./scripts/harden-video-use-plugin.sh so this kit uses local Whisper by default.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
 ```
 
 Expected local shape:
@@ -178,17 +180,6 @@ Expected marketplace file:
 ```
 
 More detail: `docs/CODEX_PLUGIN_SETUP.md`.
-
-After plugin creation, apply this repo's local transcription policy to the local
-plugin:
-
-```bash
-./scripts/harden-video-use-plugin.sh
-```
-
-This is idempotent. It appends an `ai-agent-youtube-kit` policy block to the
-local `~/plugins/video-use/skills/video-use/SKILL.md`, so Codex sees local
-Whisper as the default when both this repo and the Video Use plugin are active.
 
 ## 8. Set Up Local Whisper Transcription
 
@@ -286,6 +277,7 @@ Use local Whisper transcripts from footage/<video-slug>/edit/takes_packed.md, th
 5. Use HyperFrames for motion graphics, UI explainers, lower thirds, title cards, and transitions.
 6. Let Video Use assemble, subtitle, grade, and self-check the final timeline.
 7. Keep final outputs under `footage/<slug>/edit/`.
+8. Add only durable, reusable lessons to `PROJECT_MEMORY.md`.
 
 ## 13. Pre-Commit Brand Check
 

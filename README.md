@@ -43,7 +43,7 @@ Read:
 Fast prompt:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet. After the plugin exists, run ./scripts/harden-video-use-plugin.sh so this kit uses local Whisper by default.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
 ```
 
 ### 2. Install Runtime Dependencies
@@ -67,6 +67,7 @@ This repo uses local Whisper transcription by default. Read `docs/LOCAL_TRANSCRI
 Before building real videos, update:
 
 - `DESIGN.md`
+- `PROJECT_MEMORY.md`
 - `assets/brand-tokens.css`
 - `assets/README.md`
 - `docs/BRANDING.md`
@@ -84,6 +85,7 @@ The goal is to make new HyperFrames scenes and Video Use edit decisions inherit 
 7. Use HyperFrames for title cards, lower thirds, animated diagrams, UI explainers, and transitions.
 8. Let Video Use assemble the final edit and run its self-eval.
 9. Store finished motion projects under `video-projects/<video-slug>/` and final exports under the related `edit/` folder.
+10. Update `PROJECT_MEMORY.md` only with reusable lessons from the finished project.
 
 ## HyperFrames Commands
 
@@ -110,6 +112,7 @@ Use local Whisper transcripts from footage/my-video/edit/takes_packed.md, then u
 - `docs/CODEX_PLUGIN_SETUP.md` - create the local Video Use plugin after clone.
 - `docs/LOCAL_TRANSCRIPTION.md` - local Whisper transcription workflow.
 - `docs/CLOUD_TRANSCRIPTION.md` - optional cloud transcription guardrails.
+- `docs/LEARNING.md` - project memory and continuous learning workflow.
 - `docs/BRANDING.md` - tailor assets, tokens, captions, and identity.
 - `docs/WORKFLOW.md` - production flow from raw footage to final render.
 - `docs/PROMPTS.md` - reusable Codex prompts.

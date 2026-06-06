@@ -23,8 +23,25 @@ Video Use's ElevenLabs/Scribe transcription helper unless the user explicitly
 asks for cloud transcription. If cloud transcription is requested, follow
 `docs/CLOUD_TRANSCRIPTION.md` and keep credentials outside this repo.
 
+## Project Learning
+
+Before planning a branded video, read `DESIGN.md`, `PROJECT_MEMORY.md`, and
+`MOTION_PHILOSOPHY.md`. For project-specific work, also read the active
+`video-projects/<project>/DESIGN.md` when it exists.
+
+After a finished project, update learning only when it is durable:
+
+- append factual session notes to `footage/<slug>/edit/project.md`
+- add concise reusable lessons to `PROJECT_MEMORY.md`
+- update `DESIGN.md` only for stable brand decisions
+- update `MOTION_PHILOSOPHY.md` only for general motion principles
+
+Keep memory small and concrete. Do not add vague process notes or one-off taste
+reactions.
+
 ## Branding Copies
 
 Keep the base kit generic. Create a separate clone or copy for each brand before
 tailoring `DESIGN.md`, `assets/brand-tokens.css`, reference assets, or project
-history.
+history. The branded clone's `PROJECT_MEMORY.md` should evolve as finished
+projects accumulate.

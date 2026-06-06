@@ -14,9 +14,9 @@ Use this before making a new HyperFrames scene.
 ## Preflight Checklist
 
 - Does this project have a `DESIGN.md`?
+- Have `PROJECT_MEMORY.md` and the active project notes been checked for reusable patterns?
 - Is the target format clear: 9:16 short, 16:9 long-form, or overlay with alpha?
 - Are captions above UI-safe zones and not covering the face?
 - Do transitions land on beat or word boundaries?
 - Did `npm run check` pass?
 - Were hero frames visually inspected?
-

@@ -16,31 +16,17 @@ You want:
 Use this in Codex after cloning this repo:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet. After the plugin exists, run ./scripts/harden-video-use-plugin.sh so this kit uses local Whisper by default.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
 ```
 
 That is the preferred workflow because Codex can use its local `plugin-creator` validator and marketplace conventions.
 
-## Local Whisper Hardening
+## Local Whisper Default
 
 Video Use upstream may still document ElevenLabs/Scribe as its transcription
-helper. This repo intentionally defaults to local Whisper instead.
-
-After creating the local plugin, run this from the repo root:
-
-```bash
-./scripts/harden-video-use-plugin.sh
-```
-
-The script appends an idempotent policy block to:
-
-```text
-~/plugins/video-use/skills/video-use/SKILL.md
-```
-
-That block tells Codex to use
-`.venv/bin/python scripts/transcribe-local-whisper.py ... --model large --pack`
-inside this kit and to treat ElevenLabs/Scribe as explicit cloud opt-in only.
+helper. This repo intentionally defaults to local Whisper instead. The repo's
+`AGENTS.md`, `docs/LOCAL_TRANSCRIPTION.md`, and prompts define that default.
+Treat the plugin as a tool; keep this repo's workflow rules in this repo.
 
 ## Manual Shape
 
@@ -115,12 +101,11 @@ API keys in this repo.
 
 1. Clone this kit.
 2. Create/install the local `video-use` plugin using the Codex prompt above.
-3. Run `./scripts/harden-video-use-plugin.sh`.
-4. Confirm the official HyperFrames plugin is available in Codex.
-5. Install FFmpeg.
-6. Install local Whisper.
-7. Customize `DESIGN.md` and `assets/brand-tokens.css`.
-8. Drop raw footage into `footage/<slug>/`.
-9. Run local Whisper transcription and packing.
-10. Ask Video Use to inventory the packed transcript and propose a strategy.
-11. Use HyperFrames for motion graphics after the edit plan is approved.
+3. Confirm the official HyperFrames plugin is available in Codex.
+4. Install FFmpeg.
+5. Install local Whisper.
+6. Customize `DESIGN.md`, `PROJECT_MEMORY.md`, and `assets/brand-tokens.css`.
+7. Drop raw footage into `footage/<slug>/`.
+8. Run local Whisper transcription and packing.
+9. Ask Video Use to inventory the packed transcript and propose a strategy.
+10. Use HyperFrames for motion graphics after the edit plan is approved.
