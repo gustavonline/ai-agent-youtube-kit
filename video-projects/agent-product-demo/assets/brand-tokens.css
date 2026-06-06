@@ -1,0 +1,15 @@
+:root {
+  --brand-canvas: #0a0d10;
+  --brand-surface: #121821;
+  --brand-surface-2: #1a2430;
+  --brand-text: #f4f7fa;
+  --brand-muted: #8fa3b8;
+  --brand-cyan: #2ee7d2;
+  --brand-amber: #ffb020;
+  --brand-red: #ff4d5e;
+  --brand-border: rgba(244, 247, 250, 0.14);
+  --brand-shadow: rgba(0, 0, 0, 0.42);
+  --font-primary: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: Menlo, "SF Mono", Consolas, monospace;
+}
+
