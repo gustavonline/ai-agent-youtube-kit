@@ -30,7 +30,7 @@ Use the tools for different jobs:
 
 Do this before dropping in raw footage. The canonical fresh setup guide is:
 
-- `install.md`
+- `SETUP.md`
 
 ### 1. Set Up Codex Plugins
 
@@ -100,7 +100,7 @@ Use video-use and HyperFrames. Inventory footage/my-video, propose a YouTube edi
 
 ## Useful Docs
 
-- `install.md` - fresh setup from clone to first footage drop.
+- `SETUP.md` - fresh setup from clone to first footage drop.
 - `docs/CODEX_PLUGIN_SETUP.md` - create the local Video Use plugin after clone.
 - `docs/BRANDING.md` - tailor assets, tokens, captions, and identity.
 - `docs/WORKFLOW.md` - production flow from raw footage to final render.
