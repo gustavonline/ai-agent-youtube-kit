@@ -85,6 +85,5 @@ Then update:
 - No old brand strings found:
 
 ```bash
-rg -n "AIS|aiautomationsociety|Nate|placeholder|TODO|YourLogo|figma.com" .
+rg -n "placeholder|TODO|YourLogo|example.com|figma.com" .
 ```
-

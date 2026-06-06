@@ -2,6 +2,8 @@
 
 Follow this after cloning the repo.
 
+For the full fresh-install flow, read `install.md`.
+
 1. Create the local Video Use plugin.
    Read `docs/CODEX_PLUGIN_SETUP.md` or use the prompt in that file.
 
@@ -39,4 +41,3 @@ Follow this after cloning the repo.
    ```text
    Use video-use and HyperFrames. Inventory footage/<video-slug>, propose a YouTube edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
    ```
-

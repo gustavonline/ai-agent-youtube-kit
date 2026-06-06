@@ -2,7 +2,7 @@
 
 Local video workspace for Codex, Video Use, and HyperFrames.
 
-This repo is modeled after Nate Herkai's student-kit idea, but it is set up for your own repeatable YouTube workflow instead of copying AIS/Nate branding.
+This repo is set up as a repeatable YouTube production workspace for AI agent videos, motion graphics, raw footage editing, and channel-specific branding.
 
 ## What Lives Here
 
@@ -28,7 +28,9 @@ Use the tools for different jobs:
 
 ## First Setup
 
-Do this before dropping in raw footage.
+Do this before dropping in raw footage. The canonical fresh setup guide is:
+
+- `install.md`
 
 ### 1. Set Up Codex Plugins
 
@@ -98,6 +100,7 @@ Use video-use and HyperFrames. Inventory footage/my-video, propose a YouTube edi
 
 ## Useful Docs
 
+- `install.md` - fresh setup from clone to first footage drop.
 - `docs/CODEX_PLUGIN_SETUP.md` - create the local Video Use plugin after clone.
 - `docs/BRANDING.md` - tailor assets, tokens, captions, and identity.
 - `docs/WORKFLOW.md` - production flow from raw footage to final render.
