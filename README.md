@@ -43,7 +43,7 @@ Read:
 Fast prompt:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet. After the plugin exists, run ./scripts/harden-video-use-plugin.sh so this kit uses local Whisper by default.
 ```
 
 ### 2. Install Runtime Dependencies
@@ -109,6 +109,7 @@ Use local Whisper transcripts from footage/my-video/edit/takes_packed.md, then u
 - `SETUP.md` - fresh setup from clone to first footage drop.
 - `docs/CODEX_PLUGIN_SETUP.md` - create the local Video Use plugin after clone.
 - `docs/LOCAL_TRANSCRIPTION.md` - local Whisper transcription workflow.
+- `docs/CLOUD_TRANSCRIPTION.md` - optional cloud transcription guardrails.
 - `docs/BRANDING.md` - tailor assets, tokens, captions, and identity.
 - `docs/WORKFLOW.md` - production flow from raw footage to final render.
 - `docs/PROMPTS.md` - reusable Codex prompts.

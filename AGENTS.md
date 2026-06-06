@@ -4,7 +4,7 @@
 
 Use local Whisper transcription as the default workflow for this repo.
 
-- Do not require `ELEVENLABS_API_KEY` for normal operation.
+- Video Use upstream may mention `ELEVENLABS_API_KEY`; for this repo, do not require it for normal operation.
 - Do not place API keys or secrets in this repo.
 - For footage in `footage/<slug>/`, create transcripts with:
 
@@ -20,7 +20,8 @@ Use local Whisper transcription as the default workflow for this repo.
 Video Use can still handle editorial strategy, cut planning, subtitles, grading,
 and final assembly after local transcripts have been generated. Avoid using
 Video Use's ElevenLabs/Scribe transcription helper unless the user explicitly
-asks for cloud transcription.
+asks for cloud transcription. If cloud transcription is requested, follow
+`docs/CLOUD_TRANSCRIPTION.md` and keep credentials outside this repo.
 
 ## Branding Copies
 

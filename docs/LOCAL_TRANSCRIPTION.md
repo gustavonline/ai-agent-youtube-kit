@@ -3,6 +3,13 @@
 This kit uses local Whisper transcription by default. Do not add transcription
 API keys to this repo.
 
+If the local Video Use plugin has just been created, apply this repo's policy so
+the plugin also treats local Whisper as the default:
+
+```bash
+./scripts/harden-video-use-plugin.sh
+```
+
 ## Install
 
 FFmpeg is required:
@@ -83,3 +90,5 @@ Override that only when you intentionally want a different cache location:
   are marked as `speaker_0`.
 - Use `--model large-v3`, `--device mps`, or `--fp16 false` if those fit your Mac
   setup better.
+- See `docs/CLOUD_TRANSCRIPTION.md` only when cloud transcription is explicitly
+  requested.

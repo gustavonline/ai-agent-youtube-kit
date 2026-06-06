@@ -153,7 +153,7 @@ Codex has an official HyperFrames plugin, but Video Use should be created as a l
 Paste this into Codex:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
+Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet. After the plugin exists, run ./scripts/harden-video-use-plugin.sh so this kit uses local Whisper by default.
 ```
 
 Expected local shape:
@@ -178,6 +178,17 @@ Expected marketplace file:
 ```
 
 More detail: `docs/CODEX_PLUGIN_SETUP.md`.
+
+After plugin creation, apply this repo's local transcription policy to the local
+plugin:
+
+```bash
+./scripts/harden-video-use-plugin.sh
+```
+
+This is idempotent. It appends an `ai-agent-youtube-kit` policy block to the
+local `~/plugins/video-use/skills/video-use/SKILL.md`, so Codex sees local
+Whisper as the default when both this repo and the Video Use plugin are active.
 
 ## 8. Set Up Local Whisper Transcription
 
@@ -218,7 +229,8 @@ The command writes cached transcripts to
 downloads the Whisper model to `.cache/whisper/`.
 
 Do not put API keys in this repo. ElevenLabs/Scribe can still be used as a
-deliberate cloud alternative, but it is not the default for this kit.
+deliberate cloud alternative, but it is not the default for this kit. See
+`docs/CLOUD_TRANSCRIPTION.md` for the opt-in guardrails.
 
 ## 9. Check Starter Projects
 
