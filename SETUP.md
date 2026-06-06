@@ -1,23 +1,128 @@
 # Setup
 
-Fresh setup for this AI Agent YouTube Kit.
+Fresh setup for AI Agent YouTube Kit.
 
-This repo is designed for Codex with:
+This repo is meant to work as a reusable base kit. Keep the base kit generic, then create one separate copy or clone per brand/channel, for example:
 
-- HyperFrames for motion graphics and HTML-to-video rendering.
-- Video Use for transcript-first editing, cuts, subtitles, color, and final assembly.
-- A local brand system so every project can match your channel identity.
-
-## 1. Clone
-
-```bash
-git clone https://github.com/gustavonline/ai-agent-youtube-kit.git
-cd ai-agent-youtube-kit
+```text
+~/Downloads/ai-agent-youtube-kit
+~/Downloads/gustav-online-youtube-kit
+~/Downloads/client-name-youtube-kit
 ```
 
-If you are working from a local copy before the remote exists, just `cd` into the repo folder.
+Each branded copy can have its own `DESIGN.md`, assets, footage, starter projects, and project history.
 
-## 2. Verify Node And HyperFrames
+## 1. Create A Brand Workspace
+
+Recommended: create a new folder for the specific brand instead of tailoring the base kit directly.
+
+If cloning from GitHub, replace `gustav-online-youtube-kit` with the folder name for the brand:
+
+```bash
+cd ~/Downloads
+git clone https://github.com/gustavonline/ai-agent-youtube-kit.git gustav-online-youtube-kit
+cd gustav-online-youtube-kit
+```
+
+If copying from an existing local base kit before a remote exists:
+
+```bash
+cd ~/Downloads
+BRAND_WORKSPACE="gustav-online-youtube-kit"
+rsync -a \
+  --exclude ".git" \
+  --exclude "footage/*" \
+  --exclude "video-projects/*/renders/" \
+  ai-agent-youtube-kit/ "$BRAND_WORKSPACE/"
+cd "$BRAND_WORKSPACE"
+git init
+```
+
+Use a folder name that matches the channel or client. Good examples:
+
+- `gustav-online-youtube-kit`
+- `acme-ai-youtube-kit`
+- `client-name-video-kit`
+
+## 2. Decide What This Clone Is For
+
+Before editing files, write down the intended brand direction:
+
+```text
+Channel or client name:
+Audience:
+Main video type:
+Tone:
+Primary colors:
+Logo files available:
+Reference videos or screenshots:
+Examples to avoid:
+```
+
+This prevents the clone from becoming a generic AI-video workspace.
+
+## 3. Tailor The Brand Files
+
+Update these files inside the branded clone:
+
+```text
+README.md
+DESIGN.md
+assets/brand-tokens.css
+assets/README.md
+docs/BRANDING.md
+```
+
+At minimum, set:
+
+- channel/client name
+- channel promise
+- target audience
+- colors
+- fonts
+- caption style
+- logo/mark assets
+- thumbnail direction
+- examples to imitate and avoid
+
+Recommended asset folders:
+
+```text
+assets/
+  logo/
+  backgrounds/
+  fonts/
+  audio/
+  references/
+```
+
+Keep raw footage in `footage/<video-slug>/`, not in `assets/`.
+
+## 4. Create The First Branded Starter Project
+
+Copy the starter project that is closest to the first video format.
+
+For a 9:16 short:
+
+```bash
+BRAND_PROJECT="gustav-online-short"
+cp -R video-projects/youtube-short-template "video-projects/$BRAND_PROJECT"
+```
+
+Then update these files in the copied project:
+
+```text
+video-projects/<brand-project>/package.json
+video-projects/<brand-project>/meta.json
+video-projects/<brand-project>/README.md
+video-projects/<brand-project>/DESIGN.md
+video-projects/<brand-project>/assets/brand-tokens.css
+video-projects/<brand-project>/index.html
+```
+
+Use the copied starter project for brand-specific text, logo placement, caption layout, and first visual examples. Leave the original `youtube-short-template` intact so future projects still have a clean template.
+
+## 5. Verify Node And HyperFrames
 
 HyperFrames needs Node.js 22 or newer.
 
@@ -29,7 +134,7 @@ npx --yes hyperframes doctor
 
 Codex has an official HyperFrames plugin in this environment. The CLI is still used inside each `video-projects/<project>/` folder.
 
-## 3. Install FFmpeg
+## 6. Install FFmpeg
 
 FFmpeg is required for HyperFrames rendering and Video Use final exports.
 
@@ -39,7 +144,7 @@ ffmpeg -version
 ffprobe -version
 ```
 
-## 4. Create The Local Video Use Plugin
+## 7. Create The Local Video Use Plugin
 
 Codex has an official HyperFrames plugin, but Video Use should be created as a local Codex plugin.
 
@@ -72,7 +177,7 @@ Expected marketplace file:
 
 More detail: `docs/CODEX_PLUGIN_SETUP.md`.
 
-## 5. Add Transcription Credentials
+## 8. Add Transcription Credentials
 
 Video Use uses ElevenLabs Scribe for transcription.
 
@@ -89,42 +194,16 @@ Use either:
 
 Do not put API keys in this repo.
 
-## 6. Customize Branding
+## 9. Check Starter Projects
 
-Before making a real video, edit:
+Check the branded starter project first:
 
-```text
-DESIGN.md
-assets/brand-tokens.css
-assets/README.md
-docs/BRANDING.md
+```bash
+cd video-projects/<brand-project>
+npm run check
 ```
 
-At minimum, decide:
-
-- channel promise
-- target audience
-- colors
-- fonts
-- caption style
-- logo/mark assets
-- thumbnail direction
-- examples to imitate and avoid
-
-Recommended asset folders:
-
-```text
-assets/
-  logo/
-  backgrounds/
-  fonts/
-  audio/
-  references/
-```
-
-Keep raw footage in `footage/<video-slug>/`, not in `assets/`.
-
-## 7. Check Starter Projects
+Or check every project:
 
 ```bash
 ./scripts/check-projects.sh
@@ -132,17 +211,11 @@ Keep raw footage in `footage/<video-slug>/`, not in `assets/`.
 
 The generated reference projects may have warnings. The custom `youtube-short-template` should pass cleanly.
 
-## 8. Preview A Starter Project
+## 10. Preview A Starter Project
 
 ```bash
-cd video-projects/youtube-short-template
+cd video-projects/<brand-project>
 npm run dev
-```
-
-For checks:
-
-```bash
-npm run check
 ```
 
 For render after FFmpeg is installed:
@@ -151,7 +224,7 @@ For render after FFmpeg is installed:
 npm run render
 ```
 
-## 9. Add Footage
+## 11. Add Footage
 
 ```text
 footage/<video-slug>/
@@ -166,7 +239,7 @@ Codex prompt:
 Use video-use and HyperFrames. Inventory footage/<video-slug>, propose a YouTube edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
 ```
 
-## 10. Production Loop
+## 12. Production Loop
 
 1. Drop raw footage in `footage/<slug>/`.
 2. Use Video Use to inventory, transcribe, and propose an edit.
@@ -175,3 +248,12 @@ Use video-use and HyperFrames. Inventory footage/<video-slug>, propose a YouTube
 5. Let Video Use assemble, subtitle, grade, and self-check the final timeline.
 6. Keep final outputs under `footage/<slug>/edit/`.
 
+## 13. Pre-Commit Brand Check
+
+Before committing a branded clone, search for old placeholder names:
+
+```bash
+rg -n "temporary|TODO|YourLogo|example.com|your-channel|youtube-short-template|AI Agent YouTube Kit" .
+```
+
+Keep hits that are intentionally documenting the base template. Replace hits that appear in brand-facing files, project metadata, titles, or rendered composition text.
