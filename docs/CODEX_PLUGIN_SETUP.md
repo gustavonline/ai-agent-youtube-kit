@@ -92,14 +92,14 @@ Install local Whisper for transcription:
 ./scripts/setup-local-transcription.sh
 ```
 
-This kit transcribes footage locally through
+This repo transcribes footage locally through
 `scripts/transcribe-local-whisper.py`, stores Whisper models in repo-local
 `.cache/whisper/`, then lets Video Use consume the packed transcript. Do not put
 API keys in this repo.
 
 ## First-Run Order
 
-1. Clone this kit.
+1. Clone this repo.
 2. Create/install the local `video-use` plugin using the Codex prompt above.
 3. Confirm the official HyperFrames plugin is available in Codex.
 4. Install FFmpeg.

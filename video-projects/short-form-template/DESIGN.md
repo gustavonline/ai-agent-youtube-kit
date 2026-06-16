@@ -2,7 +2,7 @@
 
 Use the repo root `DESIGN.md` as the channel style source.
 
-This project is a 9:16 YouTube Shorts starter for AI agent tutorials and short explainers.
+This project is a 9:16 short-form starter for agentic workflow tutorials and short explainers.
 
 ## Format
 
@@ -16,4 +16,3 @@ This project is a 9:16 YouTube Shorts starter for AI agent tutorials and short e
 - Replace `.face-temporary` with A-roll, a Video Use export, or a product capture.
 - Keep captions large enough to read on a phone.
 - Motion should land on the hook, keyword, or proof moment.
-

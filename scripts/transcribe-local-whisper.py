@@ -189,7 +189,7 @@ def pack_transcripts(edit_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Local Whisper transcription for ai-agent-youtube-kit."
+        description="Local Whisper transcription for Agentic Video Editor."
     )
     parser.add_argument("input", type=Path, help="Media file or footage/<slug> directory.")
     parser.add_argument(

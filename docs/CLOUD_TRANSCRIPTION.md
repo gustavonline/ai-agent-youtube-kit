@@ -1,6 +1,6 @@
 # Cloud Transcription
 
-Local Whisper is the default transcription workflow for this kit.
+Local Whisper is the default transcription workflow for this repo.
 
 Use cloud transcription only when you explicitly want it, for example:
 

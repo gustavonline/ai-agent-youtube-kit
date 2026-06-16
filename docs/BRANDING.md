@@ -1,11 +1,13 @@
 # Branding And Assets
 
-Do this before producing your first real video. The goal is to make every new project inherit your channel identity instead of drifting into generic AI-video styling.
+Do this before producing your first real video. The goal is to make every new project inherit your channel identity instead of drifting into generic agent-video styling.
 
 ## Brand Files
 
 - `DESIGN.md` - human-readable brand and motion direction.
 - `PROJECT_MEMORY.md` - reusable lessons from finished projects.
+- `channel/PROFILE.md` - channel promise, audience, content lanes, and CTAs.
+- `channel/STYLE_GUIDE.md` - condensed reference and performance lessons.
 - `assets/brand-tokens.css` - reusable CSS variables for HyperFrames projects.
 - `assets/` - shared logos, background plates, screenshots, sound beds, and reference stills.
 - `video-projects/<project>/DESIGN.md` - project-specific notes that should point back to the root design system.
@@ -56,10 +58,12 @@ Examples to avoid:
 
 Then update:
 
-1. `DESIGN.md`
-2. `PROJECT_MEMORY.md`
-3. `assets/brand-tokens.css`
-4. Each active `video-projects/<project>/DESIGN.md`
+1. `channel/PROFILE.md`
+2. `channel/STYLE_GUIDE.md`
+3. `DESIGN.md`
+4. `PROJECT_MEMORY.md`
+5. `assets/brand-tokens.css`
+6. Each active `video-projects/<project>/DESIGN.md`
 
 ## HyperFrames Rules
 
@@ -79,6 +83,8 @@ Then update:
 ## Brand Change Checklist
 
 - Root `DESIGN.md` updated.
+- `channel/PROFILE.md` updated.
+- `channel/STYLE_GUIDE.md` updated with reusable reference and performance lessons.
 - `PROJECT_MEMORY.md` updated with durable lessons only.
 - `assets/brand-tokens.css` updated.
 - Logo and mark assets added.

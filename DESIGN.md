@@ -1,6 +1,6 @@
 # Design System
 
-This is the default brand direction for new AI agent YouTube videos. Replace it with your own brand once you know the channel identity.
+This is the default brand direction for new agentic workflow videos. Replace it with your own brand once you know the channel identity.
 
 Use `PROJECT_MEMORY.md` for lessons from finished projects. Promote a lesson
 into this design system only when it becomes a stable brand decision.

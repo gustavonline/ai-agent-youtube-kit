@@ -1,6 +1,6 @@
 # Local Transcription
 
-This kit uses local Whisper transcription by default. Do not add transcription
+This repo uses local Whisper transcription by default. Do not add transcription
 API keys to this repo.
 
 ## Install

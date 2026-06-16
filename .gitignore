@@ -16,6 +16,14 @@ renders/
 *.vtt
 footage/**
 !footage/.gitkeep
+channel/references/**/download/
+channel/references/**/frames/
+channel/references/**/local-whisper/
+channel/references/**/*.mp4
+channel/references/**/*.mov
+channel/references/**/*.m4v
+channel/references/**/*.mkv
+channel/references/**/*.webm
 video-projects/**/renders/
 video-projects/**/node_modules/
 video-projects/**/.env
