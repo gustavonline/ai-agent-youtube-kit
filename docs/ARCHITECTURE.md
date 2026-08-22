@@ -3,13 +3,13 @@
 Agentic Content System is a local-first, cloneable execution system. It runs
 without AIOS and keeps the durable truth in inspectable files. There is no
 hosted backend, auth, database, queue, Electron/Tauri shell, cloud AI, or real
-publisher in v0.1.
+publisher in v0.2.
 
 ```text
 Conversation, brief, AIOS task, or standalone context
           |
           v
-acs init -> local brief/recording plan -> ACS workspace contracts
+channel/PROFILE.md + channel/brand.json -> acs init --brand -> local brief/recording plan -> ACS workspace contracts
           |
           v
 capture/ingest -> inspect -> transcript -> explicit approval
@@ -24,12 +24,15 @@ verify -> static HTML review -> local proof/result -> caller reads learning
 ## Contract ownership
 
 - `brand.json` owns channel policy, enabled/disabled reasons, and cadence.
+- The clone-owned `channel/brand.json` is a small source of defaults; `acs
+  init --brand` validates it and copies it into the workspace before the first
+  run. The workspace copy is execution truth.
 - `project.json` owns the content promise, audience, capture format, source
   provenance, rights, transcript reference, and run-specific delivery intent.
 - `edit-plan.json` owns the deterministic render intent and explicit approval
   state. It is the gate before render, derivative generation, and packaging.
 - `publish/manifest.json` owns the generated publish-ready handoff, hashes,
-  enabled routes, disabled routes, and the v0.1 no-external-posting assertion.
+  enabled routes, disabled routes, and the v0.2 no-external-posting assertion.
 - `context/` is optional human/source-note space. It is not a contract and is
   never read by runtime validation, approval, rendering, packaging, or result
   export.
@@ -57,14 +60,14 @@ surface is a static report, not an editing studio.
 The dated editor/engine comparison and the rationale for keeping this narrow
 contract + FFmpeg boundary are recorded in
 [`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md); full editors remain
-supervised adapters rather than v0.1 core dependencies.
+supervised adapters rather than v0.2 core dependencies.
 
 The persistent AIOS Space may remain the owner of durable business defaults and
 learning. A task-level caller or judgment layer copies resolved values into a
 new ACS workspace; independent ACS then executes locally, and the caller reads
 proof and learning back through its normal task flow. No shared maintained
-schema is required. The repository-local skill is the run interface, not the
-product.
+schema is required. The setup skill configures the clone; the run skill owns
+production execution.
 
 See [`INPUT_OWNERSHIP.md`](INPUT_OWNERSHIP.md) for the source-agnostic routing
 and the explicit prohibition on upstream runtime coupling.

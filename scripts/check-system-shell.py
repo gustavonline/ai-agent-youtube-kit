@@ -14,7 +14,10 @@ CANONICAL_REPOSITORY_URL = f"https://github.com/{CANONICAL_REPOSITORY}"
 REQUIRED = (
     "AGENTS.md",
     "README.md",
+    "channel/brand.json",
     ".agents/skills/agentic-content-system/SKILL.md",
+    ".agents/skills/setup-content-system/SKILL.md",
+    ".agents/skills/setup-content-system/agents/openai.yaml",
     ".agents/skills/audit-content-system/SKILL.md",
     ".agents/skills/audit-content-system/agents/openai.yaml",
     "docs",
@@ -30,7 +33,9 @@ PUBLIC_SURFACES = (
     "SETUP.md",
     "DESIGN.md",
     "MOTION_PHILOSOPHY.md",
+    "channel/brand.json",
     ".agents/skills/agentic-content-system/SKILL.md",
+    ".agents/skills/setup-content-system",
     ".agents/skills/audit-content-system",
     "docs",
     "engine",
@@ -87,8 +92,10 @@ def main() -> int:
     skill_text = skill.read_text(encoding="utf-8") if skill.exists() else ""
     if not skill_text.startswith("---\n") or "\nname: agentic-content-system\n" not in skill_text:
         failures.append("project-local ACS skill must begin with valid YAML frontmatter")
-    if not (ROOT / "examples/gustav/README.md").exists():
-        failures.append("examples/gustav must provide a visible self-contained boundary")
+    profile_path = ROOT / "channel/brand.json"
+    profile_text = profile_path.read_text(encoding="utf-8") if profile_path.exists() else ""
+    if not profile_text:
+        failures.append("channel/brand.json must provide clone-owned channel defaults")
 
     identity_path = ROOT / "docs/REPOSITORY_IDENTITY.md"
     identity_text = identity_path.read_text(encoding="utf-8") if identity_path.exists() else ""
@@ -111,6 +118,15 @@ def main() -> int:
         failures.append("audit skill must be complete and identify write-capable proof commands")
     if "strictly read-only" not in audit_text or "Result: PASS | FAIL | BLOCKED" not in audit_text:
         failures.append("audit skill must define read-only behavior and its result contract")
+
+    setup_skill = ROOT / ".agents/skills/setup-content-system/SKILL.md"
+    setup_text = setup_skill.read_text(encoding="utf-8") if setup_skill.exists() else ""
+    if not setup_text.startswith("---\n") or "\nname: setup-content-system\n" not in setup_text:
+        failures.append("setup skill must begin with valid YAML frontmatter")
+    if "TODO" in setup_text or "validate-profile" not in setup_text:
+        failures.append("setup skill must define profile validation")
+    if "without creating a content workspace" not in setup_text:
+        failures.append("setup skill must stop before creating the first workspace")
 
     for relative in PUBLIC_SURFACES:
         surface = ROOT / relative

@@ -40,8 +40,9 @@ workspace.
 
 ## Execution sequence
 
-1. Run `python -m agentic_content_system init <workspace>`; use
-   `--example gustav` only for the explicit Gustav policy example.
+1. Start from configured clone defaults with
+   `python -m agentic_content_system init <workspace> --brand channel/brand.json`.
+   Generic `init <workspace>` remains valid when a starter policy is enough.
 2. Use bounded context and format guidance to draft/refine
    `content-brief.md` and `recording-plan.md` before capture. Carry the
    promise, proof, three-point plan, contextual CTA, and chosen format into

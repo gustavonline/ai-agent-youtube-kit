@@ -22,6 +22,40 @@
         "note": {"type": "string"}
       }
     },
+    "delivery_defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routes"],
+      "properties": {
+        "routes": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["channel", "delivery_mode"],
+                "properties": {
+                  "channel": {"type": "string", "minLength": 1},
+                  "delivery_mode": {"type": "string", "enum": ["manual"]}
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["channel", "delivery_mode", "scheduled_at", "timezone"],
+                "properties": {
+                  "channel": {"type": "string", "minLength": 1},
+                  "delivery_mode": {"type": "string", "enum": ["scheduled"]},
+                  "scheduled_at": {"type": "string", "minLength": 1},
+                  "timezone": {"type": "string", "minLength": 1}
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
     "channels": {
       "type": "array",
       "minItems": 1,

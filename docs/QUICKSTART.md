@@ -27,10 +27,22 @@ Check the environment without a workspace:
 .venv/bin/python -m agentic_content_system --help
 ```
 
+## Configure the clone before a workspace
+
+Use the setup skill or an agent to resolve the business, audience, offer and
+content promise, channel policy, cadence, and delivery defaults. Store the
+durable channel policy in `channel/brand.json`, then validate it without
+creating a content workspace:
+
+```text
+.venv/bin/python -m agentic_content_system doctor
+.venv/bin/python -m agentic_content_system validate-profile channel/brand.json
+```
+
 ## First standalone ACS workspace
 
 ```text
-.venv/bin/python -m agentic_content_system init examples/my-content --example gustav
+.venv/bin/python -m agentic_content_system init examples/my-content --brand channel/brand.json
 ```
 
 Add a source at the scaffolded `sources/source.mp4`. Update the promise,
@@ -51,21 +63,13 @@ Run `ingest-transcript`, inspect, validate, and obtain explicit approval before
 running the consequential commands. The complete command sequence is in
 `docs/CLI.md`.
 
-For context from an AIOS Space, conversation, or brief, use the same canonical
-scaffold and copy only the resolved values that this run needs into the local
-ACS contracts. There is no required upstream schema or importer:
-
-```text
-.venv/bin/python -m agentic_content_system init examples/gustav-example --example gustav
-```
-
-Then review `project.json`, `brand.json`, `content-brief.md`, and
-`recording-plan.md`. The Gustav example schedules YouTube with an explicit
-Copenhagen timezone, keeps LinkedIn manual, and leaves Instagram/TikTok
-disabled. Scheduling remains an intent in `project.json` and the generated
-`publish/publisher-handoff.json`; it is not an external post. See
-`docs/INPUT_OWNERSHIP.md` and `examples/gustav-context.md` for the task-level
-mapping pattern.
+For context from an AIOS Space, conversation, or brief, copy only the resolved
+values that this run needs into the local ACS contracts. There is no required
+upstream schema or importer. Review `project.json`, `brand.json`,
+`content-brief.md`, and `recording-plan.md`. Scheduling remains an intent in
+`project.json` and the generated `publish/publisher-handoff.json`; it is not an
+external post. See `docs/INPUT_OWNERSHIP.md` and the setup skill for the
+task-level mapping pattern.
 
 ## Local Whisper compatibility
 

@@ -35,17 +35,32 @@ Verify:
 ```
 
 There is no hosted backend, database, auth, queue, Electron/Tauri app, cloud
-AI, or external publisher required for v0.1.
+AI, or external publisher required for v0.2.
+
+## Configure the clone
+
+Use the repository-local setup skill for an agent-first intake. Resolve only
+missing business, audience, offer/content promise, channel policy, cadence,
+and delivery-default decisions. Store the durable profile in
+`channel/PROFILE.md` and `channel/brand.json`, then run:
+
+```text
+.venv/bin/python -m agentic_content_system doctor
+.venv/bin/python -m agentic_content_system validate-profile channel/brand.json
+```
+
+Do not create a content workspace until a real content outcome is requested.
 
 ## First ACS workspace
 
 ```text
-.venv/bin/python -m agentic_content_system init examples/my-content --example gustav
+.venv/bin/python -m agentic_content_system init examples/my-content --brand channel/brand.json
 ```
 
-The explicit example policy enables YouTube and LinkedIn, leaves Instagram as
-an optional disabled short route, and disables TikTok with a clear fit reason.
-For a clone, edit `brand.json` and `project.json` before using real material.
+The command validates the supplied profile before writing and copies it into
+the workspace. Edit the workspace `brand.json` only for this run's approved
+policy, and edit `project.json` for the run-specific delivery intent. Generic
+`acs init <workspace>` remains available and uses the starter policy.
 
 Add source media under the workspace's `sources/` directory. Keep the source
 rights owner, license, URL, attribution, and provenance in `project.json`.
@@ -89,7 +104,7 @@ scheduled date/time and explicit timezone. No external post occurs;
 HyperFrames workspaces under `video-projects/` remain available for a motion
 asset when motion clarifies a point. They are optional adapter material, not
 the ACS product identity. Timeline Studio, OpenReelio, and supervised
-publishers are documented seams only; v0.1 does not vendor or depend on them.
+publishers are documented seams only; v0.2 does not vendor or depend on them.
 
 ## Cleanup
 

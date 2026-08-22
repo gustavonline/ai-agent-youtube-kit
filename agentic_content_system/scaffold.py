@@ -2,35 +2,26 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 from .errors import ACSUserError
-from .io import write_json
+from .io import read_json, write_json
 from .paths import GENERATED_DIRS, resolve_project, slugify
+from .project import require_valid_brand_profile
 
 
-def default_brand(project_id: str, *, example: str | None = None) -> dict[str, Any]:
-    if example == "gustav":
-        name = "Gustav Online example channel"
-        owner = "Gustav Online"
-        intent = "Turn bounded business context into useful, buyer-relevant systems content."
-        reasons = {
-            "youtube": "Primary home for approved long-form explanations and selected shorts.",
-            "linkedin": "Primary professional route for practical proof, context, and buyer learning.",
-            "instagram": "Optional short route; enable only when the derivative has a clear visual and audience fit.",
-            "tiktok": "Disabled: the current buyer/context fit is stronger on YouTube and LinkedIn; do not assume every edit becomes TikTok content.",
-        }
-    else:
-        name = "Example brand"
-        owner = "Clone owner"
-        intent = "Turn bounded business context into useful, buyer-relevant content."
-        reasons = {
-            "youtube": "Primary long-form and selected short route; change this policy for the clone.",
-            "linkedin": "Professional context and proof route; change this policy for the clone.",
-            "instagram": "Optional short route; enable only when there is a clear fit.",
-            "tiktok": "Disabled by default until the brand has a documented fit and reason to enable it.",
-        }
+def default_brand(project_id: str) -> dict[str, Any]:
+    name = "Configured channel defaults"
+    owner = "Clone owner"
+    intent = "Turn bounded business context into useful, buyer-relevant content."
+    reasons = {
+        "youtube": "Primary long-form and selected short route; change this policy for the clone.",
+        "linkedin": "Professional context and proof route; change this policy for the clone.",
+        "instagram": "Optional short route; enable only when there is a clear fit.",
+        "tiktok": "Disabled by default until the brand has a documented fit and reason to enable it.",
+    }
     return {
         "schema_version": "1.0",
         "brand_id": project_id,
@@ -43,6 +34,12 @@ def default_brand(project_id: str, *, example: str | None = None) -> dict[str, A
             "useful_short_target": 22,
             "note": "Three core videos per week for 26 weeks is 78 core videos; add 22 useful shorts for a 100-asset planning target.",
         },
+        "delivery_defaults": {
+            "routes": [
+                {"channel": "youtube", "delivery_mode": "manual"},
+                {"channel": "linkedin", "delivery_mode": "manual"},
+            ]
+        },
         "channels": [
             {"id": "youtube", "enabled": True, "reason": reasons["youtube"], "allowed_asset_types": ["long", "short"]},
             {"id": "linkedin", "enabled": True, "reason": reasons["linkedin"], "allowed_asset_types": ["text"]},
@@ -52,22 +49,18 @@ def default_brand(project_id: str, *, example: str | None = None) -> dict[str, A
     }
 
 
-def default_project(project_id: str, brand: dict[str, Any], *, example: str | None = None) -> dict[str, Any]:
+def default_project(project_id: str, brand: dict[str, Any]) -> dict[str, Any]:
+    delivery_defaults = brand.get("delivery_defaults")
+    defaults = delivery_defaults.get("routes", []) if isinstance(delivery_defaults, dict) else []
+    defaults_by_channel = {
+        route.get("channel"): route for route in defaults if isinstance(route, dict)
+    }
     delivery_routes: list[dict[str, Any]] = []
     for channel in brand["channels"]:
         if not channel["enabled"]:
             continue
-        if example == "gustav" and channel["id"] == "youtube":
-            delivery_routes.append(
-                {
-                    "channel": "youtube",
-                    "delivery_mode": "scheduled",
-                    "scheduled_at": "2026-09-01T09:00:00",
-                    "timezone": "Europe/Copenhagen",
-                }
-            )
-        else:
-            delivery_routes.append({"channel": channel["id"], "delivery_mode": "manual"})
+        route = defaults_by_channel.get(channel["id"], {"channel": channel["id"], "delivery_mode": "manual"})
+        delivery_routes.append(deepcopy(route))
     return {
         "schema_version": "1.0",
         "project_id": project_id,
@@ -93,7 +86,7 @@ def default_project(project_id: str, brand: dict[str, Any], *, example: str | No
         ],
         "transcript": {"path": "transcripts/active.json", "format": "acs-transcript/1.0"},
         "delivery_intent": {"schema_version": "1.0", "routes": delivery_routes},
-        "notes": "Replace the example promise, audience, source rights, format, and delivery intent before a real content run.",
+        "notes": "Replace the starter promise, audience, source rights, format, and delivery intent before a real content run.",
     }
 
 
@@ -170,16 +163,31 @@ def default_recording_plan(project: dict[str, Any], edit_plan: dict[str, Any]) -
     )
 
 
-def scaffold_project(path: str | Path, *, example: str | None = None, force: bool = False) -> Path:
+def load_brand_profile(path: str | Path) -> dict[str, Any]:
+    profile_path = Path(path).expanduser().resolve()
+    if not profile_path.is_file():
+        raise ACSUserError(f"Brand profile file not found: {profile_path}")
+    brand = read_json(profile_path)
+    require_valid_brand_profile(brand)
+    return deepcopy(brand)
+
+
+def scaffold_project(
+    path: str | Path,
+    *,
+    brand: dict[str, Any] | None = None,
+    force: bool = False,
+) -> Path:
     project_dir = resolve_project(path)
     project_id = slugify(project_dir.name)
     if project_dir.exists() and any(project_dir.iterdir()) and not force:
         raise ACSUserError(f"Workspace directory is not empty: {project_dir}. Use --force only when replacement is intended.")
+    selected_brand = deepcopy(brand) if brand is not None else default_brand(project_id)
+    require_valid_brand_profile(selected_brand)
     project_dir.mkdir(parents=True, exist_ok=True)
-    brand = default_brand(project_id, example=example)
-    project = default_project(project_id, brand, example=example)
+    project = default_project(project_id, selected_brand)
     edit_plan = default_edit_plan(project_id)
-    write_json(project_dir / "brand.json", brand)
+    write_json(project_dir / "brand.json", selected_brand)
     write_json(project_dir / "project.json", project)
     write_json(project_dir / "edit-plan.json", edit_plan)
     for name in ("sources", "transcripts", "context", *GENERATED_DIRS):

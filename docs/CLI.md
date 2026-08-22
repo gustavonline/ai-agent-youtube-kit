@@ -16,7 +16,8 @@ system/Homebrew Python.
 ## Core flow
 
 ```text
-acs init <workspace> --example gustav
+acs validate-profile channel/brand.json
+acs init <workspace> --brand channel/brand.json
 acs inspect <workspace>
 acs validate <workspace>
 acs ingest-transcript <workspace> <transcript.json>
@@ -48,9 +49,9 @@ only resolved values into the ACS-owned `brand.json`, `project.json`,
 hold optional notes but is not read by the runtime. `derive` creates only
 policy-allowed derivatives and never overwrites an existing post. The
 workspace-owned `delivery_intent` sets each enabled route to `manual` or
-`scheduled` with an explicit date/time and timezone. Generic standalone
-workspaces default to explicit manual/no-date; the Gustav example demonstrates a
-scheduled YouTube route and manual LinkedIn.
+`scheduled` with an explicit date/time and timezone. A clone may store manual or
+scheduled defaults in `channel/brand.json`; the copy in a workspace is execution
+truth and can be changed as run-specific intent in `project.json`.
 
 `package` stages `manifest.json` and the versioned
 `publisher-handoff.json` together and atomically installs the package. The

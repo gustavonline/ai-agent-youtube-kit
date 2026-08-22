@@ -5,7 +5,7 @@ a hosted web app, phone-first editor, mini-Premiere, or publishing bot unless
 the user explicitly asks. Prefer transparent contracts, local scripts, and
 agent-readable Markdown over dashboards, databases, auth, or server state.
 
-The v0.1 system boundary is the Python `agentic_content_system` CLI,
+The v0.2 system boundary is the Python `agentic_content_system` CLI,
 versioned JSON contracts, FFmpeg/ffprobe, local transcript adapters, static
 review reports, and human approval. HyperFrames and full editors are optional
 adapters, not product identity.
@@ -31,6 +31,11 @@ analysis library.
   `docs/INPUT_OWNERSHIP.md`, `docs/CONTENT_FORMATS.md`, and the repository-local
   `.agents/skills/agentic-content-system/SKILL.md`; use the CLI flow in
   `docs/CLI.md`.
+- Clone setup or pre-first-video configuration: use
+  `.agents/skills/setup-content-system/SKILL.md`; resolve only missing business,
+  audience, offer/promise, channel-policy, cadence, and delivery-default
+  decisions, then run doctor and profile validation without creating a content
+  workspace.
 - Audit, check, health-check, drift, reconcile, or readiness request: read
   `.agents/skills/audit-content-system/SKILL.md`, set an explicit repository or
   one-workspace scope, and keep the audit strictly read-only. Do not run
@@ -54,6 +59,9 @@ analysis library.
   supported as source-side input).
 - Final review: follow `docs/FINAL_REVIEW.md` and keep the result in the active
   example/workspace boundary.
+- Real-video acceptance: follow `docs/REAL_VIDEO_ACCEPTANCE.md`; generated or
+  public footage proves the engine, while owner-recorded footage is required
+  for a real usability PASS.
 - Durable learning: follow `docs/LEARNING.md`.
 
 ## Reference Analysis
@@ -132,11 +140,13 @@ reactions.
 For a fresh branded clone:
 
 1. Fill `channel/PROFILE.md`.
-2. Add known performance data to `channel/published-videos.csv` if available.
-3. Analyze 3-10 reference videos with `scripts/analyze-reference-video.py`.
-4. Condense reusable lessons into `channel/STYLE_GUIDE.md`.
-5. Tailor `DESIGN.md`, `assets/brand-tokens.css`, and starter projects.
-6. Start the first video using `templates/video-brief.md`.
+2. Update and validate `channel/brand.json` from the resolved profile.
+3. Add known performance data to `channel/published-videos.csv` if available.
+4. Analyze 3-10 reference videos with `scripts/analyze-reference-video.py`.
+5. Condense reusable lessons into `channel/STYLE_GUIDE.md`.
+6. Tailor `DESIGN.md`, `assets/brand-tokens.css`, and optional starter projects.
+7. Start the first video using `templates/video-brief.md` only after a real
+   content outcome is requested.
 
 ## Branding Copies
 

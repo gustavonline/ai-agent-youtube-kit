@@ -9,6 +9,8 @@ agent-video styling.
 - `DESIGN.md` - human-readable brand and motion direction.
 - `PROJECT_MEMORY.md` - reusable lessons from finished projects.
 - `channel/PROFILE.md` - channel promise, audience, content lanes, and CTAs.
+- `channel/brand.json` - ACS-owned, schema-validated channel policy, cadence,
+  and delivery defaults copied into new workspaces.
 - `channel/STYLE_GUIDE.md` - condensed reference and performance lessons.
 - `assets/brand-tokens.css` - reusable CSS variables for HyperFrames projects.
 - `assets/` - shared logos, background plates, screenshots, sound beds, and reference stills.
@@ -64,11 +66,12 @@ Examples to avoid:
 Then update:
 
 1. `channel/PROFILE.md`
-2. `channel/STYLE_GUIDE.md`
-3. `DESIGN.md`
-4. `PROJECT_MEMORY.md`
-5. `assets/brand-tokens.css`
-6. Each active optional `video-projects/<slug>/DESIGN.md`
+2. `channel/brand.json`
+3. `channel/STYLE_GUIDE.md`
+4. `DESIGN.md`
+5. `PROJECT_MEMORY.md`
+6. `assets/brand-tokens.css`
+7. Each active optional `video-projects/<slug>/DESIGN.md`
 
 ## HyperFrames Rules
 

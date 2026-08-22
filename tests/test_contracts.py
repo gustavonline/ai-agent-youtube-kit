@@ -9,7 +9,7 @@ from agentic_content_system.validation import validate_json
 
 class ContractTests(unittest.TestCase):
     def test_scaffold_contracts_validate(self) -> None:
-        brand = default_brand("test-brand", example="gustav")
+        brand = default_brand("test-brand")
         project = default_project("test-brand", brand)
         plan = default_edit_plan("test-brand")
         self.assertEqual([], validate_json(brand, load_schema("brand")))
@@ -33,7 +33,14 @@ class ContractTests(unittest.TestCase):
         const_schema = {"type": "string", "const": "expected"}
         self.assertTrue(validate_json("wrong", const_schema))
 
-        project = default_project("test-brand", default_brand("test-brand", example="gustav"), example="gustav")
+        project = default_project("test-brand", default_brand("test-brand"))
+        project["delivery_intent"]["routes"][0].update(
+            {
+                "delivery_mode": "scheduled",
+                "scheduled_at": "2026-09-01T09:00:00",
+                "timezone": "UTC",
+            }
+        )
         project["delivery_intent"]["routes"][0].pop("timezone")
         issues = validate_json(project, load_schema("content-project"))
         self.assertTrue(any("does not match any allowed shape" in str(issue) for issue in issues))

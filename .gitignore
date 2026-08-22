@@ -15,8 +15,6 @@ examples/*/edit-plan.previous.json
 examples/*/edit/
 examples/*/local-whisper/
 examples/acs-public-source-proof-*/
-!examples/gustav/sources/README.md
-!examples/gustav/transcripts/README.md
 __pycache__/
 *.egg-info/
 build/
