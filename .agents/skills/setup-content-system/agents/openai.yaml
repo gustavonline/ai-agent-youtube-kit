@@ -1,0 +1,4 @@
+interface:
+  display_name: "Setup Content System"
+  short_description: "Configure ACS before the first real video"
+  default_prompt: "Use $setup-content-system to configure this ACS clone from business context before creating a content workspace."

@@ -12,11 +12,13 @@ CLI. The project-facing files use the same `schema_version` field:
 - `reports/review.json` -> `review-record.schema.json`
 - `results/run-result.json` -> `run-result.schema.json`
 
-`project.json.delivery_intent` is the ACS-owned run intent. New scaffolds write
+`channel/brand.json` is the clone-owned source of validated channel policy,
+cadence, and optional delivery defaults. `acs init --brand` copies it into a
+workspace, where `brand.json` becomes execution truth. `project.json.delivery_intent` is the ACS-owned run intent. New scaffolds write
 it explicitly and it must cover every enabled channel exactly once: manual
 routes have no date, while scheduled routes require an ISO date/time and
 explicit timezone. The publisher handoff is generated from that intent and is
-the only v0.1 scheduling/publisher boundary; it never grants posting
+the only v0.2 scheduling/publisher boundary; it never grants posting
 permission. Its manifest binding excludes only the mutable verify-time
 `verification` block; the handoff's asset hashes and the package's verification
 record still bind the current bytes.
@@ -32,5 +34,5 @@ and verification are publish gates: every source must be `owned`, `licensed`,
 cleared for a publish-ready handoff.
 
 Keep schema changes additive or bump the schema version and migration docs.
-The v0.1 validator intentionally covers the transparent subset needed by the
+The v0.2 validator intentionally covers the transparent subset needed by the
 CLI and does not require a third-party validation service.

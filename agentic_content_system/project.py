@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from copy import deepcopy
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -222,6 +223,93 @@ def require_valid_project(contracts: ProjectContracts, *, require_sources: bool 
 
 def channels_by_id(brand: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {channel["id"]: channel for channel in brand.get("channels", [])}
+
+
+def brand_profile_issues(brand: dict[str, Any]) -> list[ValidationIssue]:
+    """Return schema and policy issues for a clone-owned channel profile."""
+
+    issues = validate_json(brand, load_schema("brand"), "brand")
+    if not isinstance(brand, dict):
+        return issues
+    channels = brand.get("channels", [])
+    if not isinstance(channels, list):
+        return issues
+    channel_ids = [
+        channel.get("id")
+        for channel in channels
+        if isinstance(channel, dict) and isinstance(channel.get("id"), str)
+    ]
+    if len(channel_ids) != len(set(channel_ids)):
+        issues.append(ValidationIssue("brand.channels", "channel ids must be unique"))
+    for index, channel in enumerate(channels):
+        if isinstance(channel, dict) and not channel.get("enabled") and not channel.get("reason", "").strip():
+            issues.append(ValidationIssue(f"brand.channels[{index}].reason", "disabled channels require a reason"))
+
+    defaults = brand.get("delivery_defaults")
+    if not isinstance(defaults, dict):
+        return issues
+    routes = defaults.get("routes", [])
+    known = {
+        channel["id"]: channel
+        for channel in channels
+        if isinstance(channel, dict) and isinstance(channel.get("id"), str)
+    }
+    enabled_ids = [channel_id for channel_id, channel in known.items() if channel.get("enabled")]
+    seen: set[str] = set()
+    for index, route in enumerate(routes if isinstance(routes, list) else []):
+        if not isinstance(route, dict):
+            continue
+        channel_id = route.get("channel")
+        if not isinstance(channel_id, str):
+            continue
+        if channel_id in seen:
+            issues.append(ValidationIssue(f"brand.delivery_defaults.routes[{index}].channel", "duplicate channel"))
+        seen.add(channel_id)
+        policy = known.get(channel_id)
+        if policy is None:
+            issues.append(ValidationIssue(f"brand.delivery_defaults.routes[{index}].channel", "must reference a declared channel"))
+        elif not policy.get("enabled"):
+            issues.append(
+                ValidationIssue(
+                    f"brand.delivery_defaults.routes[{index}].channel",
+                    "disabled channels cannot be delivery defaults",
+                )
+            )
+        elif route.get("delivery_mode") == "scheduled":
+            scheduled_at = route.get("scheduled_at", "")
+            if not isinstance(scheduled_at, str) or ("T" not in scheduled_at and " " not in scheduled_at):
+                issues.append(
+                    ValidationIssue(
+                        f"brand.delivery_defaults.routes[{index}].scheduled_at",
+                        "scheduled delivery requires a date and time",
+                    )
+                )
+            else:
+                try:
+                    datetime.fromisoformat(scheduled_at.replace("Z", "+00:00"))
+                except (AttributeError, ValueError):
+                    issues.append(
+                        ValidationIssue(
+                            f"brand.delivery_defaults.routes[{index}].scheduled_at",
+                            "scheduled delivery requires an ISO date/time",
+                        )
+                    )
+    missing = [channel_id for channel_id in enabled_ids if channel_id not in seen]
+    if missing:
+        issues.append(
+            ValidationIssue(
+                "brand.delivery_defaults.routes",
+                "must specify every enabled channel: " + ", ".join(missing),
+            )
+        )
+    return issues
+
+
+def require_valid_brand_profile(brand: dict[str, Any]) -> None:
+    issues = brand_profile_issues(brand)
+    if issues:
+        rendered = "\n".join(f"- {issue}" for issue in issues)
+        raise ACSUserError(f"Brand profile validation failed:\n{rendered}")
 
 
 def enabled_channels(brand: dict[str, Any]) -> list[dict[str, Any]]:

@@ -234,7 +234,7 @@ def validate_current_package(contracts: ProjectContracts) -> dict[str, Any]:
     if manifest.get("project_id") != contracts.project.get("project_id"):
         raise ACSUserError("Publish manifest project_id does not match project.json")
     if manifest.get("verification", {}).get("external_posting") is not False:
-        raise ACSUserError("Verification failed: external_posting must remain false in v0.1")
+        raise ACSUserError("Verification failed: external_posting must remain false in v0.2")
     approval = contracts.edit_plan["approval"]
     if manifest.get("approval", {}).get("approval_hash") != approval.get("approval_hash"):
         raise ACSUserError("Publish manifest approval hash is stale; repackage after current approval.")

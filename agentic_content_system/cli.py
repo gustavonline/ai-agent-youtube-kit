@@ -18,11 +18,11 @@ from .io import read_json, write_json
 from .media import binary_path
 from .package import package_project, verify_package
 from .paths import GENERATED_DIRS, display_path, inside_project, project_file, resolve_project
-from .project import ProjectContracts, current_approval_hash, load_contracts, require_valid_project
+from .project import ProjectContracts, current_approval_hash, load_contracts, require_valid_brand_profile, require_valid_project
 from .render import render_project
 from .report import create_review_report
 from .result import export_result
-from .scaffold import scaffold_project
+from .scaffold import load_brand_profile, scaffold_project
 from .schemas import load_schema
 from .transcript import load_and_normalize
 from .validation import require_valid
@@ -41,8 +41,11 @@ def _parser() -> argparse.ArgumentParser:
 
     init = sub.add_parser("init", help="Create a portable ACS workspace contract and folder scaffold.")
     init.add_argument("project", metavar="workspace", help="ACS content workspace; relative or absolute paths are supported.")
-    init.add_argument("--example", choices=["gustav"], help="Apply an explicit example channel policy.")
+    init.add_argument("--brand", metavar="path", help="Copy and validate an ACS-owned brand profile into workspace brand.json.")
     init.add_argument("--force", action="store_true", help="Replace existing contract files in the target workspace.")
+
+    profile = sub.add_parser("validate-profile", help="Validate a clone-owned channel/brand.json profile without writing a workspace.")
+    profile.add_argument("profile", metavar="brand-profile")
 
     inspect = sub.add_parser("inspect", help="Probe source media and write inspection.json.")
     inspect.add_argument("project", metavar="workspace")
@@ -122,12 +125,21 @@ def command_doctor(as_json: bool) -> int:
 
 
 def command_init(args: argparse.Namespace) -> int:
-    project_dir = scaffold_project(args.project, example=args.example, force=args.force)
+    brand = load_brand_profile(args.brand) if args.brand else None
+    project_dir = scaffold_project(args.project, brand=brand, force=args.force)
     print(f"Initialized Agentic Content System workspace: {project_dir}")
     print("Next steps:")
     print(f"  1. Add source media at {display_path(project_dir, project_dir / 'sources')}")
     print(f"  2. Edit {display_path(project_dir, project_dir / 'project.json')} and {display_path(project_dir, project_dir / 'edit-plan.json')}")
     print("  3. Ingest a transcript, review, and run: acs plan <workspace> --approve --by <name>")
+    return 0
+
+
+def command_validate_profile(profile_arg: str) -> int:
+    profile_path = Path(profile_arg).expanduser().resolve()
+    brand = load_brand_profile(profile_path)
+    require_valid_brand_profile(brand)
+    print(f"Valid brand profile: {profile_path}")
     return 0
 
 
@@ -259,6 +271,7 @@ def command_clean(args: argparse.Namespace) -> int:
 COMMANDS = {
     "doctor": lambda args: command_doctor(args.as_json),
     "init": command_init,
+    "validate-profile": lambda args: command_validate_profile(args.profile),
     "inspect": command_inspect,
     "validate": command_validate,
     "plan": command_plan,

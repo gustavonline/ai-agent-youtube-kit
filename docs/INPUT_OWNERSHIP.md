@@ -50,11 +50,18 @@ and do not make an ACS workspace depend on a Space, API, database, or task
 record. A useful caller can pass context in prose or files, while the local
 workspace remains independently runnable and inspectable.
 
-## Gustav example
+## Clone defaults and a real run
 
-`examples/gustav-context.md` shows the values a judgment layer might resolve:
-YouTube and LinkedIn enabled, Instagram and TikTok disabled with reasons,
-YouTube scheduled for `2026-09-01T09:00:00` in `Europe/Copenhagen`, and
-LinkedIn manual/no-date. `acs init --example gustav` writes the corresponding
-ACS-owned example workspace. A scheduled value is intent only; the generated
-publisher handoff remains `not_posted: true` and `external_posting: false`.
+Before the first real video, the setup skill resolves missing business,
+audience, offer/content promise, channel-policy, cadence, and delivery-default
+decisions into `channel/PROFILE.md` and `channel/brand.json`. The profile is
+validated without creating a workspace. When a real outcome exists,
+`acs init <workspace> --brand channel/brand.json` copies the policy into the
+workspace. That workspace `brand.json` is execution truth; `project.json` owns
+the run-specific content and delivery intent.
+
+Any enabled or disabled channel arrangement is valid when it has explicit
+policy reasons and delivery defaults for every enabled route. Disabled channels
+cannot become delivery routes, even if a run-level intent mentions them. A
+scheduled value is intent only; the generated publisher handoff remains
+`not_posted: true` and `external_posting: false`.

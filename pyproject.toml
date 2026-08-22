@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentic-content-system"
-version = "0.1.0"
-description = "Local-first, declarative content production and publish-ready handoff CLI"
+version = "0.2.0"
+description = "Local-first agentic system for reviewed videos, posts, and publish-ready handoff"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [

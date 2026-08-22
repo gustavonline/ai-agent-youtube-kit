@@ -1,125 +1,106 @@
 # Agentic Content System
 
-Agentic Content System is a local-first, cloneable system for turning bounded
-company context into useful content: content decision -> format/script/outline
--> capture/ingest -> transcript -> approved long-form edit -> selected short
-derivatives -> posts -> publish-ready handoff -> learning.
+Agentic Content System turns business context and raw footage into reviewed videos, posts, and a publish-ready handoff locally.
 
-It is not a phone-first editor, a mini-Premiere, a hosted app, or a publishing
-bot. The durable truth is transparent JSON, Markdown, media, and proof files.
-ACS accepts resolved context from a conversation, brief, AIOS Space task, or
-another useful source, but it runs standalone once that context is copied into
-the workspace. No upstream system or shared integration schema is a runtime
-dependency.
+```text
+business context -> brief -> capture -> approved edit -> video + posts -> review -> handoff
+```
 
-The ownership boundary is deliberate: a persistent AIOS Space may own durable
-company, offer, buyer, channel defaults, and learning; a caller or judgment
-layer copies only the resolved values needed for one run; the receiving ACS
-workspace becomes canonical for execution truth; and a caller reads proof,
-supervised-publisher state, and learning back through its normal task flow. A
-delivery date is intent only. v0.1 never posts externally, and a separate
-authorization is required by any later publisher.
+## Use it when
 
-## Quickstart
+- an agent needs a transparent, repeatable content workflow for a business;
+- a human needs local contracts, FFmpeg media proof, review files, and a supervised delivery handoff;
+- AIOS or another caller can provide context, but the execution must remain standalone.
 
-Install Python 3.10+ and FFmpeg/ffprobe, then from the repository root:
+## Skip it when
+
+- the job needs a hosted editor, dashboard, cloud processing, or automatic posting;
+- there is no real content outcome yet; configure the clone first and create a workspace only when the outcome is known;
+- the source rights, approval owner, or channel policy cannot be resolved.
+
+## Agent-first start
+
+Ask an agent:
+
+```text
+Set up this ACS clone for my business. Use any business, audience, offer,
+content-promise, channel, cadence, and delivery context already available.
+Ask only for missing decisions, update channel/PROFILE.md and channel/brand.json,
+run doctor and profile validation, and stop before creating a content workspace.
+When I give you a real content outcome, create it with the configured brand defaults.
+```
+
+The manual equivalent starts with:
 
 ```text
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .
 .venv/bin/python -m agentic_content_system doctor
-.venv/bin/python -m agentic_content_system init examples/my-content --example gustav
+.venv/bin/python -m agentic_content_system validate-profile channel/brand.json
+.venv/bin/python -m agentic_content_system init examples/my-content --brand channel/brand.json
 ```
 
-On Windows PowerShell use `py -m venv .venv`, then
-`.venv\Scripts\python.exe -m pip install -e .` and invoke the same module with
-`.venv\Scripts\python.exe`. The setup helpers are
-`scripts/setup-agentic-content-system.sh` and
-`scripts\setup-agentic-content-system.ps1`. This venv-first flow avoids
-modifying Homebrew/system Python.
+Windows PowerShell uses `.venv\Scripts\python.exe` for the same module
+commands. `acs` is the equivalent installed command.
 
-Add source media under `examples/my-content/sources/`, complete the rights and
-provenance fields in `project.json`, and follow the contract-gated flow:
+## Concrete outputs
+
+- clone defaults: `channel/PROFILE.md`, `channel/brand.json`, and the reusable `channel/STYLE_GUIDE.md`;
+- workspace execution truth: `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and `edit-plan.json`;
+- local proof: inspected sources, transcript, approved FFmpeg renders, selected derivatives, and a static review report;
+- supervised handoff: `publish/manifest.json`, `publish/publisher-handoff.json`, and `results/run-result.json`.
+
+## Setup and ownership
+
+The setup skill is the primary route for configuring a clone before its first
+real video. `channel/brand.json` is the small ACS-owned source of durable
+channel policy, cadence, and delivery defaults. `acs init --brand` validates it
+before writing a copy into the new workspace. That workspace `brand.json` is
+execution truth; `project.json` owns run-specific content and delivery intent.
+Use `.agents/skills/setup-content-system/SKILL.md` for setup and
+`.agents/skills/audit-content-system/SKILL.md` for a strictly read-only audit.
+
+AIOS is optional. It may own durable business or audience defaults and pass
+resolved context in prose or files. ACS does not maintain an AIOS↔ACS JSON
+handoff contract, caller IDs, database, API, or runtime dependency.
+
+## Tested boundary and current limitation
+
+The v0.2 boundary is the cross-platform Python CLI, versioned JSON contracts,
+FFmpeg/ffprobe, local transcript adapters, static reports, and explicit human
+approval. `external_posting` remains `false`; the publisher handoff is
+`not_posted: true` and awaits separate authorization. Full local tests and the
+system shell check exercise this boundary without a server or cloud dependency.
+
+Generated fixtures and the retained public-source run prove engine and
+contract behavior. They do not prove owner usability: a real usability PASS
+still requires the owner to run the protocol with owner-recorded footage.
+
+## Lower-level CLI
 
 ```text
-.venv/bin/python -m agentic_content_system inspect examples/my-content
-.venv/bin/python -m agentic_content_system validate examples/my-content
-.venv/bin/python -m agentic_content_system ingest-transcript examples/my-content transcript.json
-.venv/bin/python -m agentic_content_system plan examples/my-content --approve --by reviewer
-.venv/bin/python -m agentic_content_system render examples/my-content --kind all
-.venv/bin/python -m agentic_content_system derive examples/my-content
-.venv/bin/python -m agentic_content_system package examples/my-content
-.venv/bin/python -m agentic_content_system verify examples/my-content
-.venv/bin/python -m agentic_content_system review-report examples/my-content
-.venv/bin/python -m agentic_content_system export-result examples/my-content
+acs init <workspace> [--brand channel/brand.json]
+acs validate-profile <brand-profile>
+acs inspect <workspace>
+acs validate <workspace> [--contracts-only]
+acs ingest-transcript <workspace> <transcript>
+acs plan <workspace> --approve --by <reviewer>
+acs render <workspace> --kind all
+acs derive <workspace>
+acs package <workspace>
+acs verify <workspace>
+acs review-report <workspace>
+acs export-result <workspace>
 ```
 
-The installed `acs` command is equivalent. Windows users can use the module
-form exactly as shown; no POSIX shell is required.
+Rendering and packaging are approval-gated. Re-run inspection after declared
+source changes; re-approve after policy, project, delivery, or edit-plan
+changes. Packaging includes enabled routes only and never posts.
 
-## What v0.1 owns
+See `docs/REAL_VIDEO_ACCEPTANCE.md` for the generic owner-recorded protocol,
+`docs/CLI.md` for command details, and `docs/ADAPTERS.md` for optional seams.
+HyperFrames and legacy adapters remain below the ACS contract/FFmpeg boundary;
+they are not the product identity.
 
-- Versioned JSON Schemas for brand/channel policy, content workspace metadata, edit plan,
-  transcript, and publish manifest.
-- A cross-platform Python CLI: doctor, init, inspect, validate, plan/diff,
-  transcript ingestion, deterministic render, derive, package, verify,
-  review-report, and clean.
-- FFmpeg/ffprobe as the controlled media boundary for 16:9 long-form and 9:16
-  short output.
-- Explicit edit-plan approval before render, derivatives, or package creation.
-- Provenance and rights metadata carried into the publish manifest.
-- A versioned workspace-owned `delivery_intent` for manual/no-date or scheduled
-  routes with an explicit timezone, plus an atomic
-  `publish/publisher-handoff.json` containing only enabled routes and an
-  awaiting-authorization/not-posted assertion.
-- Static local HTML review, deterministic reruns, understandable failures, and
-  no arbitrary shell execution from input contracts.
-- Enabled-channel-only handoff. Gustav's example enables YouTube and LinkedIn,
-  permits an optional Instagram short route, and disables TikTok with a clear
-  fit reason; policy is per brand/client.
-
-## Existing workflow assets
-
-The original local Whisper transcription scripts, footage conventions, content
-pipeline, templates, and HyperFrames projects remain useful. Local Whisper is
-optional and stays repo-local; HyperFrames is an optional motion adapter for a
-specific explanatory beat, never the product identity. Timeline Studio,
-OpenReelio, HyperFrames, and supervised publishers have documented seams but
-are not vendored or required by v0.1.
-
-The committed `examples/gustav/` directory is the visible, contract-only
-example boundary. Source media and generated proof under an example are
-ignored, so examples remain understandable without committing large files.
-Use `scripts/new-content-example.py <slug>` when you want a new local example.
-
-Read these first:
-
-- `docs/QUICKSTART.md` - setup and first ACS workspace.
-- `docs/CLI.md` - stable commands and approval gates.
-- `docs/ARCHITECTURE.md` - contract ownership and boundaries.
-- `docs/INPUT_OWNERSHIP.md` - source-agnostic context and ownership boundary.
-- `docs/CONTENT_FORMATS.md` - nine capture formats and cadence guidance.
-- `docs/EDITOR_ENGINE_DECISION.md` - dated editor/engine research and the
-  narrow contract + FFmpeg decision.
-- `.agents/skills/agentic-content-system/SKILL.md` - repository-local run interface.
-- `.agents/skills/audit-content-system/SKILL.md` - periodic read-only health,
-  truth, drift, and proof audit for the repository or one named workspace.
-- `docs/RECOVERY.md` - safe generated-output cleanup.
-
-Standalone scaffolds write explicit manual/no-date delivery for enabled routes.
-The explicit Gustav example schedules YouTube for `2026-09-01T09:00:00` in
-`Europe/Copenhagen`, keeps LinkedIn manual, and keeps Instagram/TikTok
-disabled. The advisory context is in `examples/gustav-context.md`; it is
-guidance for the judgment layer, not an ACS inbound schema or CLI input.
-
-Use the run skill for production work and the audit skill for a periodic,
-strictly read-only backstop before handoff or when workspace proof may be
-stale. An audit never repairs or regenerates proof.
-
-Brand design and motion principles remain in `DESIGN.md`,
-`MOTION_PHILOSOPHY.md`, `PROJECT_MEMORY.md`, `channel/PROFILE.md`, and
-`channel/STYLE_GUIDE.md`. The existing HyperFrames starter projects are kept
-under `video-projects/` as optional motion assets, not as the system boundary.
-The legacy `footage/` directory remains ignored and accepted by the local
-transcription helper for older source-side workflows; new ACS runs should use
-an `examples/<slug>/` workspace or another explicitly chosen local directory.
+The proposed GitHub repository description is recorded in
+`docs/GITHUB_DESCRIPTION.md`; remote metadata is intentionally unchanged.

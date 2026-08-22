@@ -11,7 +11,8 @@ the system is not a phone-first editor.
    standalone business/content notes.
 2. Choose a buyer problem, proof requirement, practical group, and one of the
    nine capture formats in `content-formats/formats.json`.
-3. Scaffold a workspace with `acs init`; copy resolved values into the local
+3. Configure clone defaults in `channel/PROFILE.md` and `channel/brand.json`,
+   validate them, then scaffold a workspace with `acs init --brand`; copy resolved values into the local
    `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and
    `edit-plan.json`.
 4. Choose manual/no-date or scheduled delivery for each enabled route in
@@ -24,8 +25,7 @@ the system is not a phone-first editor.
    `acs review-report`, and `acs export-result`.
 9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
    `results/run-result.json` through its normal task flow. The publisher handoff
-   is awaiting separate authorization; v0.1 never schedules or posts
-   externally.
+   is awaiting separate authorization; v0.2 never posts externally.
 
 ## Editorial defaults
 
@@ -46,7 +46,7 @@ videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority
 - FFmpeg/ffprobe own deterministic inspection and render boundaries.
 - HyperFrames can supply a motion asset when it clarifies a point.
 - Timeline Studio, OpenReelio, and supervised publishers are documented seams,
-  not v0.1 dependencies.
+  not v0.2 dependencies.
 
 See `docs/ADAPTERS.md` for boundary rules and `docs/RECOVERY.md` for safe
 cleanup.

@@ -39,7 +39,7 @@ class CLITests(unittest.TestCase):
         )
 
     def create_project_and_source(self) -> None:
-        result = self.run_cli("init", str(self.project), "--example", "gustav")
+        result = self.run_cli("init", str(self.project))
         self.assertEqual(result.returncode, 0, result.stderr)
         fixture_script = REPO_ROOT / "scripts" / "create-fixture-media.py"
         result = subprocess.run(
@@ -170,9 +170,9 @@ class CLITests(unittest.TestCase):
         self.assertEqual({"youtube", "linkedin"}, {route["channel"] for route in publisher["routes"]})
         youtube_route = next(route for route in publisher["routes"] if route["channel"] == "youtube")
         linkedin_route = next(route for route in publisher["routes"] if route["channel"] == "linkedin")
-        self.assertEqual("scheduled", youtube_route["delivery_mode"])
-        self.assertEqual("2026-09-01T09:00:00", youtube_route["scheduled_at"])
-        self.assertEqual("Europe/Copenhagen", youtube_route["timezone"])
+        self.assertEqual("manual", youtube_route["delivery_mode"])
+        self.assertNotIn("scheduled_at", youtube_route)
+        self.assertNotIn("timezone", youtube_route)
         self.assertEqual("manual", linkedin_route["delivery_mode"])
         self.assertNotIn("scheduled_at", linkedin_route)
         self.assertNotIn("timezone", linkedin_route)
@@ -715,7 +715,7 @@ class CLITests(unittest.TestCase):
         self.assertEqual("verified", run_result["status"])
 
     def test_standalone_init_ignores_optional_caller_notes_and_exports_generic_result(self) -> None:
-        result = self.run_cli("init", str(self.project), "--example", "gustav")
+        result = self.run_cli("init", str(self.project))
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("buyer problem", (self.project / "content-brief.md").read_text(encoding="utf-8").lower())
         self.assertTrue((self.project / "recording-plan.md").exists())
@@ -733,7 +733,7 @@ class CLITests(unittest.TestCase):
         )
         self.assertFalse((self.project / "context" / "inbound-handoff.json").exists())
         self.assertEqual(
-            "scheduled",
+            "manual",
             next(
                 route for route in read_json(self.project / "project.json")["delivery_intent"]["routes"]
                 if route["channel"] == "youtube"
@@ -750,7 +750,7 @@ class CLITests(unittest.TestCase):
         commands = (
             ("inspect", str(self.project)),
             ("ingest-transcript", str(self.project), str(FIXTURE_TRANSCRIPT)),
-            ("plan", str(self.project), "--approve", "--by", "Gustav Online"),
+            ("plan", str(self.project), "--approve", "--by", "automated-test"),
             ("render", str(self.project), "--kind", "all"),
             ("derive", str(self.project)),
             ("package", str(self.project)),
@@ -774,9 +774,9 @@ class CLITests(unittest.TestCase):
         self.assertEqual({"youtube", "linkedin"}, {route["channel"] for route in publisher["routes"]})
         youtube = next(route for route in publisher["routes"] if route["channel"] == "youtube")
         linkedin = next(route for route in publisher["routes"] if route["channel"] == "linkedin")
-        self.assertEqual("scheduled", youtube["delivery_mode"])
-        self.assertEqual("2026-09-01T09:00:00", youtube["scheduled_at"])
-        self.assertEqual("Europe/Copenhagen", youtube["timezone"])
+        self.assertEqual("manual", youtube["delivery_mode"])
+        self.assertNotIn("scheduled_at", youtube)
+        self.assertNotIn("timezone", youtube)
         self.assertEqual("manual", linkedin["delivery_mode"])
         self.assertNotIn("scheduled_at", linkedin)
         self.assertNotIn("timezone", linkedin)
@@ -802,9 +802,15 @@ class CLITests(unittest.TestCase):
 
         project_path = self.project / "project.json"
         project = read_json(project_path)
-        project["delivery_intent"]["routes"][0]["scheduled_at"] = "2026-09-02T09:00:00"
+        project["delivery_intent"]["routes"][0].update(
+            {
+                "delivery_mode": "scheduled",
+                "scheduled_at": "2026-09-02T09:00:00",
+                "timezone": "Europe/Copenhagen",
+            }
+        )
         write_json(project_path, project)
-        result = self.run_cli("plan", str(self.project), "--approve", "--by", "Gustav Online")
+        result = self.run_cli("plan", str(self.project), "--approve", "--by", "automated-test")
         self.assertEqual(result.returncode, 0, result.stderr)
         result = self.run_cli("verify", str(self.project))
         self.assertEqual(result.returncode, 2)
@@ -817,7 +823,7 @@ class CLITests(unittest.TestCase):
             {"channel": "tiktok", "delivery_mode": "scheduled", "scheduled_at": "2026-09-03T09:00:00", "timezone": "Europe/Copenhagen"}
         )
         write_json(project_path, project)
-        result = self.run_cli("plan", str(self.project), "--approve", "--by", "Gustav Online")
+        result = self.run_cli("plan", str(self.project), "--approve", "--by", "automated-test")
         self.assertEqual(result.returncode, 0, result.stderr)
         for stale_derivative in (
             self.project / "derived" / "linkedin.md",

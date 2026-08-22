@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "brand_id": "configured-channel",
+  "name": "Configured channel defaults",
+  "owner": "Clone owner",
+  "channel_intent": "Turn bounded business context into useful, buyer-relevant content.",
+  "cadence": {
+    "core_videos_per_week": 3,
+    "planning_horizon_weeks": 26,
+    "useful_short_target": 22,
+    "note": "Replace this cadence during setup when the business has a different sustainable publishing rhythm."
+  },
+  "delivery_defaults": {
+    "routes": [
+      {
+        "channel": "youtube",
+        "delivery_mode": "manual"
+      },
+      {
+        "channel": "linkedin",
+        "delivery_mode": "manual"
+      }
+    ]
+  },
+  "channels": [
+    {
+      "id": "youtube",
+      "enabled": true,
+      "reason": "Primary long-form and selected short route; update this policy during setup.",
+      "allowed_asset_types": ["long", "short"]
+    },
+    {
+      "id": "linkedin",
+      "enabled": true,
+      "reason": "Professional context and proof route; update this policy during setup.",
+      "allowed_asset_types": ["text"]
+    },
+    {
+      "id": "instagram",
+      "enabled": false,
+      "reason": "Disabled until the brand has a documented audience and format fit.",
+      "allowed_asset_types": ["short"]
+    },
+    {
+      "id": "tiktok",
+      "enabled": false,
+      "reason": "Disabled until the brand has a documented audience and format fit.",
+      "allowed_asset_types": []
+    }
+  ]
+}
