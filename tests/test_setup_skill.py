@@ -66,6 +66,49 @@ class SetupSkillTests(unittest.TestCase):
         self.assertIn("disabled", result.stderr.lower())
         self.assertFalse(workspace.exists())
 
+    def test_missing_delivery_defaults_is_rejected_before_workspace_write(self) -> None:
+        profile = read_json(REPO_ROOT / "channel" / "brand.json")
+        profile.pop("delivery_defaults")
+        bad_profile = self.root / "missing-delivery-defaults.json"
+        write_json(bad_profile, profile)
+
+        result = self.run_cli("validate-profile", str(bad_profile))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("delivery_defaults", result.stderr)
+
+        workspace = self.root / "must-not-be-created"
+        result = self.run_cli("init", str(workspace), "--brand", str(bad_profile))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("delivery_defaults", result.stderr)
+        self.assertFalse(workspace.exists())
+
+    def test_existing_workspace_without_delivery_defaults_remains_valid(self) -> None:
+        workspace = self.root / "legacy-workspace"
+        result = self.run_cli("init", str(workspace))
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        brand = read_json(workspace / "brand.json")
+        brand.pop("delivery_defaults")
+        write_json(workspace / "brand.json", brand)
+
+        result = self.run_cli("validate", str(workspace), "--contracts-only")
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_invalid_scheduled_profile_datetime_is_rejected(self) -> None:
+        profile = read_json(REPO_ROOT / "channel" / "brand.json")
+        profile["delivery_defaults"]["routes"][0] = {
+            "channel": "youtube",
+            "delivery_mode": "scheduled",
+            "scheduled_at": "2026-13-99T09:00:00",
+            "timezone": "UTC",
+        }
+        bad_profile = self.root / "bad-schedule.json"
+        write_json(bad_profile, profile)
+
+        result = self.run_cli("validate-profile", str(bad_profile))
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("ISO date/time", result.stderr)
+
     def test_setup_skill_is_concise_and_metadata_is_invocable(self) -> None:
         files = {
             path.relative_to(SKILL_ROOT).as_posix()

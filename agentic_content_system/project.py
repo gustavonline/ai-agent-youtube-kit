@@ -7,6 +7,7 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .errors import ACSUserError
 from .io import canonical_hash, read_json, sha256_file
@@ -16,6 +17,31 @@ from .validation import ValidationIssue, validate_json, require_valid
 
 
 CLEARED_RIGHTS_STATUSES = frozenset({"owned", "licensed", "public-domain", "cc0", "cc-by"})
+
+
+try:
+    ZoneInfo("UTC")
+except ZoneInfoNotFoundError:
+    # Bare Windows installations do not always ship an IANA database. Keep
+    # the no-dependency contract portable: require a non-empty timezone there,
+    # and resolve its name whenever the standard-library database is present.
+    _ZONEINFO_AVAILABLE = False
+else:
+    _ZONEINFO_AVAILABLE = True
+
+
+def timezone_name_is_valid(value: object) -> bool:
+    """Validate an IANA timezone when the platform exposes zoneinfo data."""
+
+    if not isinstance(value, str) or not value.strip():
+        return False
+    if not _ZONEINFO_AVAILABLE:
+        return True
+    try:
+        ZoneInfo(value)
+    except (ZoneInfoNotFoundError, ValueError):
+        return False
+    return True
 
 
 @dataclass
@@ -247,6 +273,12 @@ def brand_profile_issues(brand: dict[str, Any]) -> list[ValidationIssue]:
 
     defaults = brand.get("delivery_defaults")
     if not isinstance(defaults, dict):
+        issues.append(
+            ValidationIssue(
+                "brand.delivery_defaults",
+                "is required for clone profiles and must define one route for every enabled channel",
+            )
+        )
         return issues
     routes = defaults.get("routes", [])
     known = {
@@ -294,6 +326,13 @@ def brand_profile_issues(brand: dict[str, Any]) -> list[ValidationIssue]:
                             "scheduled delivery requires an ISO date/time",
                         )
                     )
+            if not timezone_name_is_valid(route.get("timezone")):
+                issues.append(
+                    ValidationIssue(
+                        f"brand.delivery_defaults.routes[{index}].timezone",
+                        "scheduled delivery requires a valid IANA timezone",
+                    )
+                )
     missing = [channel_id for channel_id in enabled_ids if channel_id not in seen]
     if missing:
         issues.append(

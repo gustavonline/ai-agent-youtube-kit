@@ -7,7 +7,7 @@ from typing import Any
 
 from .errors import ACSUserError
 from .io import canonical_hash
-from .project import ProjectContracts, channels_by_id, enabled_channels
+from .project import ProjectContracts, channels_by_id, enabled_channels, timezone_name_is_valid
 
 
 def _default_delivery_intent(contracts: ProjectContracts) -> dict[str, Any]:
@@ -36,6 +36,10 @@ def _validate_scheduled_route(route: dict[str, Any]) -> None:
         raise ACSUserError(f"Scheduled delivery for {route.get('channel', '<unknown>')} requires scheduled_at.")
     if not isinstance(timezone, str) or not timezone.strip():
         raise ACSUserError(f"Scheduled delivery for {route.get('channel', '<unknown>')} requires timezone.")
+    if not timezone_name_is_valid(timezone):
+        raise ACSUserError(
+            f"Scheduled delivery for {route.get('channel', '<unknown>')} requires a valid IANA timezone."
+        )
     if "T" not in scheduled_at and " " not in scheduled_at:
         raise ACSUserError(
             f"Scheduled delivery for {route.get('channel', '<unknown>')} requires a date and time, not only a date."

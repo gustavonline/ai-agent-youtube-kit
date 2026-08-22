@@ -17,7 +17,10 @@ cadence, and optional delivery defaults. `acs init --brand` copies it into a
 workspace, where `brand.json` becomes execution truth. `project.json.delivery_intent` is the ACS-owned run intent. New scaffolds write
 it explicitly and it must cover every enabled channel exactly once: manual
 routes have no date, while scheduled routes require an ISO date/time and
-explicit timezone. The publisher handoff is generated from that intent and is
+explicit timezone. When the host exposes the standard-library IANA zoneinfo
+database, ACS also rejects unknown timezone names; on a bare host without that
+database it still requires a non-empty timezone but makes no semantic name
+claim. The publisher handoff is generated from that intent and is
 the only v0.2 scheduling/publisher boundary; it never grants posting
 permission. Its manifest binding excludes only the mutable verify-time
 `verification` block; the handoff's asset hashes and the package's verification

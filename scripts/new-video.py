@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from agentic_content_system.scaffold import scaffold_project  # noqa: E402
+from agentic_content_system.scaffold import load_brand_profile, scaffold_project  # noqa: E402
 
 
 def main() -> int:
@@ -28,8 +28,6 @@ def main() -> int:
     parser.add_argument("--brand", help="Copy and validate a brand profile into the workspace")
     parser.add_argument("--force", action="store_true", help="Replace existing contract files")
     args = parser.parse_args()
-
-    from agentic_content_system.scaffold import load_brand_profile
 
     workspace = scaffold_project(
         REPO_ROOT / "examples" / args.slug,
