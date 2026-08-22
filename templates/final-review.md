@@ -1,6 +1,6 @@
 # Final Review
 
-**Video slug:** <fill>
+**Content workspace:** <fill>
 **Final file:** <fill>
 **Reviewed:** <fill>
 
@@ -36,6 +36,6 @@
 
 ## Lessons
 
-- Add to `footage/<slug>/edit/project.md`:
+- Add factual notes to `<workspace>/learning.json` or its local notes:
 - Add to `PROJECT_MEMORY.md` only if reusable:
 - Add to `channel/STYLE_GUIDE.md` only if channel-level:

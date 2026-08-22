@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-content-system"
+version = "0.1.0"
+description = "Local-first, declarative content production and publish-ready handoff CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Gustav Online" }
+]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/onlinesourdough/Agentic-Content-System"
+Issues = "https://github.com/onlinesourdough/Agentic-Content-System/issues"
+
+[project.scripts]
+acs = "agentic_content_system.cli:main"
+agentic-content-system = "agentic_content_system.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agentic_content_system*", "contracts*"]
+
+[tool.setuptools.package-data]
+agentic_content_system = ["data/*.json"]
+contracts = ["schemas/*.json"]

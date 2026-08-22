@@ -10,10 +10,11 @@ branded clone:
 - `channel/REFERENCES.md` for the index of analyzed reference videos.
 - `DESIGN.md` for stable brand identity decisions.
 - `MOTION_PHILOSOPHY.md` for general motion principles.
-- `video-projects/<project>/DESIGN.md` for project-specific decisions.
-- `footage/<slug>/edit/project.md` for session notes and render history.
+- `video-projects/<slug>/DESIGN.md` for optional motion-adapter decisions.
+- `examples/<slug>/learning.json` for the ACS run's local learning slots and
+  workspace notes for session history.
 
-## Before A New Project
+## Before A New Content Run
 
 Read in this order:
 
@@ -23,8 +24,8 @@ Read in this order:
 4. `channel/PROFILE.md`
 5. `channel/STYLE_GUIDE.md`
 6. relevant `channel/references/*/analysis.md`
-7. relevant `video-projects/<template>/DESIGN.md`
-8. source footage notes under `footage/<slug>/`
+7. relevant optional `video-projects/<slug>/DESIGN.md`
+8. source notes under the chosen ACS workspace
 
 Use these files to choose caption style, pacing, callouts, grade direction, and
 which prior examples to reuse.
@@ -33,12 +34,13 @@ which prior examples to reuse.
 
 Update only what earned its place:
 
-1. Append session facts to `footage/<slug>/edit/project.md`.
+1. Append session facts to the workspace's local notes or `learning.json`.
 2. Add one concise row to `PROJECT_MEMORY.md` if the project created a reusable pattern.
 3. Add one concise row to `channel/STYLE_GUIDE.md` if performance or references proved a channel-level pattern.
 4. Update `DESIGN.md` only when the brand itself changed.
 5. Update `MOTION_PHILOSOPHY.md` only when the lesson is general across videos.
-6. Update a project `DESIGN.md` only for project-specific constraints.
+6. Update an optional adapter `DESIGN.md` only for adapter-specific
+   constraints.
 
 Do not turn every render into a new rule. Keep the memory small enough that it
 actually gets read.
@@ -72,7 +74,7 @@ Use this format when adding a reusable lesson:
 - Pattern: <short name>
   - Works when: <specific context>
   - Avoid when: <specific context>
-  - Example project: <project or footage slug>
+  - Example workspace: <workspace slug>
 ```
 
 ## Reference Learning Entry Shape

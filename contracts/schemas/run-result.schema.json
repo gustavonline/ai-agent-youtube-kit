@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "acs/run-result/1.0",
+  "title": "Agentic Content System local proof and learning result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "project_id", "status", "proof", "enabled_routes", "disabled_routes", "review", "publisher_handoff", "verification", "learning"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["1.0"]},
+    "result_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["verified"]},
+    "proof": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path", "sha256"],
+        "properties": {
+          "kind": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "enabled_routes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "disabled_routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["channel", "reason"],
+        "properties": {
+          "channel": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "report_path"],
+      "properties": {
+        "status": {"type": "string", "enum": ["available"]},
+        "report_path": {"type": "string", "minLength": 1}
+      }
+    },
+    "publisher_handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "status", "external_posting"],
+      "properties": {
+        "path": {"type": "string", "const": "publish/publisher-handoff.json"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "status": {"type": "string", "enum": ["awaiting-separate-authorization"]},
+        "external_posting": {"type": "boolean", "enum": [false]}
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "external_posting"],
+      "properties": {
+        "status": {"type": "string", "enum": ["passed"]},
+        "external_posting": {"type": "boolean"}
+      }
+    },
+    "learning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["what_worked", "what_to_change", "next_experiment"],
+      "properties": {
+        "what_worked": {"type": "string"},
+        "what_to_change": {"type": "string"},
+        "next_experiment": {"type": "string"}
+      }
+    }
+  }
+}

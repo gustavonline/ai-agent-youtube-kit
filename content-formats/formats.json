@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Reusable capture and content-format library for Agentic Content System projects.",
+  "research_provenance": "docs/RESEARCH_PROVENANCE.md",
+  "groups": [
+    {
+      "id": "teach-explain",
+      "label": "Teach / explain",
+      "use_for": "Make a useful mechanism, decision, or workflow understandable.",
+      "formats": ["solo-direct-to-camera", "screen-slides-miro", "physical-whiteboard", "ipad-tablet"]
+    },
+    {
+      "id": "prove-demonstrate",
+      "label": "Prove / demonstrate",
+      "use_for": "Show evidence, a client result, a tool, or a real workflow in motion.",
+      "formats": ["screen-slides-miro", "physical-whiteboard", "ipad-tablet", "client-case-interview", "vlog"]
+    },
+    {
+      "id": "converse-learn",
+      "label": "Converse / learn",
+      "use_for": "Learn in public through a guest, client, Q&A, or thoughtful exchange.",
+      "formats": ["physical-guest-podcast", "online-guest-podcast", "client-case-interview"]
+    },
+    {
+      "id": "humanize-relate",
+      "label": "Humanize / relate",
+      "use_for": "Give the audience context, lived experience, and a credible point of view.",
+      "formats": ["outdoor-plus-another-mode", "vlog", "solo-direct-to-camera"]
+    }
+  ],
+  "formats": [
+    {"id": "physical-guest-podcast", "label": "Physical guest podcast", "group": "converse-learn", "capture": "Two or more people in the same physical space.", "best_for": "Conversation, disagreement, stories, and buyer questions."},
+    {"id": "solo-direct-to-camera", "label": "Solo / direct-to-camera", "group": "teach-explain", "capture": "One person speaking directly to the viewer.", "best_for": "A clear promise, explanation, opinion, or CTA."},
+    {"id": "screen-slides-miro", "label": "Screen / slides / Miro", "group": "teach-explain", "capture": "Screen recording, slides, diagram, or collaborative canvas.", "best_for": "Mechanisms, walkthroughs, systems, and visual proof."},
+    {"id": "physical-whiteboard", "label": "Physical whiteboard", "group": "teach-explain", "capture": "A person maps an idea on a physical board.", "best_for": "Models, tradeoffs, process maps, and teaching by drawing."},
+    {"id": "ipad-tablet", "label": "iPad / tablet", "group": "teach-explain", "capture": "Handwritten or visual explanation on a tablet.", "best_for": "Sketches, annotated examples, and intimate explanations."},
+    {"id": "outdoor-plus-another-mode", "label": "Outdoor + another mode", "group": "humanize-relate", "capture": "Outdoor context combined with direct-to-camera, screen, or conversation.", "best_for": "Perspective, contrast, movement, and a human point of view."},
+    {"id": "online-guest-podcast", "label": "Online guest podcast", "group": "converse-learn", "capture": "Remote guest conversation with a clear recording layout.", "best_for": "Expertise, Q&A, case learning, and distributed teams."},
+    {"id": "client-case-interview", "label": "Client / case interview", "group": "prove-demonstrate", "capture": "A client or customer describes the problem, mechanism, and result.", "best_for": "Proof, credibility, objections, and buyer relevance."},
+    {"id": "vlog", "label": "Vlog", "group": "humanize-relate", "capture": "A day, project, or decision shown through lived moments.", "best_for": "Context and relationship; keep it a minority of the mix, usually about 5–20%."}
+  ],
+  "cadence_guidance": {
+    "default_structure": ["promise", "proof", "plan"],
+    "typical_points": 3,
+    "sources": ["work and client questions", "mistakes", "proof and case evidence", "mechanism", "philosophy"],
+    "funnel": ["attention", "nurture", "conversion"],
+    "weekly_target": "3 core videos per week over 26 weeks yields 78 core videos; add 22 useful shorts for a 100-asset planning target.",
+    "cta": "Place a contextual CTA after the viewer has received the useful proof; point to the next useful video when possible.",
+    "harvest": "Treat a core video as a harvest source for selected shorts and posts; do not force every derivative onto every platform."
+  },
+  "research_notes": [
+    "Content libraries should connect attention to nurture and conversion.",
+    "Buyer relevance and useful proof matter more than mass reach.",
+    "Nate Herk's contribution is treated as process mapping and feedback loops, not as a brand identity.",
+    "HyperFrames is an optional motion adapter for moments where motion clarifies the idea; it is not the product."
+  ]
+}

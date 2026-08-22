@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Transcribe footage locally with Whisper for the Video Use workflow.
+"""Transcribe footage locally with Whisper for the Agentic Content System.
 
-Outputs Video Use-compatible cached transcripts at:
+Outputs agent-readable cached transcripts at:
 
-    <footage-dir>/edit/transcripts/<clip-stem>.json
+    <source-dir>/edit/transcripts/<clip-stem>.json
 
-The JSON intentionally follows the word-list shape expected by the Video Use
+The JSON preserves the word-list shape used by the existing optional editor
 packer, while keeping transcription fully local.
 """
 
@@ -166,7 +166,7 @@ def transcribe_one(
         "metadata": {
             "engine": "local-whisper",
             "source": str(media_path),
-            "note": "Local Whisper transcript converted to Video Use-compatible word JSON.",
+            "note": "Local Whisper transcript kept in an open word-timestamp JSON shape.",
         },
     }
 
@@ -179,7 +179,7 @@ def pack_transcripts(edit_dir: Path) -> None:
     helper = Path.home() / "plugins/video-use/skills/video-use/helpers/pack_transcripts.py"
     if not helper.exists():
         print(
-            "Skipping pack step: Video Use packer was not found at "
+            "Skipping optional transcript pack step: editor packer was not found at "
             f"{helper}",
             file=sys.stderr,
         )
@@ -189,9 +189,9 @@ def pack_transcripts(edit_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Local Whisper transcription for Agentic Video Editor."
+        description="Local Whisper transcription for Agentic Content System."
     )
-    parser.add_argument("input", type=Path, help="Media file or footage/<slug> directory.")
+    parser.add_argument("input", type=Path, help="Media file or ACS source/legacy footage directory.")
     parser.add_argument(
         "--edit-dir",
         type=Path,
@@ -238,7 +238,7 @@ def main() -> None:
     parser.add_argument(
         "--pack",
         action="store_true",
-        help="After transcription, run the Video Use packer to create takes_packed.md.",
+        help="After transcription, run the optional editor packer to create takes_packed.md.",
     )
     args = parser.parse_args()
 

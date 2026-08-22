@@ -1,6 +1,7 @@
 # Motion Philosophy
 
-Use this before making a new HyperFrames scene.
+Use this only when an approved content plan calls for a HyperFrames motion
+adapter. Motion clarifies a point; it is not the Agentic Content System itself.
 
 ## Principles
 

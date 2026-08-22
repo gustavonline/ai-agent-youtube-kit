@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Content System"
+  short_description: "Audit ACS health, truth, and workspace proof"
+  default_prompt: "Use $audit-content-system to audit this Agentic Content System and report evidence, gaps, and the smallest next action."

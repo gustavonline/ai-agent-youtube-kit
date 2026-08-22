@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "acs/publisher-handoff/1.1",
+  "title": "Agentic Content System supervised publisher handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "publisher_handoff_id",
+    "project_id",
+    "manifest_id",
+    "manifest_sha256",
+    "delivery_intent_hash",
+    "status",
+    "not_posted",
+    "external_posting",
+    "routes",
+    "disabled_channels"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["1.1"]},
+    "publisher_handoff_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "manifest_id": {"type": "string", "minLength": 1},
+    "manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "delivery_intent_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "status": {"type": "string", "enum": ["awaiting-separate-authorization"]},
+    "not_posted": {"type": "boolean", "enum": [true]},
+    "external_posting": {"type": "boolean", "enum": [false]},
+    "routes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["channel", "delivery_mode", "assets", "post_path"],
+            "properties": {
+              "channel": {"type": "string", "minLength": 1},
+              "delivery_mode": {"type": "string", "enum": ["manual"]},
+              "assets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["path", "kind", "sha256", "bytes"],
+                  "properties": {
+                    "path": {"type": "string", "minLength": 1},
+                    "kind": {"type": "string", "enum": ["long", "short", "text"]},
+                    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                    "bytes": {"type": "integer", "minimum": 0}
+                  }
+                }
+              },
+              "post_path": {"type": "string"}
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["channel", "delivery_mode", "scheduled_at", "timezone", "assets", "post_path"],
+            "properties": {
+              "channel": {"type": "string", "minLength": 1},
+              "delivery_mode": {"type": "string", "enum": ["scheduled"]},
+              "scheduled_at": {"type": "string", "minLength": 1},
+              "timezone": {"type": "string", "minLength": 1},
+              "assets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["path", "kind", "sha256", "bytes"],
+                  "properties": {
+                    "path": {"type": "string", "minLength": 1},
+                    "kind": {"type": "string", "enum": ["long", "short", "text"]},
+                    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                    "bytes": {"type": "integer", "minimum": 0}
+                  }
+                }
+              },
+              "post_path": {"type": "string"}
+            }
+          }
+        ]
+      }
+    },
+    "disabled_channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["channel", "reason"],
+        "properties": {
+          "channel": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

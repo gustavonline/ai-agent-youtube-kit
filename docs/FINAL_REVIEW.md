@@ -1,7 +1,7 @@
 # Final Review
 
-Final review is the file-based version of CreatorGrowth's AI Final Review. It
-is an advisory gate before publishing, not a hosted dashboard.
+Final review is a file-based advisory gate for an ACS workspace. It is a local
+review step before separate publishing authorization, not a hosted dashboard.
 
 ## When To Run
 
@@ -9,7 +9,7 @@ Run final review after a candidate export exists and before marking the project
 finished.
 
 ```text
-footage/<slug>/edit/final.mp4
+<workspace>/renders/long.mp4
 ```
 
 ## Inputs
@@ -23,16 +23,16 @@ Read:
 5. `channel/STYLE_GUIDE.md`
 6. `channel/published-videos.csv`
 7. relevant reference analyses under `channel/references/`
-8. `footage/<slug>/edit/project.md`
-9. `footage/<slug>/edit/cut-plan.md`
-10. `footage/<slug>/edit/packaging-review.md`
+8. `<workspace>/learning.json` and any local session notes
+9. `<workspace>/edit-plan.json`
+10. `<workspace>/packaging-review.md`, when supplied
 
 ## Output
 
 Write:
 
 ```text
-footage/<slug>/edit/final-review.md
+examples/<slug>/final-review.md
 ```
 
 Use:
@@ -65,10 +65,10 @@ Score each category from 1-10:
 
 ## Learning
 
-Append factual session notes to:
+Append factual session notes to the workspace's local notes or `learning.json`:
 
 ```text
-footage/<slug>/edit/project.md
+examples/<slug>/learning.json
 ```
 
 Promote only durable lessons:

@@ -1,6 +1,6 @@
-# Cut Plan
+# ACS Cut Plan Notes
 
-**Footage:** <fill>
+**Workspace/source(s):** <fill>
 **Transcript:** <fill>
 **Target runtime:** <fill>
 
@@ -11,7 +11,7 @@
 - What to preserve:
 - Pacing:
 
-## Selected Takes
+## Selected Segments
 
 | Clip | Time Range | Use For | Notes |
 | --- | --- | --- | --- |
