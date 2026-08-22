@@ -9,6 +9,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
+CANONICAL_REPOSITORY = "onlinesourdough/Agentic-Content-System"
+CANONICAL_REPOSITORY_URL = f"https://github.com/{CANONICAL_REPOSITORY}"
 REQUIRED = (
     "AGENTS.md",
     "README.md",
@@ -57,8 +59,7 @@ FORBIDDEN = (
     re.compile(r"project-local run interface", re.IGNORECASE),
 )
 ALLOWLIST = {
-    "pyproject.toml",  # canonical GitHub destination is metadata, not product identity
-    "docs/REPOSITORY_IDENTITY.md",  # records the owner-authorized migration boundary
+    "docs/REPOSITORY_IDENTITY.md",  # records historical redirect aliases
     "docs/EDITOR_ENGINE_DECISION.md",  # cites a dated external candidate repository
     "scripts/check-system-shell.py",  # the guard must contain its own patterns
 }
@@ -88,6 +89,19 @@ def main() -> int:
         failures.append("project-local ACS skill must begin with valid YAML frontmatter")
     if not (ROOT / "examples/gustav/README.md").exists():
         failures.append("examples/gustav must provide a visible self-contained boundary")
+
+    identity_path = ROOT / "docs/REPOSITORY_IDENTITY.md"
+    identity_text = identity_path.read_text(encoding="utf-8") if identity_path.exists() else ""
+    metadata_path = ROOT / "pyproject.toml"
+    metadata_text = metadata_path.read_text(encoding="utf-8") if metadata_path.exists() else ""
+    if CANONICAL_REPOSITORY not in identity_text:
+        failures.append("repository identity must name the canonical ACS repository")
+    if CANONICAL_REPOSITORY_URL not in metadata_text:
+        failures.append("package metadata must use the canonical ACS repository URL")
+    if f"{CANONICAL_REPOSITORY_URL}/issues" not in metadata_text:
+        failures.append("package metadata must use the canonical ACS issue URL")
+    if not re.search(r"historical.*redirect", identity_text, re.IGNORECASE | re.DOTALL):
+        failures.append("historical repository paths must be clearly marked as redirects")
 
     audit_skill = ROOT / ".agents/skills/audit-content-system/SKILL.md"
     audit_text = audit_skill.read_text(encoding="utf-8") if audit_skill.exists() else ""

@@ -4,14 +4,14 @@ The public product identity is **Agentic Content System (ACS)**: a persistent,
 standalone system for useful content decisions, capture, editing, proof, and
 supervised publish-ready handoff.
 
-This checkout and its local Git origin retain historical `ai-agent-youtube-kit`
-names from the starting repository. The current public repository used for
-issue coordination before transfer is `gustavonline/Agentic-videoeditor`; the
-intended canonical destination is `onlinesourdough/Agentic-videoeditor`. A
-GitHub transfer, rename, redirect, or remote rewrite is an owner-authorized
-Ship action and is deliberately not performed in Build. New product docs,
-package metadata, skills, examples, and commands use ACS identity and do not
-depend on either historical path.
+The canonical public repository is
+`onlinesourdough/Agentic-Content-System`, and its issue tracker is
+https://github.com/onlinesourdough/Agentic-Content-System/issues. Historical
+GitHub paths `onlinesourdough/Agentic-videoeditor`,
+`gustavonline/Agentic-videoeditor`, and `gustavonline/ai-agent-youtube-kit`
+remain redirect aliases only; they are not current repository identity.
+Product docs, package metadata, skills, examples, and commands use the
+canonical ACS identity.
 
 Do not interpret the repository name as a runtime contract. The Python package
 and installed commands are `agentic_content_system`, `acs`, and

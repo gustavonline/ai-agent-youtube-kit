@@ -68,10 +68,17 @@ class AuditSkillTests(unittest.TestCase):
         for text in (agents, readme):
             self.assertIn(".agents/skills/audit-content-system/SKILL.md", text)
         self.assertIn("read-only", agents.lower())
-        self.assertIn("onlinesourdough/Agentic-videoeditor", identity)
-        self.assertIn("https://github.com/onlinesourdough/Agentic-videoeditor", pyproject)
-        self.assertIn("https://github.com/onlinesourdough/Agentic-videoeditor/issues", pyproject)
-        self.assertIn("gustavonline/Agentic-videoeditor", identity)
+        self.assertIn("onlinesourdough/Agentic-Content-System", identity)
+        self.assertIn("https://github.com/onlinesourdough/Agentic-Content-System", pyproject)
+        self.assertIn("https://github.com/onlinesourdough/Agentic-Content-System/issues", pyproject)
+        self.assertIn("historical", identity.lower())
+        self.assertIn("redirect", identity.lower())
+        self.assertNotIn("intended canonical", identity.lower())
+        historical_editor_slug = "Agentic-" + "videoeditor"
+        self.assertNotIn("https://github.com/onlinesourdough/" + historical_editor_slug, pyproject)
+        self.assertNotIn("https://github.com/gustavonline/" + historical_editor_slug, pyproject)
+        self.assertIn("onlinesourdough/" + historical_editor_slug, identity)
+        self.assertIn("gustavonline/" + historical_editor_slug, identity)
 
     def test_audit_instructions_prohibit_mutating_lifecycle_commands(self) -> None:
         text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")

@@ -10,9 +10,9 @@ Technical editor/engine research is kept separately in the dated
 constraint-first discipline but does not turn GitHub metadata or star counts
 into quality claims.
 
-The working set was retrieved as local metadata/transcripts under
-`/private/tmp/aios-content-research.PVhV5a/`. The repository keeps canonical
-YouTube links and bounded notes; it does not vendor the temporary downloads.
+The working set was retrieved as local metadata/transcripts under a temporary
+local working directory. The repository keeps canonical YouTube links and
+bounded notes; it does not vendor the temporary downloads.
 
 ## Creator claims (attributed, not independently validated)
 
