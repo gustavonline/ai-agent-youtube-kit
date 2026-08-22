@@ -31,6 +31,10 @@ analysis library.
   `docs/INPUT_OWNERSHIP.md`, `docs/CONTENT_FORMATS.md`, and the repository-local
   `.agents/skills/agentic-content-system/SKILL.md`; use the CLI flow in
   `docs/CLI.md`.
+- Audit, check, health-check, drift, reconcile, or readiness request: read
+  `.agents/skills/audit-content-system/SKILL.md`, set an explicit repository or
+  one-workspace scope, and keep the audit strictly read-only. Do not run
+  write-capable `verify`, `review-report`, or `export-result` as audit steps.
 - Build proof: use `scripts/create-fixture-media.py` for a tiny ignored source
   under an ignored `examples/<slug>/` boundary and run the actual CLI from
   inspect through `export-result`.

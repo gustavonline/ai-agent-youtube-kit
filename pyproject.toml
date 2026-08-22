@@ -14,8 +14,8 @@ authors = [
 dependencies = []
 
 [project.urls]
-Repository = "https://github.com/gustavonline/Agentic-videoeditor"
-Issues = "https://github.com/gustavonline/Agentic-videoeditor/issues"
+Repository = "https://github.com/onlinesourdough/Agentic-videoeditor"
+Issues = "https://github.com/onlinesourdough/Agentic-videoeditor/issues"
 
 [project.scripts]
 acs = "agentic_content_system.cli:main"

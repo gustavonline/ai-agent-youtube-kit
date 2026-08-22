@@ -102,6 +102,8 @@ Read these first:
 - `docs/EDITOR_ENGINE_DECISION.md` - dated editor/engine research and the
   narrow contract + FFmpeg decision.
 - `.agents/skills/agentic-content-system/SKILL.md` - repository-local run interface.
+- `.agents/skills/audit-content-system/SKILL.md` - periodic read-only health,
+  truth, drift, and proof audit for the repository or one named workspace.
 - `docs/RECOVERY.md` - safe generated-output cleanup.
 
 Standalone scaffolds write explicit manual/no-date delivery for enabled routes.
@@ -109,6 +111,10 @@ The explicit Gustav example schedules YouTube for `2026-09-01T09:00:00` in
 `Europe/Copenhagen`, keeps LinkedIn manual, and keeps Instagram/TikTok
 disabled. The advisory context is in `examples/gustav-context.md`; it is
 guidance for the judgment layer, not an ACS inbound schema or CLI input.
+
+Use the run skill for production work and the audit skill for a periodic,
+strictly read-only backstop before handoff or when workspace proof may be
+stale. An audit never repairs or regenerates proof.
 
 Brand design and motion principles remain in `DESIGN.md`,
 `MOTION_PHILOSOPHY.md`, `PROJECT_MEMORY.md`, `channel/PROFILE.md`, and

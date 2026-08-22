@@ -13,6 +13,8 @@ REQUIRED = (
     "AGENTS.md",
     "README.md",
     ".agents/skills/agentic-content-system/SKILL.md",
+    ".agents/skills/audit-content-system/SKILL.md",
+    ".agents/skills/audit-content-system/agents/openai.yaml",
     "docs",
     "engine",
     "examples",
@@ -27,6 +29,7 @@ PUBLIC_SURFACES = (
     "DESIGN.md",
     "MOTION_PHILOSOPHY.md",
     ".agents/skills/agentic-content-system/SKILL.md",
+    ".agents/skills/audit-content-system",
     "docs",
     "engine",
     "examples",
@@ -85,6 +88,15 @@ def main() -> int:
         failures.append("project-local ACS skill must begin with valid YAML frontmatter")
     if not (ROOT / "examples/gustav/README.md").exists():
         failures.append("examples/gustav must provide a visible self-contained boundary")
+
+    audit_skill = ROOT / ".agents/skills/audit-content-system/SKILL.md"
+    audit_text = audit_skill.read_text(encoding="utf-8") if audit_skill.exists() else ""
+    if not audit_text.startswith("---\n") or "\nname: audit-content-system\n" not in audit_text:
+        failures.append("audit skill must begin with valid YAML frontmatter")
+    if "TODO" in audit_text or "not audit-safe" not in audit_text:
+        failures.append("audit skill must be complete and identify write-capable proof commands")
+    if "strictly read-only" not in audit_text or "Result: PASS | FAIL | BLOCKED" not in audit_text:
+        failures.append("audit skill must define read-only behavior and its result contract")
 
     for relative in PUBLIC_SURFACES:
         surface = ROOT / relative
