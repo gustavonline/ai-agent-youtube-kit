@@ -1,9 +1,14 @@
-# Agentic Video Editor Instructions
+# Agentic Content System Instructions
 
-This is an AI-first, cloneable video workspace. Do not turn it into a hosted
-web app unless the user explicitly asks. Prefer transparent files, local
-scripts, and agent-readable markdown over dashboards, databases, auth, or
-server state.
+This is an AI-first, cloneable content production system. Do not turn it into
+a hosted web app, phone-first editor, mini-Premiere, or publishing bot unless
+the user explicitly asks. Prefer transparent contracts, local scripts, and
+agent-readable Markdown over dashboards, databases, auth, or server state.
+
+The v0.1 system boundary is the Python `agentic_content_system` CLI,
+versioned JSON contracts, FFmpeg/ffprobe, local transcript adapters, static
+review reports, and human approval. HyperFrames and full editors are optional
+adapters, not product identity.
 
 ## Start Here
 
@@ -22,16 +27,29 @@ analysis library.
 
 ## Workflow Router
 
+- New ACS workspace or example: read `docs/QUICKSTART.md`, `docs/ARCHITECTURE.md`,
+  `docs/INPUT_OWNERSHIP.md`, `docs/CONTENT_FORMATS.md`, and the repository-local
+  `.agents/skills/agentic-content-system/SKILL.md`; use the CLI flow in
+  `docs/CLI.md`.
+- Build proof: use `scripts/create-fixture-media.py` for a tiny ignored source
+  under an ignored `examples/<slug>/` boundary and run the actual CLI from
+  inspect through `export-result`.
+
 - Reference video or competitor analysis: follow `docs/REFERENCE_ANALYSIS.md`
   and run `python3 scripts/analyze-reference-video.py <url-or-file>`.
-- Own raw footage transcription: follow the Transcription section below.
-- Edit planning: use `templates/video-brief.md` and `templates/cut-plan.md`.
-- Motion graphics: read `MOTION_PHILOSOPHY.md`, the active project `DESIGN.md`,
-  and use HyperFrames inside `video-projects/<project>/`.
-- Packaging: follow `docs/PACKAGING.md` and write
-  `footage/<slug>/edit/packaging-review.md`.
-- Final review: follow `docs/FINAL_REVIEW.md` and write
-  `footage/<slug>/edit/final-review.md`.
+- Raw capture/source transcription: follow the Transcription section below;
+  `footage/` is retained only for legacy/source-side compatibility.
+- Edit planning: use the declarative `edit-plan.json`; use
+  `templates/video-brief.md` and `templates/cut-plan.md` for human context when
+  useful.
+- Motion graphics: read `MOTION_PHILOSOPHY.md`, the active content design, and
+  use HyperFrames only through the optional seam documented in
+  `engine/motion-adapters/`.
+- Packaging: follow `docs/PACKAGING.md` and write the review in the active
+  `examples/<slug>/` boundary (legacy `footage/<slug>/edit/` notes remain
+  supported as source-side input).
+- Final review: follow `docs/FINAL_REVIEW.md` and keep the result in the active
+  example/workspace boundary.
 - Durable learning: follow `docs/LEARNING.md`.
 
 ## Reference Analysis
@@ -62,9 +80,10 @@ visual proof, pacing, structure, CTA placement, and packaging logic.
 
 Use local Whisper transcription as the default workflow for this repo.
 
-- Video Use upstream may mention `ELEVENLABS_API_KEY`; for this repo, do not require it for normal operation.
+- Upstream editor tooling may mention `ELEVENLABS_API_KEY`; for this repo, do not require it for normal operation.
 - Do not place API keys or secrets in this repo.
-- For footage in `footage/<slug>/`, create transcripts with:
+- For a legacy source directory under `footage/<slug>/`, create transcripts
+  with:
 
 ```bash
 .venv/bin/python scripts/transcribe-local-whisper.py footage/<slug> --model large --pack
@@ -72,12 +91,15 @@ Use local Whisper transcription as the default workflow for this repo.
 
 - Add `--language da` for Danish footage when appropriate.
 - Whisper models should stay in repo-local `.cache/whisper/`, which is the script default.
-- The transcript cache lives in `footage/<slug>/edit/transcripts/`.
-- `takes_packed.md` is the primary transcript artifact for planning cuts.
+- The legacy transcript cache lives in `footage/<slug>/edit/transcripts/`.
+  For an ACS workspace, ingest the resulting open JSON into its canonical
+  `transcripts/active.json` with `acs ingest-transcript`.
+- `takes_packed.md` is an optional transcript view for planning cuts; the ACS
+  transcript contract remains the runtime input.
 
-Video Use can still handle editorial strategy, cut planning, subtitles, grading,
-and final assembly after local transcripts have been generated. Avoid using
-Video Use's ElevenLabs/Scribe transcription helper unless the user explicitly
+An external editor adapter can still handle editorial strategy, cut planning,
+subtitles, grading, and final assembly after local transcripts have been
+generated. Avoid using a cloud transcription helper unless the user explicitly
 asks for cloud transcription. If cloud transcription is requested, follow
 `docs/CLOUD_TRANSCRIPTION.md` and keep credentials outside this repo.
 
@@ -85,12 +107,14 @@ asks for cloud transcription. If cloud transcription is requested, follow
 
 Before planning a branded video, read `DESIGN.md`, `PROJECT_MEMORY.md`, and
 `MOTION_PHILOSOPHY.md`, plus `channel/PROFILE.md` and `channel/STYLE_GUIDE.md`.
-For project-specific work, also read the active `video-projects/<project>/DESIGN.md`
-when it exists.
+For an optional HyperFrames motion workspace, also read its local
+`video-projects/<slug>/DESIGN.md` when it exists. It is adapter material, not
+an ACS content boundary.
 
 After a finished project, update learning only when it is durable:
 
-- append factual session notes to `footage/<slug>/edit/project.md`
+- append factual session notes to the active workspace's local notes (or the
+  legacy `footage/<slug>/edit/project.md` when using that compatibility path)
 - add concise reusable lessons to `PROJECT_MEMORY.md`
 - add concise channel-level lessons to `channel/STYLE_GUIDE.md`
 - update `DESIGN.md` only for stable brand decisions

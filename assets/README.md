@@ -11,5 +11,6 @@ Start with:
 - `audio/` - reusable beds and sound effects.
 - `references/` - screenshots or stills that define the desired look.
 
-Do not store raw A-roll or large source footage here. Put that in `footage/<slug>/`.
-
+Do not store raw A-roll or large source media here. Put it in the active ACS
+workspace's `sources/` directory; the ignored `footage/` directory is retained
+only for legacy source-side compatibility.

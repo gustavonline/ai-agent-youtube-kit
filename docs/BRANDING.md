@@ -1,6 +1,8 @@
 # Branding And Assets
 
-Do this before producing your first real video. The goal is to make every new project inherit your channel identity instead of drifting into generic agent-video styling.
+Do this before producing the first real content run. The goal is to make every
+ACS workspace inherit the channel identity instead of drifting into generic
+agent-video styling.
 
 ## Brand Files
 
@@ -10,7 +12,8 @@ Do this before producing your first real video. The goal is to make every new pr
 - `channel/STYLE_GUIDE.md` - condensed reference and performance lessons.
 - `assets/brand-tokens.css` - reusable CSS variables for HyperFrames projects.
 - `assets/` - shared logos, background plates, screenshots, sound beds, and reference stills.
-- `video-projects/<project>/DESIGN.md` - project-specific notes that should point back to the root design system.
+- `video-projects/<slug>/DESIGN.md` - optional HyperFrames adapter notes that
+  should point back to the root design system.
 
 ## Recommended Asset Layout
 
@@ -35,7 +38,9 @@ assets/
     favorite-video-frame.png
 ```
 
-Keep large raw footage in `footage/`, not `assets/`.
+Keep large source media in the active ACS workspace's `sources/` directory,
+not `assets/`. The ignored `footage/` directory remains a legacy source-side
+compatibility location.
 
 ## Brand Intake
 
@@ -63,7 +68,7 @@ Then update:
 3. `DESIGN.md`
 4. `PROJECT_MEMORY.md`
 5. `assets/brand-tokens.css`
-6. Each active `video-projects/<project>/DESIGN.md`
+6. Each active optional `video-projects/<slug>/DESIGN.md`
 
 ## HyperFrames Rules
 
@@ -73,12 +78,16 @@ Then update:
 - Use local fonts with `@font-face` for final renders when typography matters.
 - Do not ship borrowed temporary names, handles, logos, or colors from example projects.
 
-## Video Use Rules
+## External Editor Adapter Rules
 
-- Store raw footage under `footage/<slug>/`.
-- Let Video Use write outputs under `footage/<slug>/edit/`.
-- Keep project memory in `edit/project.md`.
-- Treat HyperFrames renders as assets Video Use can assemble into the final timeline.
+- Store source media under `examples/<slug>/sources/` (or another explicitly
+  chosen ACS workspace).
+- Keep ACS contracts and generated proof under the workspace; external editors
+  may consume them but must not become the owner of ACS truth.
+- Keep durable memory in `PROJECT_MEMORY.md` and factual session notes in the
+  workspace's local notes when they exist.
+- Treat HyperFrames renders as optional assets an external editor can assemble
+  into a final timeline.
 
 ## Brand Change Checklist
 

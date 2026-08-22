@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "gustav-plan",
+  "project_id": "gustav",
+  "approval": {
+    "status": "draft",
+    "approved_by": "",
+    "approved_at": "",
+    "note": "Review this declarative plan, then approve it explicitly before rendering or packaging.",
+    "approval_hash": "",
+    "approval_revision": 0
+  },
+  "source": "sources/source.mp4",
+  "long_form": {
+    "enabled": true,
+    "output": "renders/long.mp4",
+    "segments": [
+      {
+        "source": "sources/source.mp4",
+        "start": 0,
+        "duration": 0
+      }
+    ]
+  },
+  "short_form": {
+    "enabled": true,
+    "output": "renders/short-vertical.mp4",
+    "segments": [
+      {
+        "source": "sources/source.mp4",
+        "start": 0,
+        "duration": 30
+      }
+    ]
+  },
+  "points": [
+    "State the buyer promise and why it matters.",
+    "Show the mechanism or proof.",
+    "Give the next useful step."
+  ],
+  "proof": [
+    "Capture a visible mechanism, result, case, or other concrete proof for the promise."
+  ],
+  "cta": "Choose one buyer question and write the smallest useful recording plan.",
+  "transcript_ref": "transcripts/active.json",
+  "notes": "Keep promise + proof + plan, a contextual CTA, and an outro to a useful next video."
+}

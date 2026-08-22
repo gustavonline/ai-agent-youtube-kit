@@ -1,149 +1,119 @@
-# Agentic Video Editor
+# Agentic Content System
 
-Local video workspace for Codex, Video Use, and HyperFrames.
+Agentic Content System is a local-first, cloneable system for turning bounded
+company context into useful content: content decision -> format/script/outline
+-> capture/ingest -> transcript -> approved long-form edit -> selected short
+derivatives -> posts -> publish-ready handoff -> learning.
 
-This repo is set up as a repeatable agentic video editing workspace for AI workflow videos, motion graphics, raw footage editing, and channel-specific branding.
+It is not a phone-first editor, a mini-Premiere, a hosted app, or a publishing
+bot. The durable truth is transparent JSON, Markdown, media, and proof files.
+ACS accepts resolved context from a conversation, brief, AIOS Space task, or
+another useful source, but it runs standalone once that context is copied into
+the workspace. No upstream system or shared integration schema is a runtime
+dependency.
 
-## What Lives Here
+The ownership boundary is deliberate: a persistent AIOS Space may own durable
+company, offer, buyer, channel defaults, and learning; a caller or judgment
+layer copies only the resolved values needed for one run; the receiving ACS
+workspace becomes canonical for execution truth; and a caller reads proof,
+supervised-publisher state, and learning back through its normal task flow. A
+delivery date is intent only. v0.1 never posts externally, and a separate
+authorization is required by any later publisher.
 
-- `footage/` - raw recordings, screen captures, B-roll, and exports you do not commit.
-- `video-projects/` - one HyperFrames project per motion graphics piece or final video package.
-- `channel/` - channel profile, style guide, reference analyses, and published-video data.
-- `content-pipeline/` - lightweight idea and packaging pipeline without a hosted app.
-- `templates/` - reusable markdown templates for briefs, cut plans, packaging, final review, and reference analysis.
-- `assets/` - shared brand tokens and reusable assets.
-- `docs/` - production workflow, prompt patterns, and brand rules.
-- `scripts/` - repo-level helper checks.
+## Quickstart
 
-## The Production Stack
-
-Use the tools for different jobs:
-
-- Video Use: transcript-first editing, take selection, cuts, subtitles, audio fades, color, final `ffmpeg` render, and self-checks.
-- HyperFrames: HTML/CSS/JS motion graphics, kinetic titles, product/UI animations, lower thirds, transitions, and platform-ready visual polish.
-- Reference analyzer: local `yt-dlp` + `ffmpeg` frame/caption extraction for learning from selected videos.
-- This repo: your working library of templates, brand rules, reference intelligence, prompts, and project history.
-
-## Starter Projects
-
-- `video-projects/short-form-template` - 9:16 short-form template for talking-head plus captions and motion graphics.
-- `video-projects/agent-product-demo` - 16:9 product/demo promo starter generated from HyperFrames.
-- `video-projects/agent-short-starter` - 16:9 kinetic motion reference generated from HyperFrames.
-
-## First Setup
-
-Do this before dropping in raw footage. The canonical fresh setup guide is:
-
-- `SETUP.md`
-
-### 1. Set Up Codex Plugins
-
-Codex already has an official HyperFrames plugin available in this environment, but Video Use needs to be created as a local plugin.
-
-Read:
-
-- `docs/CODEX_PLUGIN_SETUP.md`
-
-Fast prompt:
+Install Python 3.10+ and FFmpeg/ffprobe, then from the repository root:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
+python3 -m venv .venv
+.venv/bin/python -m pip install -e .
+.venv/bin/python -m agentic_content_system doctor
+.venv/bin/python -m agentic_content_system init examples/my-content --example gustav
 ```
 
-### 2. Install Runtime Dependencies
+On Windows PowerShell use `py -m venv .venv`, then
+`.venv\Scripts\python.exe -m pip install -e .` and invoke the same module with
+`.venv\Scripts\python.exe`. The setup helpers are
+`scripts/setup-agentic-content-system.sh` and
+`scripts\setup-agentic-content-system.ps1`. This venv-first flow avoids
+modifying Homebrew/system Python.
 
-From this repo:
-
-```bash
-brew install ffmpeg
-./scripts/setup-local-transcription.sh
-npx --yes hyperframes doctor
-```
-
-This repo uses local Whisper transcription by default. Read `docs/LOCAL_TRANSCRIPTION.md` and transcribe footage with:
-
-```bash
-.venv/bin/python scripts/transcribe-local-whisper.py footage/<video-slug> --model large --pack
-```
-
-### 3. Tailor Branding
-
-Before building real videos, update:
-
-- `channel/PROFILE.md`
-- `channel/STYLE_GUIDE.md`
-- `DESIGN.md`
-- `PROJECT_MEMORY.md`
-- `assets/brand-tokens.css`
-- `assets/README.md`
-- `docs/BRANDING.md`
-
-The goal is to make new HyperFrames scenes and Video Use edit decisions inherit your channel identity instead of defaulting to generic agent-video styling.
-
-### 4. Analyze References
-
-Before the first serious video, analyze a few reference videos and condense the
-reusable lessons into `channel/STYLE_GUIDE.md`:
-
-```bash
-brew install yt-dlp ffmpeg
-python3 scripts/analyze-reference-video.py --check
-python3 scripts/analyze-reference-video.py "<reference-video-url>"
-```
-
-## Normal Workflow
-
-1. Confirm HyperFrames and Video Use are available in Codex.
-2. Confirm `channel/PROFILE.md`, `channel/STYLE_GUIDE.md`, and branding files are tailored enough for the video.
-3. Scaffold the project with `python3 scripts/new-video.py <video-slug>`.
-4. Put raw footage in `footage/<video-slug>/`.
-5. Run local Whisper transcription and pack transcripts.
-6. Ask Codex to use `video-use` to inventory the footage and propose an edit strategy.
-7. Save the approved strategy to `footage/<slug>/edit/cut-plan.md`.
-8. Use HyperFrames for title cards, lower thirds, animated diagrams, UI explainers, and transitions.
-9. Let Video Use assemble the final edit and run its self-eval.
-10. Run packaging review and final review.
-11. Store finished motion projects under `video-projects/<video-slug>/` and final exports under the related `edit/` folder.
-12. Update memory only with durable lessons.
-
-## HyperFrames Commands
-
-Run commands inside a specific project folder:
-
-```bash
-cd video-projects/short-form-template
-npm run dev
-npm run check
-npm run render
-```
-
-`npm run render` needs FFmpeg. Preview and source editing can work before FFmpeg is installed.
-
-## Good First Codex Prompt
+Add source media under `examples/my-content/sources/`, complete the rights and
+provenance fields in `project.json`, and follow the contract-gated flow:
 
 ```text
-Use local Whisper transcripts from footage/my-video/edit/takes_packed.md, then use video-use and HyperFrames. Inventory the footage, propose an agentic video edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
+.venv/bin/python -m agentic_content_system inspect examples/my-content
+.venv/bin/python -m agentic_content_system validate examples/my-content
+.venv/bin/python -m agentic_content_system ingest-transcript examples/my-content transcript.json
+.venv/bin/python -m agentic_content_system plan examples/my-content --approve --by reviewer
+.venv/bin/python -m agentic_content_system render examples/my-content --kind all
+.venv/bin/python -m agentic_content_system derive examples/my-content
+.venv/bin/python -m agentic_content_system package examples/my-content
+.venv/bin/python -m agentic_content_system verify examples/my-content
+.venv/bin/python -m agentic_content_system review-report examples/my-content
+.venv/bin/python -m agentic_content_system export-result examples/my-content
 ```
 
-## Useful Commands
+The installed `acs` command is equivalent. Windows users can use the module
+form exactly as shown; no POSIX shell is required.
 
-```bash
-python3 scripts/analyze-reference-video.py --check
-python3 scripts/analyze-reference-video.py "<reference-video-url>"
-python3 scripts/new-video.py my-video
-.venv/bin/python scripts/transcribe-local-whisper.py footage/my-video --model large --pack
-```
+## What v0.1 owns
 
-## Useful Docs
+- Versioned JSON Schemas for brand/channel policy, content workspace metadata, edit plan,
+  transcript, and publish manifest.
+- A cross-platform Python CLI: doctor, init, inspect, validate, plan/diff,
+  transcript ingestion, deterministic render, derive, package, verify,
+  review-report, and clean.
+- FFmpeg/ffprobe as the controlled media boundary for 16:9 long-form and 9:16
+  short output.
+- Explicit edit-plan approval before render, derivatives, or package creation.
+- Provenance and rights metadata carried into the publish manifest.
+- A versioned workspace-owned `delivery_intent` for manual/no-date or scheduled
+  routes with an explicit timezone, plus an atomic
+  `publish/publisher-handoff.json` containing only enabled routes and an
+  awaiting-authorization/not-posted assertion.
+- Static local HTML review, deterministic reruns, understandable failures, and
+  no arbitrary shell execution from input contracts.
+- Enabled-channel-only handoff. Gustav's example enables YouTube and LinkedIn,
+  permits an optional Instagram short route, and disables TikTok with a clear
+  fit reason; policy is per brand/client.
 
-- `SETUP.md` - fresh setup from clone to first footage drop.
-- `docs/CODEX_PLUGIN_SETUP.md` - create the local Video Use plugin after clone.
-- `docs/REFERENCE_ANALYSIS.md` - analyze selected reference videos without a hosted app.
-- `docs/LOCAL_TRANSCRIPTION.md` - local Whisper transcription workflow.
-- `docs/CLOUD_TRANSCRIPTION.md` - optional cloud transcription guardrails.
-- `docs/PACKAGING.md` - title and thumbnail review workflow.
-- `docs/FINAL_REVIEW.md` - final advisory review before publishing.
-- `docs/LEARNING.md` - project memory and continuous learning workflow.
-- `docs/BRANDING.md` - tailor assets, tokens, captions, and identity.
-- `docs/WORKFLOW.md` - production flow from raw footage to final render.
-- `docs/PROMPTS.md` - reusable Codex prompts.
+## Existing workflow assets
+
+The original local Whisper transcription scripts, footage conventions, content
+pipeline, templates, and HyperFrames projects remain useful. Local Whisper is
+optional and stays repo-local; HyperFrames is an optional motion adapter for a
+specific explanatory beat, never the product identity. Timeline Studio,
+OpenReelio, HyperFrames, and supervised publishers have documented seams but
+are not vendored or required by v0.1.
+
+The committed `examples/gustav/` directory is the visible, contract-only
+example boundary. Source media and generated proof under an example are
+ignored, so examples remain understandable without committing large files.
+Use `scripts/new-content-example.py <slug>` when you want a new local example.
+
+Read these first:
+
+- `docs/QUICKSTART.md` - setup and first ACS workspace.
+- `docs/CLI.md` - stable commands and approval gates.
+- `docs/ARCHITECTURE.md` - contract ownership and boundaries.
+- `docs/INPUT_OWNERSHIP.md` - source-agnostic context and ownership boundary.
+- `docs/CONTENT_FORMATS.md` - nine capture formats and cadence guidance.
+- `docs/EDITOR_ENGINE_DECISION.md` - dated editor/engine research and the
+  narrow contract + FFmpeg decision.
+- `.agents/skills/agentic-content-system/SKILL.md` - repository-local run interface.
+- `docs/RECOVERY.md` - safe generated-output cleanup.
+
+Standalone scaffolds write explicit manual/no-date delivery for enabled routes.
+The explicit Gustav example schedules YouTube for `2026-09-01T09:00:00` in
+`Europe/Copenhagen`, keeps LinkedIn manual, and keeps Instagram/TikTok
+disabled. The advisory context is in `examples/gustav-context.md`; it is
+guidance for the judgment layer, not an ACS inbound schema or CLI input.
+
+Brand design and motion principles remain in `DESIGN.md`,
+`MOTION_PHILOSOPHY.md`, `PROJECT_MEMORY.md`, `channel/PROFILE.md`, and
+`channel/STYLE_GUIDE.md`. The existing HyperFrames starter projects are kept
+under `video-projects/` as optional motion assets, not as the system boundary.
+The legacy `footage/` directory remains ignored and accepted by the local
+transcription helper for older source-side workflows; new ACS runs should use
+an `examples/<slug>/` workspace or another explicitly chosen local directory.

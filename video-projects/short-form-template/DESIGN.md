@@ -13,6 +13,6 @@ This project is a 9:16 short-form starter for agentic workflow tutorials and sho
 
 ## Edit Notes
 
-- Replace `.face-temporary` with A-roll, a Video Use export, or a product capture.
+- Replace `.face-temporary` with A-roll, an ACS render, or a product capture.
 - Keep captions large enough to read on a phone.
 - Motion should land on the hook, keyword, or proof moment.

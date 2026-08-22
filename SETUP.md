@@ -1,336 +1,103 @@
-# Setup
+# Agentic Content System Setup
 
-Fresh setup for Agentic Video Editor.
+This repository is a persistent, standalone local-first content system. A
+single ACS checkout can hold many content workspaces; keep brand/client truth in
+the workspace that owns the run, or use a separate clone when isolation is
+needed. `examples/<slug>/` is the readable boundary for committed contract
+examples and ignored local proof.
 
-This repo is meant to work as a reusable agentic video editing base. Keep the base repo generic, then create one separate copy or clone per brand/channel, for example:
+## Runtime
 
-```text
-~/Downloads/agentic-video-editor
-~/Downloads/gustavonline-video-agent
-~/Downloads/client-name-video-agent
-```
+Install Python 3.10+ and FFmpeg/ffprobe. Then install the package in editable
+mode:
 
-Each branded copy can have its own `DESIGN.md`, assets, footage, starter projects, and project history.
-
-## 1. Create A Brand Workspace
-
-Recommended: create a new folder for the specific brand instead of tailoring the base editor directly.
-
-If cloning from GitHub, replace `gustavonline-video-agent` with the folder name for the brand:
-
-```bash
-cd ~/Downloads
-git clone https://github.com/gustavonline/ai-agent-youtube-kit.git gustavonline-video-agent
-cd gustavonline-video-agent
-```
-
-If copying from an existing local base editor before a remote exists:
-
-```bash
-cd ~/Downloads
-BRAND_WORKSPACE="gustavonline-video-agent"
-rsync -a \
-  --exclude ".git" \
-  --exclude ".venv" \
-  --exclude ".cache" \
-  --exclude "footage/*" \
-  --exclude "video-projects/*/renders/" \
-  agentic-video-editor/ "$BRAND_WORKSPACE/"
-cd "$BRAND_WORKSPACE"
-git init
-```
-
-Use a folder name that matches the channel or client. Good examples:
-
-- `gustavonline-video-agent`
-- `acme-agentic-video`
-- `client-name-video-agent`
-
-## 2. Decide What This Clone Is For
-
-Before editing files, write down the intended brand direction:
+macOS/Linux:
 
 ```text
-Channel or client name:
-Audience:
-Main video type:
-Tone:
-Primary colors:
-Logo files available:
-Reference videos or screenshots:
-Examples to avoid:
+python3 -m venv .venv
+.venv/bin/python -m pip install -e .
 ```
 
-This prevents the clone from becoming a generic video workspace.
-
-## 3. Tailor The Brand Files
-
-Update these files inside the branded clone:
+Windows PowerShell:
 
 ```text
-README.md
-channel/PROFILE.md
-channel/STYLE_GUIDE.md
-channel/published-videos.csv
-DESIGN.md
-PROJECT_MEMORY.md
-assets/brand-tokens.css
-assets/README.md
-docs/BRANDING.md
+py -m venv .venv
+.venv\Scripts\python.exe -m pip install -e .
 ```
 
-At minimum, set:
+PowerShell users can also run `scripts\setup-agentic-content-system.ps1`.
 
-- channel/client name
-- channel promise
-- target audience
-- reusable project memory
-- colors
-- fonts
-- caption style
-- logo/mark assets
-- thumbnail direction
-- examples to imitate and avoid
-
-Recommended asset folders:
+Verify:
 
 ```text
-assets/
-  logo/
-  backgrounds/
-  fonts/
-  audio/
-  references/
+.venv/bin/python -m agentic_content_system doctor
+.venv/bin/python -m agentic_content_system --help
 ```
 
-Keep raw footage in `footage/<video-slug>/`, not in `assets/`.
+There is no hosted backend, database, auth, queue, Electron/Tauri app, cloud
+AI, or external publisher required for v0.1.
 
-## 4. Analyze Reference Videos
-
-Before producing the first real video, analyze 3-10 selected reference videos.
-This replaces the need for a hosted inspiration dashboard.
-
-```bash
-brew install yt-dlp ffmpeg
-python3 scripts/analyze-reference-video.py --check
-python3 scripts/analyze-reference-video.py "<reference-video-url>"
-```
-
-For long videos, focus on the hook or the relevant section:
-
-```bash
-python3 scripts/analyze-reference-video.py "<reference-video-url>" --start 00:00 --end 01:30
-```
-
-Each run writes:
+## First ACS workspace
 
 ```text
-channel/references/<date-platform-slug>/
-  source.json
-  frames_manifest.json
-  transcript.md
-  analysis.md
-  agent-prompt.md
+.venv/bin/python -m agentic_content_system init examples/my-content --example gustav
 ```
 
-After each analysis:
+The explicit example policy enables YouTube and LinkedIn, leaves Instagram as
+an optional disabled short route, and disables TikTok with a clear fit reason.
+For a clone, edit `brand.json` and `project.json` before using real material.
 
-1. Fill `analysis.md`.
-2. Add a row to `channel/REFERENCES.md`.
-3. Promote reusable lessons to `channel/STYLE_GUIDE.md`.
+Add source media under the workspace's `sources/` directory. Keep the source
+rights owner, license, URL, attribution, and provenance in `project.json`.
+Choose one of the nine formats in `content-formats/formats.json`, then edit the
+promise, audience, points, CTA, and output windows in `edit-plan.json`.
 
-## 5. Create The First Branded Starter Project
+## Transcript
 
-Copy the starter project that is closest to the first video format.
-
-For a 9:16 short:
-
-```bash
-BRAND_PROJECT="gustav-online-short"
-cp -R video-projects/short-form-template "video-projects/$BRAND_PROJECT"
-```
-
-Then update these files in the copied project:
+The CLI accepts canonical transcript JSON, local Whisper JSON, Markdown, SRT,
+or VTT:
 
 ```text
-video-projects/<brand-project>/package.json
-video-projects/<brand-project>/meta.json
-video-projects/<brand-project>/README.md
-video-projects/<brand-project>/DESIGN.md
-video-projects/<brand-project>/assets/brand-tokens.css
-video-projects/<brand-project>/index.html
+.venv/bin/python -m agentic_content_system ingest-transcript examples/my-content transcript.json
 ```
 
-Use the copied starter project for brand-specific text, logo placement, caption layout, and first visual examples. Leave the original `short-form-template` intact so future projects still have a clean template.
-
-## 6. Verify Node And HyperFrames
-
-HyperFrames needs Node.js 22 or newer.
-
-```bash
-node -v
-npx --yes hyperframes --version
-npx --yes hyperframes doctor
-```
-
-Codex has an official HyperFrames plugin in this environment. The CLI is still used inside each `video-projects/<project>/` folder.
-
-## 7. Install FFmpeg
-
-FFmpeg is required for HyperFrames rendering and Video Use final exports.
-
-```bash
-brew install ffmpeg
-ffmpeg -version
-ffprobe -version
-```
-
-## 8. Create The Local Video Use Plugin
-
-Codex has an official HyperFrames plugin, but Video Use should be created as a local Codex plugin.
-
-Paste this into Codex:
+The existing local Whisper workflow is optional and preserved:
 
 ```text
-Use the plugin-creator skill. Create a local Codex plugin called video-use from https://github.com/browser-use/video-use. Put it in ~/plugins/video-use, add it to the default personal marketplace, preserve the upstream SKILL.md/helpers/static files under skills/video-use, add accurate manifest metadata, and validate the plugin. Do not transcribe anything yet.
-```
-
-Expected local shape:
-
-```text
-~/plugins/video-use/
-  .codex-plugin/plugin.json
-  assets/
-  skills/
-    video-use/
-      SKILL.md
-      install.md
-      helpers/
-      static/
-      pyproject.toml
-```
-
-Expected marketplace file:
-
-```text
-~/.agents/plugins/marketplace.json
-```
-
-More detail: `docs/CODEX_PLUGIN_SETUP.md`.
-
-## 9. Set Up Local Whisper Transcription
-
-Agentic Video Editor uses local Whisper transcription by default. No transcription API key
-is required for the standard workflow.
-
-Install the repo-local transcription runtime:
-
-```bash
 ./scripts/setup-local-transcription.sh
+.venv/bin/python scripts/transcribe-local-whisper.py examples/my-content --model large --pack
 ```
 
-This creates `.venv/` for Python packages and `.cache/whisper/` for downloaded
-Whisper models. Both live inside the repo clone and are ignored by git. Deleting
-the clone removes the local runtime and model cache.
+Do not add API keys to this repository. See `docs/CLOUD_TRANSCRIPTION.md` only
+for an explicitly requested cloud alternative.
 
-To clean repo-local runtime/cache artifacts later:
-
-```bash
-./scripts/clean-local-artifacts.sh
-```
-
-Transcribe footage from the repo root:
-
-```bash
-.venv/bin/python scripts/transcribe-local-whisper.py footage/<video-slug> --model large --pack
-```
-
-For Danish footage:
-
-```bash
-.venv/bin/python scripts/transcribe-local-whisper.py footage/<video-slug> --model large --language da --pack
-```
-
-The command writes cached transcripts to
-`footage/<video-slug>/edit/transcripts/` and creates
-`footage/<video-slug>/edit/takes_packed.md`. The first `--model large` run also
-downloads the Whisper model to `.cache/whisper/`.
-
-Do not put API keys in this repo. ElevenLabs/Scribe can still be used as a
-deliberate cloud alternative, but it is not the default for this repo. See
-`docs/CLOUD_TRANSCRIPTION.md` for the opt-in guardrails.
-
-## 10. Check Starter Projects
-
-Check the branded starter project first:
-
-```bash
-cd video-projects/<brand-project>
-npm run check
-```
-
-Or check every project:
-
-```bash
-./scripts/check-projects.sh
-```
-
-The generated reference projects may have warnings. The custom `short-form-template` should pass cleanly.
-
-## 11. Preview A Starter Project
-
-```bash
-cd video-projects/<brand-project>
-npm run dev
-```
-
-For render after FFmpeg is installed:
-
-```bash
-npm run render
-```
-
-## 12. Add Footage
+## Approval-gated flow
 
 ```text
-footage/<video-slug>/
-  raw clips here
+inspect -> validate -> ingest transcript -> review/edit plan -> approve
+  -> render -> derive -> package -> verify -> static review report
 ```
 
-Do not start by rendering. Start with inventory and strategy.
+Use `.venv/bin/python -m agentic_content_system plan examples/my-content --approve --by <name>`
+only after the plan is reviewed. Delivery intent is owned by
+`project.json.delivery_intent`; edit it and reapprove when a route needs a
+scheduled date/time and explicit timezone. No external post occurs;
+`publish/` is a validated package for later supervised shipping.
 
-Create the standard edit files:
+## Optional motion and editor adapters
 
-```bash
-python3 scripts/new-video.py <video-slug>
-```
+HyperFrames workspaces under `video-projects/` remain available for a motion
+asset when motion clarifies a point. They are optional adapter material, not
+the ACS product identity. Timeline Studio, OpenReelio, and supervised
+publishers are documented seams only; v0.1 does not vendor or depend on them.
 
-Codex prompt:
+## Cleanup
+
+Remove generated workspace outputs without deleting decisions or inputs:
 
 ```text
-Use local Whisper transcripts from footage/<video-slug>/edit/takes_packed.md, then use video-use and HyperFrames. Inventory footage/<video-slug>, propose an agentic video edit strategy, and identify which beats need motion graphics. Do not cut or render until I approve the plan.
+.venv/bin/python -m agentic_content_system clean examples/my-content --outputs
 ```
 
-## 13. Production Loop
-
-1. Run `python3 scripts/new-video.py <slug>` and fill the generated brief.
-2. Drop raw footage in `footage/<slug>/`.
-3. Run local Whisper transcription with `.venv/bin/python scripts/transcribe-local-whisper.py footage/<slug> --model large --pack`.
-4. Use Video Use to inventory the packed transcript and propose an edit.
-5. Save the approved edit plan to `footage/<slug>/edit/cut-plan.md`.
-6. Use HyperFrames for motion graphics, UI explainers, lower thirds, title cards, and transitions.
-7. Let Video Use assemble, subtitle, grade, and self-check the final timeline.
-8. Run packaging review with `templates/packaging-review.md`.
-9. Run final review with `templates/final-review.md`.
-10. Keep final outputs under `footage/<slug>/edit/`.
-11. Add only durable, reusable lessons to `PROJECT_MEMORY.md` and `channel/STYLE_GUIDE.md`.
-
-## 14. Pre-Commit Brand Check
-
-Before committing a branded clone, search for old placeholder names:
-
-```bash
-rg -n "temporary|TODO|YourLogo|example.com|your-channel|old-repo-name" .
-```
-
-Keep hits that are intentionally documenting the base template. Replace hits that appear in brand-facing files, project metadata, titles, or rendered composition text.
+For repo-local Whisper runtime/cache cleanup, use the existing
+`scripts/clean-local-artifacts.sh` with its documented flags.

@@ -1,8 +1,9 @@
 # Packaging
 
-This is the AI-first version of the useful CreatorGrowth packaging workflow:
-titles, thumbnails, and click psychology live in files instead of a hosted
-dashboard.
+This is the AI-first packaging layer around an ACS content workspace: titles,
+thumbnails, and click psychology live in files instead of a hosted dashboard.
+The executable publish package is produced by `acs package`; this document is
+the optional human/agent packaging review around that handoff.
 
 ## Inputs
 
@@ -12,16 +13,16 @@ Before packaging a video, read:
 2. `channel/STYLE_GUIDE.md`
 3. `channel/published-videos.csv`
 4. relevant `channel/references/*/analysis.md`
-5. `footage/<slug>/edit/cut-plan.md`
+5. the workspace `edit-plan.json`, `content-brief.md`, and `recording-plan.md`
 6. `DESIGN.md`
 7. `PROJECT_MEMORY.md`
 
 ## Output
 
-Write the review to:
+Write the optional human review to:
 
 ```text
-footage/<slug>/edit/packaging-review.md
+examples/<slug>/packaging-review.md
 ```
 
 Use:
@@ -92,7 +93,8 @@ Avoid:
 4. Score each title and concept.
 5. Pick the strongest title/thumbnail pair.
 6. List exact changes needed before publish.
-7. Save the chosen pair in `footage/<slug>/edit/packaging-review.md`.
+7. Save the chosen pair in `examples/<slug>/packaging-review.md` (or the
+   corresponding local workspace).
 
 ## Learning
 

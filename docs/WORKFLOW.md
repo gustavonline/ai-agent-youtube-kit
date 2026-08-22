@@ -1,102 +1,52 @@
 # Workflow
 
-## Clone To Channel Workflow
+Agentic Content System is the execution layer for a solo founder or small
+business. It accepts phone, camera, screen recording, podcast, Q&A, demo, vlog,
+tablet, or whiteboard capture. The source mode is chosen by the content job;
+the system is not a phone-first editor.
 
-1. Fill `channel/PROFILE.md`.
-2. Add known published-video data to `channel/published-videos.csv`.
-3. Analyze 3-10 reference videos with `scripts/analyze-reference-video.py`.
-4. Condense reusable lessons into `channel/STYLE_GUIDE.md`.
-5. Tailor `DESIGN.md`, `PROJECT_MEMORY.md`, and `assets/brand-tokens.css`.
-6. Copy a starter project from `video-projects/short-form-template`.
+## Decision to publish-ready handoff
 
-## Reference Video To Style Lesson
+1. Bring useful context from a conversation, brief, AIOS Space task, or
+   standalone business/content notes.
+2. Choose a buyer problem, proof requirement, practical group, and one of the
+   nine capture formats in `content-formats/formats.json`.
+3. Scaffold a workspace with `acs init`; copy resolved values into the local
+   `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and
+   `edit-plan.json`.
+4. Choose manual/no-date or scheduled delivery for each enabled route in
+   `project.json.delivery_intent`. Disabled routes stay disabled.
+5. Add source media and rights/provenance metadata.
+6. Draft/refine `content-brief.md` and `recording-plan.md`, then run
+   `acs inspect`, ingest a transcript, and review the declarative plan.
+7. Record explicit approval with `acs plan --approve --by <reviewer>`.
+8. Run `acs render`, `acs derive`, `acs package`, `acs verify`,
+   `acs review-report`, and `acs export-result`.
+9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
+   `results/run-result.json` through its normal task flow. The publisher handoff
+   is awaiting separate authorization; v0.1 never schedules or posts
+   externally.
 
-```bash
-python3 scripts/analyze-reference-video.py "<reference-video-url>"
-```
+## Editorial defaults
 
-Then fill:
+Use promise + proof + plan, usually in three points, with a contextual CTA and
+an outro to the next useful video. Source ideas from work/client questions,
+mistakes, proof, mechanism, and philosophy. Treat attention, nurture, and
+conversion as connected outcomes; buyer relevance is more important than mass
+reach. A core video can be harvested into selected shorts and posts, but
+channel policy decides which derivatives exist.
 
-```text
-channel/references/<slug>/analysis.md
-```
+The planning reference is three core videos per week for 26 weeks (78 core
+videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority.
 
-Update:
+## Optional adapters
 
-```text
-channel/REFERENCES.md
-channel/STYLE_GUIDE.md
-```
+- Local Whisper is the default optional transcription engine through
+  `scripts/transcribe-local-whisper.py`.
+- FFmpeg/ffprobe own deterministic inspection and render boundaries.
+- HyperFrames can supply a motion asset when it clarifies a point.
+- Timeline Studio, OpenReelio, and supervised publishers are documented seams,
+  not v0.1 dependencies.
 
-## Raw Footage To Final Video
-
-1. Run `python3 scripts/new-video.py <slug>`.
-2. Put source clips, screen recordings, B-roll, logos, and notes in `footage/<slug>/`.
-3. Fill `footage/<slug>/edit/video-brief.md`.
-4. Run local Whisper transcription and pack transcripts.
-5. Ask Codex to use Video Use to inventory `edit/takes_packed.md`.
-6. Review the proposed editorial strategy.
-7. Save the approved cut plan to `edit/cut-plan.md`.
-8. Build HyperFrames scenes for moments that need visual explanation.
-9. Render or export HyperFrames overlays/assets.
-10. Let Video Use assemble, subtitle, grade, and verify.
-11. Run packaging review.
-12. Run final review.
-
-```bash
-.venv/bin/python scripts/transcribe-local-whisper.py footage/<slug> --model large --pack
-```
-
-## Folder Pattern
-
-```text
-footage/<slug>/
-  raw clips here
-  edit/
-    project.md
-    video-brief.md
-    takes_packed.md
-    cut-plan.md
-    packaging-review.md
-    final-review.md
-    edl.json
-    animations/
-    final.mp4
-
-video-projects/<slug>-graphics/
-  index.html
-  compositions/
-  assets/
-  renders/
-```
-
-## When To Use HyperFrames
-
-- Animated hook/title
-- Lower third
-- Platform subscribe/CTA
-- System diagram
-- Product UI animation
-- Website capture-to-video
-- Word-synced kinetic typography
-- Overlay that would be painful in raw ffmpeg
-
-## When To Let Video Use Handle It
-
-- Cut decisions
-- Removing filler words and dead air
-- Transcript packing
-- Planning from local Whisper transcripts
-- Audio fades
-- Subtitle burn-in on the final timeline
-- Color grade per segment
-- Final assembly and self-eval
-
-## When To Use Reference Analysis
-
-- Learning a channel style from selected examples
-- Breaking down hooks, CTAs, pacing, captions, and proof mechanics
-- Building `channel/STYLE_GUIDE.md`
-- Finding reusable thumbnail/title patterns
-
-Do not use reference analysis as a substitute for editing your own raw footage.
+See `docs/ADAPTERS.md` for boundary rules and `docs/RECOVERY.md` for safe
+cleanup.

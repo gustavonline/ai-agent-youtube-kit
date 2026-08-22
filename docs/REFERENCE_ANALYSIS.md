@@ -15,8 +15,9 @@ and production choices.
 - When you need examples for hook structure, CTA timing, screen-record pacing,
   or visual proof.
 
-Do not use this for your own raw footage edit workflow. Use
-`docs/LOCAL_TRANSCRIPTION.md` and `footage/<slug>/edit/takes_packed.md` for that.
+Do not use this for your own source edit workflow. Use
+`docs/LOCAL_TRANSCRIPTION.md` and an ACS workspace's local transcript view for
+that. Reference analysis remains separate from ACS execution truth.
 
 ## Setup Check
 

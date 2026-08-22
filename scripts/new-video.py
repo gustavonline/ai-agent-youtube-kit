@@ -1,66 +1,37 @@
 #!/usr/bin/env python3
-"""Create the standard file scaffold for a new video project."""
+"""Compatibility wrapper for the canonical ACS content-example scaffold.
+
+Use ``scripts/new-content-example.py`` or ``acs init`` for new work. The old
+filename remains so existing local instructions fail safely into the current
+Agentic Content System boundary instead of creating a second legacy layout.
+"""
 
 from __future__ import annotations
 
 import argparse
-import re
 import sys
-from datetime import date
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE_MAP = {
-    "video-brief.md": "video-brief.md",
-    "cut-plan.md": "cut-plan.md",
-    "packaging-review.md": "packaging-review.md",
-    "final-review.md": "final-review.md",
-    "project.md": "project.md",
-}
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
-
-def slugify(value: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
-    return slug or "new-video"
-
-
-def copy_template(template_name: str, out_path: Path, slug: str, force: bool) -> str:
-    if out_path.exists() and not force:
-        return "exists"
-    text = (REPO_ROOT / "templates" / template_name).read_text(encoding="utf-8")
-    text = text.replace("**Slug:** <fill>", f"**Slug:** {slug}")
-    text = text.replace("**Video slug:** <fill>", f"**Video slug:** {slug}")
-    text = text.replace("**Started:** <fill>", f"**Started:** {date.today().isoformat()}")
-    text = text.replace("**Reviewed:** <fill>", f"**Reviewed:** {date.today().isoformat()}")
-    out_path.write_text(text, encoding="utf-8")
-    return "created"
+from agentic_content_system.scaffold import scaffold_project  # noqa: E402
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Scaffold footage/<slug>/edit files.")
-    parser.add_argument("slug", help="Video slug or title.")
-    parser.add_argument("--force", action="store_true", help="Overwrite existing scaffold files.")
+    parser = argparse.ArgumentParser(
+        description="Compatibility wrapper: scaffold an ACS example under examples/<slug>."
+    )
+    parser.add_argument("slug", help="Content example/workspace slug")
+    parser.add_argument("--example", choices=["gustav"], help="Apply an explicit channel example")
+    parser.add_argument("--force", action="store_true", help="Replace existing contract files")
     args = parser.parse_args()
 
-    slug = slugify(args.slug)
-    footage_dir = REPO_ROOT / "footage" / slug
-    edit_dir = footage_dir / "edit"
-    edit_dir.mkdir(parents=True, exist_ok=True)
-    (edit_dir / "animations").mkdir(exist_ok=True)
-
-    statuses = {}
-    for output_name, template_name in TEMPLATE_MAP.items():
-        statuses[output_name] = copy_template(template_name, edit_dir / output_name, slug, args.force)
-
-    print(f"Scaffolded: {footage_dir}")
-    for name, status in statuses.items():
-        print(f"- edit/{name}: {status}")
-    print()
-    print("Next steps:")
-    print(f"1. Add source clips to footage/{slug}/")
-    print(f"2. Fill footage/{slug}/edit/video-brief.md")
-    print(f"3. Transcribe with: .venv/bin/python scripts/transcribe-local-whisper.py footage/{slug} --model large --pack")
+    workspace = scaffold_project(REPO_ROOT / "examples" / args.slug, example=args.example, force=args.force)
+    print(f"Scaffolded ACS example: {workspace}")
+    print("Canonical helper: scripts/new-content-example.py")
     return 0
 
 

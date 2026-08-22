@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "project_id": "gustav",
+  "title": "From buyer question to useful content system",
+  "promise": "Show how one buyer question becomes a useful, approved content system.",
+  "audience": "A solo founder or small-business operator who wants useful AI-enabled workflows.",
+  "format": "solo-direct-to-camera",
+  "content_group": "teach-explain",
+  "status": "draft",
+  "sources": [
+    {
+      "path": "sources/source.mp4",
+      "kind": "camera",
+      "role": "primary",
+      "rights": {
+        "status": "owned",
+        "owner": "Gustav Online",
+        "license": "owner-provided-original",
+        "source_url": "",
+        "attribution": ""
+      }
+    }
+  ],
+  "transcript": {
+    "path": "transcripts/active.json",
+    "format": "acs-transcript/1.0"
+  },
+  "delivery_intent": {
+    "schema_version": "1.0",
+    "routes": [
+      {
+        "channel": "youtube",
+        "delivery_mode": "scheduled",
+        "scheduled_at": "2026-09-01T09:00:00",
+        "timezone": "Europe/Copenhagen"
+      },
+      {
+        "channel": "linkedin",
+        "delivery_mode": "manual"
+      }
+    ]
+  },
+  "notes": "Illustrative ACS example. Replace the source rights and content decision before real use."
+}

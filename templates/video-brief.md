@@ -1,10 +1,10 @@
-# Video Brief
+# ACS Content Brief
 
-**Slug:** <fill>
+**Workspace slug:** <fill>
 **Working title:** <fill>
-**Target platform:** <fill>
+**Enabled route(s):** <fill>
 **Target duration:** <fill>
-**Source idea/reference:** <fill>
+**Source context/reference:** <fill>
 
 ## Audience
 

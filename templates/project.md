@@ -1,8 +1,8 @@
-# Project Notes
+# ACS Workspace Notes
 
-**Slug:** <fill>
+**Workspace slug:** <fill>
 **Started:** <fill>
-**Format:** <fill>
+**Capture format:** <fill>
 
 ## Session Log
 

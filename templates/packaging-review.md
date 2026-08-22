@@ -1,6 +1,6 @@
 # Packaging Review
 
-**Video slug:** <fill>
+**Content workspace:** <fill>
 **Reviewed:** <fill>
 **Reference inputs:** `channel/STYLE_GUIDE.md`, `channel/published-videos.csv`, `channel/references/`
 
