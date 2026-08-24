@@ -57,7 +57,8 @@ If captions are unavailable and you want local transcription:
 python3 workspace/engine/scripts/analyze-reference-video.py "https://www.youtube.com/watch?v=..." --local-whisper --language en
 ```
 
-Local Whisper uses this repo's `.venv/` and `.cache/whisper/`. Set it up with:
+Local Whisper uses this repo's `.venv/` and the ignored
+`workspace/engine/.cache/whisper/` cache by default. Set it up with:
 
 ```bash
 ./workspace/engine/scripts/setup-local-transcription.sh

@@ -21,5 +21,6 @@ transcription:
 python -m agentic_content_system ingest-transcript workspace/productions/<slug> workspace/productions/<slug>/local-whisper/transcripts/<clip>.json
 ```
 
-Models stay in `.cache/whisper/`, and no API key belongs in this repository.
+Models stay in the ignored `workspace/engine/.cache/whisper/` cache by default
+(override with `ACS_WHISPER_CACHE_DIR`), and no API key belongs in this repository.
 Cloud transcription is opt-in only; see `docs/CLOUD_TRANSCRIPTION.md`.

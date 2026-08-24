@@ -2,6 +2,7 @@
 .env
 .venv/
 .cache/
+workspace/engine/.cache/
 workspace/productions/*/sources/*
 workspace/productions/*/transcripts/*
 workspace/productions/*/renders/*
