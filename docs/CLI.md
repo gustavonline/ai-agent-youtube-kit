@@ -16,8 +16,8 @@ system/Homebrew Python.
 ## Core flow
 
 ```text
-acs validate-profile channel/brand.json
-acs init <workspace> --brand channel/brand.json
+acs validate-profile workspace/channel/brand.json
+acs init <workspace> --brand workspace/channel/brand.json
 acs inspect <workspace>
 acs validate <workspace>
 acs ingest-transcript <workspace> <transcript.json>
@@ -50,7 +50,7 @@ hold optional notes but is not read by the runtime. `derive` creates only
 policy-allowed derivatives and never overwrites an existing post. The
 workspace-owned `delivery_intent` sets each enabled route to `manual` or
 `scheduled` with an explicit date/time and timezone. A clone may store manual or
-scheduled defaults in `channel/brand.json`; the copy in a workspace is execution
+scheduled defaults in `workspace/channel/brand.json`; the copy in a workspace is execution
 truth and can be changed as run-specific intent in `project.json`.
 
 `package` stages `manifest.json` and the versioned
@@ -83,6 +83,24 @@ Useful supporting commands:
 `derive` and `package` have no `--force` flag: they proceed only when their
 current approval and input bindings are valid. Use `render --force` only for
 an explicit deterministic rerender.
+
+## Full-route history proof
+
+After the complete inspect-through-export route, record exactly one deliberate
+attempt with the local stdlib-only tracer:
+
+```text
+python workspace/engine/tracer.py record workspace/productions/<slug> --status succeeded
+python workspace/engine/tracer.py record workspace/productions/<slug> --status failed --failure-code render_failed --failure-step render
+python workspace/engine/tracer.py record workspace/productions/<slug> --status succeeded --recover run-0002
+python workspace/engine/tracer.py check
+```
+
+The tracer is not invoked by individual ACS subcommands. A normal repeat uses
+`predecessor`; `--recover` consumes one unresolved failed run at most once.
+The ledger keeps only production references and small machine-readable
+failure/recovery facts. Use `promote-example --run-id <id> --slug <slug>` only
+when a successful run is deliberately curated into `examples/`.
 
 Publish-ready packaging and verification require source rights status
 `owned`, `licensed`, `public-domain`, `cc0`, or `cc-by`. Draft and inspect work

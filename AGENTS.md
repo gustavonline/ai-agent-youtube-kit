@@ -14,20 +14,20 @@ adapters, not product identity.
 
 Before planning channel-specific work, read these files in order:
 
-1. `DESIGN.md`
-2. `PROJECT_MEMORY.md`
-3. `MOTION_PHILOSOPHY.md`
-4. `channel/PROFILE.md`
-5. `channel/STYLE_GUIDE.md`
+1. `workspace/channel/DESIGN.md`
+2. `workspace/learning/PROJECT_MEMORY.md`
+3. `workspace/learning/MOTION_PHILOSOPHY.md`
+4. `workspace/channel/PROFILE.md`
+5. `workspace/channel/STYLE_GUIDE.md`
 6. relevant docs under `docs/`
 
-Use `content-pipeline/ideas.md` as the lightweight CreatorGrowth-style content
-pipeline. Use `channel/REFERENCES.md` and `channel/references/` as the reference
+Use `workspace/content-pipeline/ideas.md` as the lightweight CreatorGrowth-style content
+pipeline. Use `workspace/references/REFERENCES.md` and `workspace/references/` as the reference
 analysis library.
 
 ## Workflow Router
 
-- New ACS workspace or example: read `docs/QUICKSTART.md`, `docs/ARCHITECTURE.md`,
+- New ACS production workspace: read `docs/QUICKSTART.md`, `docs/ARCHITECTURE.md`,
   `docs/INPUT_OWNERSHIP.md`, `docs/CONTENT_FORMATS.md`, and the repository-local
   `.agents/skills/agentic-content-system/SKILL.md`; use the CLI flow in
   `docs/CLI.md`.
@@ -40,25 +40,24 @@ analysis library.
   `.agents/skills/audit-content-system/SKILL.md`, set an explicit repository or
   one-workspace scope, and keep the audit strictly read-only. Do not run
   write-capable `verify`, `review-report`, or `export-result` as audit steps.
-- Build proof: use `scripts/create-fixture-media.py` for a tiny ignored source
-  under an ignored `examples/<slug>/` boundary and run the actual CLI from
+- Build proof: use `workspace/engine/scripts/create-fixture-media.py` for a tiny ignored source
+  under an ignored `workspace/productions/<slug>/` boundary and run the actual CLI from
   inspect through `export-result`.
 
 - Reference video or competitor analysis: follow `docs/REFERENCE_ANALYSIS.md`
-  and run `python3 scripts/analyze-reference-video.py <url-or-file>`.
+  and run `python3 workspace/engine/scripts/analyze-reference-video.py <url-or-file>`.
 - Raw capture/source transcription: follow the Transcription section below;
-  `footage/` is retained only for legacy/source-side compatibility.
+  `workspace/productions/` is the canonical source-side boundary.
 - Edit planning: use the declarative `edit-plan.json`; use
-  `templates/video-brief.md` and `templates/cut-plan.md` for human context when
+  `workspace/engine/templates/video-brief.md` and `workspace/engine/templates/cut-plan.md` for human context when
   useful.
-- Motion graphics: read `MOTION_PHILOSOPHY.md`, the active content design, and
+- Motion graphics: read `workspace/learning/MOTION_PHILOSOPHY.md`, the active content design, and
   use HyperFrames only through the optional seam documented in
-  `engine/motion-adapters/`.
+  `workspace/engine/motion-adapters/`.
 - Packaging: follow `docs/PACKAGING.md` and write the review in the active
-  `examples/<slug>/` boundary (legacy `footage/<slug>/edit/` notes remain
-  supported as source-side input).
+  `workspace/productions/<slug>/` boundary.
 - Final review: follow `docs/FINAL_REVIEW.md` and keep the result in the active
-  example/workspace boundary.
+  production workspace boundary.
 - Real-video acceptance: follow `docs/REAL_VIDEO_ACCEPTANCE.md`; generated or
   public footage proves the engine, while owner-recorded footage is required
   for a real usability PASS.
@@ -70,20 +69,20 @@ Use reference analysis to learn from selected videos before creating or evolving
 a channel style.
 
 ```bash
-python3 scripts/analyze-reference-video.py --check
-python3 scripts/analyze-reference-video.py "<video-url>"
+python3 workspace/engine/scripts/analyze-reference-video.py --check
+python3 workspace/engine/scripts/analyze-reference-video.py "<video-url>"
 ```
 
 For long videos, focus the section:
 
 ```bash
-python3 scripts/analyze-reference-video.py "<video-url>" --start 00:00 --end 01:30
+python3 workspace/engine/scripts/analyze-reference-video.py "<video-url>" --start 00:00 --end 01:30
 ```
 
-The script writes artifacts under `channel/references/<slug>/`. Inspect frames
+The script writes artifacts under `workspace/references/<slug>/`. Inspect frames
 from `frames_manifest.json`, read `transcript.md`, fill `analysis.md`, add one
-row to `channel/REFERENCES.md`, and promote only reusable lessons to
-`channel/STYLE_GUIDE.md`.
+row to `workspace/references/REFERENCES.md`, and promote only reusable lessons to
+`workspace/channel/STYLE_GUIDE.md`.
 
 Do not copy another creator's identity. Extract reusable mechanics: hook shape,
 visual proof, pacing, structure, CTA placement, and packaging logic.
@@ -94,18 +93,19 @@ Use local Whisper transcription as the default workflow for this repo.
 
 - Upstream editor tooling may mention `ELEVENLABS_API_KEY`; for this repo, do not require it for normal operation.
 - Do not place API keys or secrets in this repo.
-- For a legacy source directory under `footage/<slug>/`, create transcripts
-  with:
+- For source media under `workspace/productions/<slug>/sources/`, create local
+  transcripts with:
 
 ```bash
-.venv/bin/python scripts/transcribe-local-whisper.py footage/<slug> --model large --pack
+.venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<slug>/sources --model large --pack
 ```
 
 - Add `--language da` for Danish footage when appropriate.
 - Whisper models should stay in repo-local `.cache/whisper/`, which is the script default.
-- The legacy transcript cache lives in `footage/<slug>/edit/transcripts/`.
-  For an ACS workspace, ingest the resulting open JSON into its canonical
-  `transcripts/active.json` with `acs ingest-transcript`.
+- The optional editor transcript cache lives in
+  `workspace/productions/<slug>/edit/transcripts/`. For an ACS production,
+  ingest the resulting open JSON into its canonical `transcripts/active.json`
+  with `acs ingest-transcript`.
 - `takes_packed.md` is an optional transcript view for planning cuts; the ACS
   transcript contract remains the runtime input.
 
@@ -117,20 +117,21 @@ asks for cloud transcription. If cloud transcription is requested, follow
 
 ## Project Learning
 
-Before planning a branded video, read `DESIGN.md`, `PROJECT_MEMORY.md`, and
-`MOTION_PHILOSOPHY.md`, plus `channel/PROFILE.md` and `channel/STYLE_GUIDE.md`.
+Before planning a branded video, read `workspace/channel/DESIGN.md`,
+`workspace/learning/PROJECT_MEMORY.md`, and
+`workspace/learning/MOTION_PHILOSOPHY.md`, plus `workspace/channel/PROFILE.md`
+and `workspace/channel/STYLE_GUIDE.md`.
 For an optional HyperFrames motion workspace, also read its local
-`video-projects/<slug>/DESIGN.md` when it exists. It is adapter material, not
-an ACS content boundary.
+`workspace/engine/motion-adapters/video-projects/<slug>/DESIGN.md` when it
+exists. It is adapter material, not an ACS content boundary.
 
 After a finished project, update learning only when it is durable:
 
-- append factual session notes to the active workspace's local notes (or the
-  legacy `footage/<slug>/edit/project.md` when using that compatibility path)
-- add concise reusable lessons to `PROJECT_MEMORY.md`
-- add concise channel-level lessons to `channel/STYLE_GUIDE.md`
-- update `DESIGN.md` only for stable brand decisions
-- update `MOTION_PHILOSOPHY.md` only for general motion principles
+- append factual session notes to the active production workspace's local notes
+- add concise reusable lessons to `workspace/learning/PROJECT_MEMORY.md`
+- add concise channel-level lessons to `workspace/channel/STYLE_GUIDE.md`
+- update `workspace/channel/DESIGN.md` only for stable brand decisions
+- update `workspace/learning/MOTION_PHILOSOPHY.md` only for general motion principles
 
 Keep memory small and concrete. Do not add vague process notes or one-off taste
 reactions.
@@ -139,18 +140,18 @@ reactions.
 
 For a fresh branded clone:
 
-1. Fill `channel/PROFILE.md`.
-2. Update and validate `channel/brand.json` from the resolved profile.
-3. Add known performance data to `channel/published-videos.csv` if available.
-4. Analyze 3-10 reference videos with `scripts/analyze-reference-video.py`.
-5. Condense reusable lessons into `channel/STYLE_GUIDE.md`.
-6. Tailor `DESIGN.md`, `assets/brand-tokens.css`, and optional starter projects.
-7. Start the first video using `templates/video-brief.md` only after a real
+1. Fill `workspace/channel/PROFILE.md`.
+2. Update and validate `workspace/channel/brand.json` from the resolved profile.
+3. Add known performance data to `workspace/channel/published-videos.csv` if available.
+4. Analyze 3-10 reference videos with `workspace/engine/scripts/analyze-reference-video.py`.
+5. Condense reusable lessons into `workspace/channel/STYLE_GUIDE.md`.
+6. Tailor `workspace/channel/DESIGN.md`, `workspace/channel/assets/brand-tokens.css`, and optional starter projects.
+7. Start the first video using `workspace/engine/templates/video-brief.md` only after a real
    content outcome is requested.
 
 ## Branding Copies
 
 Keep the base editor generic. Create a separate clone or copy for each brand before
-tailoring `DESIGN.md`, `assets/brand-tokens.css`, reference assets, or project
-history. The branded clone's `PROJECT_MEMORY.md` should evolve as finished
+tailoring `workspace/channel/DESIGN.md`, `workspace/channel/assets/brand-tokens.css`, reference assets, or project
+history. The branded clone's `workspace/learning/PROJECT_MEMORY.md` should evolve as finished
 projects accumulate.

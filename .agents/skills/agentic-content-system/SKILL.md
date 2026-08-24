@@ -38,10 +38,16 @@ Read `docs/ARCHITECTURE.md`, `docs/INPUT_OWNERSHIP.md`,
 `docs/CONTENT_FORMATS.md`, and `docs/CLI.md` before planning a new content
 workspace.
 
+Before planning an ordinary repeat or explicit recovery, inspect the relevant
+prior records in `workspace/history/runs.jsonl` and the referenced
+`workspace/runs/<run-id>/run.json` evidence. Choose `predecessor` for an
+ordinary repeat or one explicit `--recover <run-id>` for a deliberate recovery
+based on that evidence.
+
 ## Execution sequence
 
 1. Start from configured clone defaults with
-   `python -m agentic_content_system init <workspace> --brand channel/brand.json`.
+   `python -m agentic_content_system init <workspace> --brand workspace/channel/brand.json`.
    Generic `init <workspace>` remains valid when a starter policy is enough.
 2. Use bounded context and format guidance to draft/refine
    `content-brief.md` and `recording-plan.md` before capture. Carry the
@@ -63,6 +69,18 @@ workspace.
 8. Return proof paths/hashes, enabled/disabled route results, and the
    `publish/publisher-handoff.json` path/hash/status to the calling context. Do
    not post externally.
+9. After the complete route succeeds or fails, record exactly one deliberate
+   attempt with `python workspace/engine/tracer.py record
+   workspace/productions/<slug> --status succeeded|failed`. Low-level ACS CLI
+   subcommands do not create ledger records. Use `--recover <run-id>` only for
+   one explicit recovery of an unresolved failed attempt.
+   The append-only relation is `workspace/history/runs.jsonl`, and evidence
+   directories are kept under `workspace/runs/`.
+
+After a successful full route, promotion to `examples/` is optional and
+deliberate only: use `python workspace/engine/tracer.py promote-example
+--run-id <id> --slug <slug>`. Never promote automatically; examples are
+curated proof, not operational state.
 
 Re-run `inspect` after changing a declared source, its rights/provenance,
 kind/role, or source order. Verification, review reports, and proof export bind

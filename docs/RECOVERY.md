@@ -42,6 +42,14 @@ failed replacement restores the prior package and its generated claims. If an
 export fails while an older result exists, the older result is moved to
 `recovery/stale-results/` and is not an active caller result.
 
+Record the route outcome once after the complete attempt with
+`workspace/engine/tracer.py`. A failed route remains immutable in
+`workspace/history/runs.jsonl`; a normal repeat points to its predecessor, and
+an explicit recovery points to one unresolved failed run and cannot consume it
+again. The tracer evidence references production-owned proof and does not copy
+raw prompts or request text. Do not rewrite or delete the ledger during
+cleanup.
+
 Ignored local runtime artifacts from the existing Whisper workflow remain
-available through `scripts/clean-local-artifacts.sh`; that script is separate
+available through `workspace/engine/scripts/clean-local-artifacts.sh`; that script is separate
 from project-output cleanup.

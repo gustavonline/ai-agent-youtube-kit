@@ -54,9 +54,9 @@ workspace remains independently runnable and inspectable.
 
 Before the first real video, the setup skill resolves missing business,
 audience, offer/content promise, channel-policy, cadence, and delivery-default
-decisions into `channel/PROFILE.md` and `channel/brand.json`. The profile is
+decisions into `workspace/channel/PROFILE.md` and `workspace/channel/brand.json`. The profile is
 validated without creating a workspace. When a real outcome exists,
-`acs init <workspace> --brand channel/brand.json` copies the policy into the
+`acs init <workspace> --brand workspace/channel/brand.json` copies the policy into the
 workspace. That workspace `brand.json` is execution truth; `project.json` owns
 the run-specific content and delivery intent.
 

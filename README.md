@@ -6,6 +6,13 @@ Agentic Content System turns business context and raw footage into reviewed vide
 business context -> brief -> capture -> approved edit -> video + posts -> review -> handoff
 ```
 
+The public shell is intentionally small: `AGENTS.md`, this `README.md`,
+`.agents/skills/`, `docs/`, `workspace/`, and curated `examples/`. Persistent
+operational truth lives under `workspace/`; technical implementation, local
+contracts, scripts, tests, templates, and optional adapters live under
+`workspace/engine/`. Root `pyproject.toml` and hidden CI are toolchain
+exceptions.
+
 ## Use it when
 
 - an agent needs a transparent, repeatable content workflow for a business;
@@ -25,7 +32,7 @@ Ask an agent:
 ```text
 Set up this ACS clone for my business. Use any business, audience, offer,
 content-promise, channel, cadence, and delivery context already available.
-Ask only for missing decisions, update channel/PROFILE.md and channel/brand.json,
+Ask only for missing decisions, update workspace/channel/PROFILE.md and workspace/channel/brand.json,
 run doctor and profile validation, and stop before creating a content workspace.
 When I give you a real content outcome, create it with the configured brand defaults.
 ```
@@ -36,8 +43,8 @@ The manual equivalent starts with:
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .
 .venv/bin/python -m agentic_content_system doctor
-.venv/bin/python -m agentic_content_system validate-profile channel/brand.json
-.venv/bin/python -m agentic_content_system init examples/my-content --brand channel/brand.json
+.venv/bin/python -m agentic_content_system validate-profile workspace/channel/brand.json
+.venv/bin/python -m agentic_content_system init workspace/productions/my-content --brand workspace/channel/brand.json
 ```
 
 Windows PowerShell uses `.venv\Scripts\python.exe` for the same module
@@ -45,7 +52,7 @@ commands. `acs` is the equivalent installed command.
 
 ## Concrete outputs
 
-- clone defaults: `channel/PROFILE.md`, `channel/brand.json`, and the reusable `channel/STYLE_GUIDE.md`;
+- clone defaults: `workspace/channel/PROFILE.md`, `workspace/channel/brand.json`, and the reusable `workspace/channel/STYLE_GUIDE.md`;
 - workspace execution truth: `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and `edit-plan.json`;
 - local proof: inspected sources, transcript, approved FFmpeg renders, selected derivatives, and a static review report;
 - supervised handoff: `publish/manifest.json`, `publish/publisher-handoff.json`, and `results/run-result.json`.
@@ -53,9 +60,9 @@ commands. `acs` is the equivalent installed command.
 ## Setup and ownership
 
 The setup skill is the primary route for configuring a clone before its first
-real video. `channel/brand.json` is the small ACS-owned source of durable
+real video. `workspace/channel/brand.json` is the small ACS-owned source of durable
 channel policy, cadence, and delivery defaults. `acs init --brand` validates it
-before writing a copy into the new workspace. That workspace `brand.json` is
+before writing a copy into the new production workspace. That workspace `brand.json` is
 execution truth; `project.json` owns run-specific content and delivery intent.
 Use `.agents/skills/setup-content-system/SKILL.md` for setup and
 `.agents/skills/audit-content-system/SKILL.md` for a strictly read-only audit.
@@ -76,10 +83,18 @@ Generated fixtures and the retained public-source run prove engine and
 contract behavior. They do not prove owner usability: a real usability PASS
 still requires the owner to run the protocol with owner-recorded footage.
 
+Each deliberate full production-route attempt must append exactly one
+structured record to `workspace/history/runs.jsonl` and write evidence under
+`workspace/runs/<run-id>/`. Ordinary repeats link with `predecessor`; explicit
+recovery consumes one unresolved failed run once. The ledger references
+production proof and bounded failure/recovery facts; it never stores raw
+requests and is not an AIOS service. Curated examples are promoted separately
+with the local tracer and never become operational state.
+
 ## Lower-level CLI
 
 ```text
-acs init <workspace> [--brand channel/brand.json]
+acs init <workspace> [--brand workspace/channel/brand.json]
 acs validate-profile <brand-profile>
 acs inspect <workspace>
 acs validate <workspace> [--contracts-only]

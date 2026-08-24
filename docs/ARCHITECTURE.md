@@ -9,7 +9,7 @@ publisher in v0.2.
 Conversation, brief, AIOS task, or standalone context
           |
           v
-channel/PROFILE.md + channel/brand.json -> acs init --brand -> local brief/recording plan -> ACS workspace contracts
+workspace/channel/PROFILE.md + workspace/channel/brand.json -> acs init --brand -> local brief/recording plan -> ACS workspace contracts
           |
           v
 capture/ingest -> inspect -> transcript -> explicit approval
@@ -24,7 +24,7 @@ verify -> static HTML review -> local proof/result -> caller reads learning
 ## Contract ownership
 
 - `brand.json` owns channel policy, enabled/disabled reasons, and cadence.
-- The clone-owned `channel/brand.json` is a small source of defaults; `acs
+- The clone-owned `workspace/channel/brand.json` is a small source of defaults; `acs
   init --brand` validates it and copies it into the workspace before the first
   run. The workspace copy is execution truth.
 - `project.json` owns the content promise, audience, capture format, source
@@ -47,11 +47,27 @@ verify -> static HTML review -> local proof/result -> caller reads learning
   for the HTML review and outbound proof/result. A package replacement stages
   manifest and publisher handoff together, then invalidates old generated
   review/result claims only after the replacement succeeds.
-- `contracts/schemas/` versions the shapes. The CLI validates them without a
+- `workspace/engine/contracts/schemas/` versions the shapes. The CLI validates them without a
   runtime database or network call.
 - `run-result.schema.json` owns the caller-agnostic proof/learning result. It
   contains no upstream-system fields and does not validate a caller return
   shape.
+
+## Persistent System Template-aligned shell
+
+`workspace/` is persistent operational truth. The channel, planning library,
+production workspaces, reference library, learning, and run evidence remain
+local files; `workspace/engine/` is only the technical implementation. The
+append-only `workspace/history/runs.jsonl` relation contains one record per
+deliberate full production-route attempt, whether it succeeds or fails. It
+references the production `project.json`, `results/run-result.json`, and
+`reports/review.json` rather than copying raw requests or prompts.
+
+The local `workspace/engine/tracer.py` records predecessor repeats and explicit
+single-use recovery relations. `examples/` is a deliberate curation boundary:
+promotion writes only a small README and proof pointer, while operational
+production state remains under `workspace/productions/`. Neither the tracer nor
+the ACS CLI is an AIOS service, daemon, database, or automatic publisher.
 
 FFmpeg/ffprobe are the deterministic media boundary. Local Whisper remains an
 optional transcript adapter through the existing repo script. The browser

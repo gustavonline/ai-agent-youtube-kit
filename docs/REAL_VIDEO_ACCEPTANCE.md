@@ -18,8 +18,8 @@ From the repository root, with the clone defaults configured:
 
 ```text
 python -m agentic_content_system doctor
-python -m agentic_content_system validate-profile channel/brand.json
-python -m agentic_content_system init <workspace> --brand channel/brand.json
+python -m agentic_content_system validate-profile workspace/channel/brand.json
+python -m agentic_content_system init <workspace> --brand workspace/channel/brand.json
 ```
 
 Resolve the real promise, audience, format, source rights, edit plan, and

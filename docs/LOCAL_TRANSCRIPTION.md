@@ -14,7 +14,7 @@ brew install ffmpeg
 Install the repo-local Python runtime:
 
 ```bash
-./scripts/setup-local-transcription.sh
+./workspace/engine/scripts/setup-local-transcription.sh
 ```
 
 This creates:
@@ -30,13 +30,13 @@ clone removes the Python packages and Whisper model cache.
 To remove local runtime/cache artifacts without deleting the clone:
 
 ```bash
-./scripts/clean-local-artifacts.sh
+./workspace/engine/scripts/clean-local-artifacts.sh
 ```
 
 To also remove ignored footage and edit outputs:
 
 ```bash
-./scripts/clean-local-artifacts.sh --footage
+./workspace/engine/scripts/clean-local-artifacts.sh --footage
 ```
 
 ## Transcribe An ACS Workspace
@@ -44,26 +44,26 @@ To also remove ignored footage and edit outputs:
 Put source media in the workspace:
 
 ```text
-examples/<content-slug>/sources/
+workspace/productions/<content-slug>/sources/
 ```
 
 Run local transcription from the repo root:
 
 ```bash
-.venv/bin/python scripts/transcribe-local-whisper.py examples/<content-slug>/sources --recursive --edit-dir examples/<content-slug>/local-whisper --model large --pack
+.venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<content-slug>/sources --recursive --edit-dir workspace/productions/<content-slug>/local-whisper --model large --pack
 ```
 
 For Danish footage, pass the language explicitly:
 
 ```bash
-.venv/bin/python scripts/transcribe-local-whisper.py examples/<content-slug>/sources --recursive --edit-dir examples/<content-slug>/local-whisper --model large --language da --pack
+.venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<content-slug>/sources --recursive --edit-dir workspace/productions/<content-slug>/local-whisper --model large --language da --pack
 ```
 
 The script writes:
 
 ```text
-examples/<content-slug>/local-whisper/transcripts/<clip-name>.json
-examples/<content-slug>/local-whisper/takes_packed.md
+workspace/productions/<content-slug>/local-whisper/transcripts/<clip-name>.json
+workspace/productions/<content-slug>/local-whisper/takes_packed.md
 ```
 
 `takes_packed.md` is the primary transcript view for edit decisions.
@@ -72,16 +72,16 @@ The first run with `--model large` downloads the model to `.cache/whisper/`.
 Override that only when you intentionally want a different cache location:
 
 ```bash
-.venv/bin/python scripts/transcribe-local-whisper.py examples/<content-slug>/sources --recursive --edit-dir examples/<content-slug>/local-whisper --model large --model-cache-dir .cache/whisper --pack
+.venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<content-slug>/sources --recursive --edit-dir workspace/productions/<content-slug>/local-whisper --model large --model-cache-dir .cache/whisper --pack
 ```
 
 ## Notes
 
 - Transcripts are cached. Use `--force` to re-transcribe changed or improved takes.
 - The generated JSON is compatible with the repository's optional packer and
-  can be normalized directly with `acs ingest-transcript examples/<slug> ...`.
-- The helper still accepts a direct media file or a legacy `footage/<slug>`
-  directory when older source-side work needs it.
+  can be normalized directly with `acs ingest-transcript workspace/productions/<slug> ...`.
+- The helper still accepts a direct media file or an older source directory
+  when existing local work needs it.
 - Local Whisper does not perform speaker diarization in this workflow; transcripts
   are marked as `speaker_0`.
 - Use `--model large-v3`, `--device mps`, or `--fp16 false` if those fit your Mac

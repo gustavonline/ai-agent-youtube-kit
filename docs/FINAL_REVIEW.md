@@ -16,13 +16,13 @@ finished.
 
 Read:
 
-1. `DESIGN.md`
-2. `PROJECT_MEMORY.md`
-3. `MOTION_PHILOSOPHY.md`
-4. `channel/PROFILE.md`
-5. `channel/STYLE_GUIDE.md`
-6. `channel/published-videos.csv`
-7. relevant reference analyses under `channel/references/`
+1. `workspace/channel/DESIGN.md`
+2. `workspace/learning/PROJECT_MEMORY.md`
+3. `workspace/learning/MOTION_PHILOSOPHY.md`
+4. `workspace/channel/PROFILE.md`
+5. `workspace/channel/STYLE_GUIDE.md`
+6. `workspace/channel/published-videos.csv`
+7. relevant reference analyses under `workspace/references/`
 8. `<workspace>/learning.json` and any local session notes
 9. `<workspace>/edit-plan.json`
 10. `<workspace>/packaging-review.md`, when supplied
@@ -32,13 +32,13 @@ Read:
 Write:
 
 ```text
-examples/<slug>/final-review.md
+workspace/productions/<slug>/final-review.md
 ```
 
 Use:
 
 ```text
-templates/final-review.md
+workspace/engine/templates/final-review.md
 ```
 
 ## Review Rubric
@@ -68,12 +68,12 @@ Score each category from 1-10:
 Append factual session notes to the workspace's local notes or `learning.json`:
 
 ```text
-examples/<slug>/learning.json
+workspace/productions/<slug>/learning.json
 ```
 
 Promote only durable lessons:
 
-- `PROJECT_MEMORY.md` for reusable production/editing patterns.
-- `channel/STYLE_GUIDE.md` for channel-level content style.
-- `DESIGN.md` only for stable brand decisions.
-- `MOTION_PHILOSOPHY.md` only for general motion principles.
+- `workspace/learning/PROJECT_MEMORY.md` for reusable production/editing patterns.
+- `workspace/channel/STYLE_GUIDE.md` for channel-level content style.
+- `workspace/channel/DESIGN.md` only for stable brand decisions.
+- `workspace/learning/MOTION_PHILOSOPHY.md` only for general motion principles.
