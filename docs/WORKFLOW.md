@@ -26,13 +26,19 @@ the system is not a phone-first editor.
 9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
    `results/run-result.json` through its normal task flow. The publisher handoff
    is awaiting separate authorization; v0.2 never posts externally.
-10. Record one success or failure for the completed route, then route the
+10. For a repeat or explicit recovery, inspect relevant entries in
+    `workspace/history/runs.jsonl` and their `workspace/runs/<run-id>/run.json`
+    evidence before choosing `predecessor` or an explicit `--recover <run-id>`.
+    Record one success or failure for the completed route, then route the
     attempt through the local tracer exactly once:
     `python workspace/engine/tracer.py record workspace/productions/<slug>
     --status succeeded` (or `failed --failure-code <short-code>`). An ordinary
     repeat uses `predecessor`; an explicit `--recover <run-id>` consumes one
-    unresolved failed run at most once and creates a new record. The tracer is
-    a local proof tool, not a daemon or an AIOS service.
+    unresolved failed run at most once and creates a new record. After a
+    successful full route, optional promotion to `examples/` is deliberate
+    only through `python workspace/engine/tracer.py promote-example --run-id
+    <id> --slug <slug>`; never promote automatically. The tracer is a local
+    proof tool, not a daemon or an AIOS service.
 
 ## Editorial defaults
 

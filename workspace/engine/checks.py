@@ -200,8 +200,23 @@ def check_skills(failures: list[str]) -> None:
         if required_text not in text:
             _record_failure(failures, f"{name} skill lacks required contract text")
     primary = (ROOT / ".agents/skills/agentic-content-system/SKILL.md").read_text(encoding="utf-8")
-    if "workspace/history/runs.jsonl" not in primary or "one success or failure" not in (ROOT / "docs/WORKFLOW.md").read_text(encoding="utf-8"):
-        _record_failure(failures, "primary ACS skill and workflow must describe the local run relation")
+    normalized_primary = " ".join(primary.split())
+    workflow = (ROOT / "docs/WORKFLOW.md").read_text(encoding="utf-8")
+    primary_obligations = (
+        "Before planning an ordinary repeat or explicit recovery",
+        "workspace/history/runs.jsonl",
+        "workspace/runs/<run-id>/run.json",
+        "Choose `predecessor` for an ordinary repeat",
+        "one explicit `--recover <run-id>`",
+        "promote-example",
+        "optional and",
+        "Never promote automatically",
+    )
+    missing = [marker for marker in primary_obligations if marker not in normalized_primary]
+    if missing:
+        _record_failure(failures, f"primary ACS skill lacks lifecycle obligations: {', '.join(missing)}")
+    if "one success or failure" not in workflow or "promote-example" not in workflow:
+        _record_failure(failures, "workflow must describe the local run relation and deliberate example promotion")
 
 
 def check_text(failures: list[str]) -> None:
