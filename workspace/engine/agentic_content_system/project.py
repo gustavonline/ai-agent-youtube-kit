@@ -107,12 +107,14 @@ def approval_payload(contracts: ProjectContracts) -> dict[str, Any]:
     # policy, project, edit intent, and source bytes. Import lazily to keep the
     # contract helper cycle-free.
     from .delivery import current_delivery_intent
+    from .creative import creative_direction_fingerprints
 
     return {
         "brand": contracts.brand,
         "project": contracts.project,
         "edit_plan_intent": edit_plan_intent(contracts.edit_plan),
         "source_fingerprints": source_fingerprints(contracts),
+        "creative_direction_fingerprints": creative_direction_fingerprints(contracts),
         "delivery_intent": current_delivery_intent(contracts),
     }
 
@@ -202,6 +204,17 @@ def contract_issues(contracts: ProjectContracts, *, require_sources: bool = True
                     issues.append(ValidationIssue(f"edit-plan.{kind}_form.segments[{index}].source", f"file does not exist: {source}"))
             except ACSUserError as exc:
                 issues.append(ValidationIssue(f"edit-plan.{kind}_form.segments[{index}].source", str(exc)))
+            overlay = segment.get("overlay")
+            if overlay:
+                if overlay not in declared_sources:
+                    issues.append(ValidationIssue(f"edit-plan.{kind}_form.segments[{index}].overlay", "must reference project.sources"))
+                else:
+                    try:
+                        overlay_path = inside_project(contracts.directory, overlay, label=f"{kind} segment overlay")
+                        if require_sources and not overlay_path.exists():
+                            issues.append(ValidationIssue(f"edit-plan.{kind}_form.segments[{index}].overlay", f"file does not exist: {overlay}"))
+                    except ACSUserError as exc:
+                        issues.append(ValidationIssue(f"edit-plan.{kind}_form.segments[{index}].overlay", str(exc)))
     transcript_ref = project.get("transcript", {}).get("path")
     if transcript_ref and plan.get("transcript_ref") != transcript_ref:
         issues.append(ValidationIssue("edit-plan.transcript_ref", "must match project.transcript.path"))

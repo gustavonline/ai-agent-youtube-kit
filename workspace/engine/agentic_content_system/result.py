@@ -6,12 +6,14 @@ from pathlib import Path
 from typing import Any
 
 from .errors import ACSUserError
+from .adapters import ADAPTER_IMPORT_RELATIVE, load_current_adapter_import
 from .inspect import require_current_inspection
 from .io import canonical_hash, read_json, sha256_file, write_json
 from .package import verify_package
 from .paths import display_path, inside_project
 from .project import ProjectContracts, require_current_approval
 from .publisher import PUBLISHER_HANDOFF_RELATIVE
+from .report import qa_review_proof, render_review_proof
 from .schemas import load_schema
 from .validation import require_valid
 
@@ -32,6 +34,64 @@ def archive_active_result(contracts: ProjectContracts) -> None:
         result_path.unlink()
     else:
         result_path.replace(archive_path)
+    index_path = contracts.directory / "results" / "index.md"
+    if index_path.exists():
+        index_archive = contracts.directory / "recovery" / "stale-results" / f"index-{digest[:16]}.md"
+        if index_archive.exists():
+            index_path.unlink()
+        else:
+            index_path.replace(index_archive)
+
+
+def _write_result_index(contracts: ProjectContracts, manifest: dict[str, Any]) -> Path:
+    lines = [
+        f"# Result index: {contracts.project['title']}",
+        "",
+        "This is a human-facing pointer into the canonical production workspace. The workspace remains the source of truth; no external post was made.",
+        "",
+        "## Finished files",
+        "",
+    ]
+    labels = {
+        "long": "Long video",
+        "short": "9:16 short video",
+        "caption": "Caption sidecar",
+        "text": "Text post",
+        "adapter": "Imported adapter output",
+        "adapter-manifest": "Adapter plan/manifest",
+    }
+    for asset in manifest.get("assets", []):
+        label = labels.get(asset.get("kind"), asset.get("kind", "Asset"))
+        path = asset.get("path", "")
+        lines.append(f"- {label}: [`{path}`](../{path})")
+    lines.extend(
+        [
+            "",
+            "## Proof and handoff",
+            "",
+            "- [Static review report](../reports/review.html)",
+            "- [Review record](../reports/review.json)",
+            "- [Verified run result](run-result.json)",
+            "- [Publisher handoff](../publish/publisher-handoff.json)",
+        ]
+    )
+    qa_paths = [item["path"] for item in qa_review_proof(contracts)]
+    if qa_paths:
+        lines.append("")
+        lines.append("## Visual QA")
+        lines.append("")
+        for path in qa_paths:
+            lines.append(f"- Visual QA proof: [`{path}`](../{path})")
+    lines.extend(
+        [
+            "",
+            "Status: verified locally; publisher handoff remains awaiting separate authorization.",
+            "",
+        ]
+    )
+    path = contracts.directory / "results" / "index.md"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
 
 
 def _require_current_review(
@@ -80,6 +140,14 @@ def _require_current_review(
         raise ACSUserError("Review report publisher handoff binding is stale; rerun `acs review-report`.")
     if review.get("verification_status") != "passed" or review.get("verification_sha256") != sha256_file(verification_path):
         raise ACSUserError("Review report is not bound to current passed verification; rerun `acs review-report`.")
+    render_record_path = contracts.directory / "renders" / "render-record.json"
+    render_record = read_json(render_record_path) if render_record_path.exists() else {}
+    expected_render_proof = render_review_proof(contracts, render_record)
+    if review.get("render_proof", []) != expected_render_proof:
+        raise ACSUserError("Review report render/caption proof is stale; rerun `acs review-report`.")
+    expected_qa_proof = qa_review_proof(contracts)
+    if review.get("qa_proof", []) != expected_qa_proof:
+        raise ACSUserError("Review report visual-QA proof is stale; rerun `acs review-report`.")
     return review
 
 
@@ -113,9 +181,12 @@ def export_result(contracts: ProjectContracts) -> Path:
         review_record_path=review_record_path,
         manifest=manifest,
     )
+    _write_result_index(contracts, manifest)
 
     proof_candidates = [
         ("inspection", "inspection.json"),
+        ("raw-transcript", "transcripts/raw.json"),
+        ("reviewed-transcript", "transcripts/reviewed.json"),
         ("approved-plan", "edit-plan.json"),
         ("render-record", "renders/render-record.json"),
         ("publish-manifest", "publish/manifest.json"),
@@ -123,10 +194,34 @@ def export_result(contracts: ProjectContracts) -> Path:
         ("publish-verification", "publish/verification.json"),
         ("review-report", "reports/review.html"),
         ("review-record", "reports/review.json"),
+        ("result-index", "results/index.md"),
     ]
+    creative_note = contracts.directory / "creative-direction.md"
+    if creative_note.exists():
+        proof_candidates.insert(3, ("creative-direction", "creative-direction.md"))
     derivative_record = contracts.directory / "derived" / "derivative-record.json"
     if derivative_record.exists():
         proof_candidates.insert(3, ("derivative-record", "derived/derivative-record.json"))
+    render_record_path = contracts.directory / "renders" / "render-record.json"
+    if render_record_path.exists():
+        render_record = read_json(render_record_path)
+        for kind, render in render_record.get("renders", {}).items():
+            captions = render.get("captions") or {}
+            sidecar_path = captions.get("sidecar_path")
+            if captions.get("sidecar") and sidecar_path:
+                proof_candidates.append((f"{kind}-caption-sidecar", str(sidecar_path)))
+    for item in qa_review_proof(contracts):
+        proof_candidates.append(("visual-qa", item["path"]))
+    adapter_state = load_current_adapter_import(contracts)
+    if adapter_state is not None:
+        adapter_record, _ = adapter_state
+        proof_candidates.extend(
+            [
+                ("adapter-import", ADAPTER_IMPORT_RELATIVE),
+                ("adapter-output", adapter_record["output"]["path"]),
+                ("adapter-manifest", adapter_record["manifest"]["path"]),
+            ]
+        )
     proof: list[dict[str, str]] = []
     for kind, relative in proof_candidates:
         path = inside_project(contracts.directory, relative, label="proof path")

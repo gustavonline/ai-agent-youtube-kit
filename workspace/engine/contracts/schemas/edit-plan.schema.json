@@ -42,7 +42,32 @@
             "properties": {
               "source": {"type": "string", "minLength": 1},
               "start": {"type": "number", "minimum": 0},
-              "duration": {"type": "number", "minimum": 0}
+              "duration": {"type": "number", "minimum": 0},
+              "audio": {"type": "string", "enum": ["source", "primary", "mute"]},
+              "overlay": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "frame": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "fit": {"type": "string", "enum": ["cover", "contain"]},
+            "anchor": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "x": {"type": "number", "minimum": 0},
+                "y": {"type": "number", "minimum": 0}
+              }
+            },
+            "focal_point": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "x": {"type": "number", "minimum": 0},
+                "y": {"type": "number", "minimum": 0}
+              }
             }
           }
         }
@@ -67,7 +92,32 @@
             "properties": {
               "source": {"type": "string", "minLength": 1},
               "start": {"type": "number", "minimum": 0},
-              "duration": {"type": "number", "minimum": 0}
+              "duration": {"type": "number", "minimum": 0},
+              "audio": {"type": "string", "enum": ["source", "primary", "mute"]},
+              "overlay": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "frame": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "fit": {"type": "string", "enum": ["cover", "contain"]},
+            "anchor": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "x": {"type": "number", "minimum": 0},
+                "y": {"type": "number", "minimum": 0}
+              }
+            },
+            "focal_point": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "x": {"type": "number", "minimum": 0},
+                "y": {"type": "number", "minimum": 0}
+              }
             }
           }
         }
@@ -85,6 +135,131 @@
     },
     "cta": {"type": "string", "minLength": 1},
     "transcript_ref": {"type": "string", "minLength": 1},
+    "captions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "long": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "format": {"type": "string", "enum": ["srt", "vtt"]},
+            "sidecar": {"type": "boolean"},
+            "burn": {"type": "boolean"},
+            "max_chars": {"type": "integer", "minimum": 1},
+            "max_words": {"type": "integer", "minimum": 1},
+            "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]},
+            "placement": {"type": "string", "enum": ["bottom", "top", "center"]},
+            "font": {"type": "string"},
+            "font_size": {"type": "integer", "minimum": 1},
+            "color": {"type": "string", "minLength": 1},
+            "outline_color": {"type": "string", "minLength": 1},
+            "outline_width": {"type": "integer", "minimum": 0},
+            "margin": {"type": "integer", "minimum": 0},
+            "style": {"type": "object", "additionalProperties": false, "properties": {"font": {"type": "string"}, "font_size": {"type": "integer", "minimum": 1}, "color": {"type": "string", "minLength": 1}, "outline_color": {"type": "string", "minLength": 1}, "outline_width": {"type": "integer", "minimum": 0}, "placement": {"type": "string", "enum": ["bottom", "top", "center"]}, "margin": {"type": "integer", "minimum": 0}}},
+            "chunking": {"type": "object", "additionalProperties": false, "properties": {"max_chars": {"type": "integer", "minimum": 1}, "max_words": {"type": "integer", "minimum": 1}, "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]}}}
+          }
+        },
+        "short": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "format": {"type": "string", "enum": ["srt", "vtt"]},
+            "sidecar": {"type": "boolean"},
+            "burn": {"type": "boolean"},
+            "max_chars": {"type": "integer", "minimum": 1},
+            "max_words": {"type": "integer", "minimum": 1},
+            "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]},
+            "placement": {"type": "string", "enum": ["bottom", "top", "center"]},
+            "font": {"type": "string"},
+            "font_size": {"type": "integer", "minimum": 1},
+            "color": {"type": "string", "minLength": 1},
+            "outline_color": {"type": "string", "minLength": 1},
+            "outline_width": {"type": "integer", "minimum": 0},
+            "margin": {"type": "integer", "minimum": 0},
+            "style": {"type": "object", "additionalProperties": false, "properties": {"font": {"type": "string"}, "font_size": {"type": "integer", "minimum": 1}, "color": {"type": "string", "minLength": 1}, "outline_color": {"type": "string", "minLength": 1}, "outline_width": {"type": "integer", "minimum": 0}, "placement": {"type": "string", "enum": ["bottom", "top", "center"]}, "margin": {"type": "integer", "minimum": 0}}},
+            "chunking": {"type": "object", "additionalProperties": false, "properties": {"max_chars": {"type": "integer", "minimum": 1}, "max_words": {"type": "integer", "minimum": 1}, "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]}}}
+          }
+        },
+        "long_form": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "format": {"type": "string", "enum": ["srt", "vtt"]},
+            "sidecar": {"type": "boolean"},
+            "burn": {"type": "boolean"},
+            "max_chars": {"type": "integer", "minimum": 1},
+            "max_words": {"type": "integer", "minimum": 1},
+            "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]},
+            "placement": {"type": "string", "enum": ["bottom", "top", "center"]},
+            "font": {"type": "string"},
+            "font_size": {"type": "integer", "minimum": 1},
+            "color": {"type": "string", "minLength": 1},
+            "outline_color": {"type": "string", "minLength": 1},
+            "outline_width": {"type": "integer", "minimum": 0},
+            "margin": {"type": "integer", "minimum": 0},
+            "style": {"type": "object", "additionalProperties": false, "properties": {"font": {"type": "string"}, "font_size": {"type": "integer", "minimum": 1}, "color": {"type": "string", "minLength": 1}, "outline_color": {"type": "string", "minLength": 1}, "outline_width": {"type": "integer", "minimum": 0}, "placement": {"type": "string", "enum": ["bottom", "top", "center"]}, "margin": {"type": "integer", "minimum": 0}}},
+            "chunking": {"type": "object", "additionalProperties": false, "properties": {"max_chars": {"type": "integer", "minimum": 1}, "max_words": {"type": "integer", "minimum": 1}, "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]}}}
+          }
+        },
+        "short_form": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "format": {"type": "string", "enum": ["srt", "vtt"]},
+            "sidecar": {"type": "boolean"},
+            "burn": {"type": "boolean"},
+            "max_chars": {"type": "integer", "minimum": 1},
+            "max_words": {"type": "integer", "minimum": 1},
+            "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]},
+            "placement": {"type": "string", "enum": ["bottom", "top", "center"]},
+            "font": {"type": "string"},
+            "font_size": {"type": "integer", "minimum": 1},
+            "color": {"type": "string", "minLength": 1},
+            "outline_color": {"type": "string", "minLength": 1},
+            "outline_width": {"type": "integer", "minimum": 0},
+            "margin": {"type": "integer", "minimum": 0},
+            "style": {"type": "object", "additionalProperties": false, "properties": {"font": {"type": "string"}, "font_size": {"type": "integer", "minimum": 1}, "color": {"type": "string", "minLength": 1}, "outline_color": {"type": "string", "minLength": 1}, "outline_width": {"type": "integer", "minimum": 0}, "placement": {"type": "string", "enum": ["bottom", "top", "center"]}, "margin": {"type": "integer", "minimum": 0}}},
+            "chunking": {"type": "object", "additionalProperties": false, "properties": {"max_chars": {"type": "integer", "minimum": 1}, "max_words": {"type": "integer", "minimum": 1}, "case": {"type": "string", "enum": ["preserve", "upper", "lower", "title"]}}}
+          }
+        }
+      }
+    },
+    "creative_direction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "references": {"type": "array", "items": {"type": "string"}},
+        "rights_notes": {"type": "string"},
+        "caption_choice": {"type": "string"},
+        "framing_choice": {"type": "string"},
+        "grade_choice": {"type": "string"},
+        "callout_choice": {"type": "string"},
+        "thumbnail_choice": {"type": "string"},
+        "motion_choice": {"type": "string"},
+        "lut": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "preview_path", "approved", "approved_by"],
+              "properties": {
+                "path": {"type": "string", "minLength": 1},
+                "preview_path": {"type": "string", "minLength": 1},
+                "preview_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                "approved": {"type": "boolean"},
+                "approved_by": {"type": "string", "minLength": 1}
+              }
+            }
+          ]
+        }
+      }
+    },
     "notes": {"type": "string"}
   }
 }

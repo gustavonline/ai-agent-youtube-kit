@@ -11,10 +11,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__
+from .adapters import import_adapter_output
 from .derive import derive_project
 from .errors import ACSUserError
 from .inspect import inspect_project
-from .io import read_json, write_json
+from .io import copy_file, read_json, write_json
 from .media import binary_path
 from .package import package_project, verify_package
 from .paths import GENERATED_DIRS, display_path, inside_project, project_file, resolve_project
@@ -24,7 +25,15 @@ from .report import create_review_report
 from .result import export_result
 from .scaffold import load_brand_profile, scaffold_project
 from .schemas import load_schema
-from .transcript import load_and_normalize
+from .transcript import (
+    RAW_TRANSCRIPT_RELATIVE,
+    REVIEWED_TRANSCRIPT_RELATIVE,
+    build_raw_record,
+    build_reviewed_record,
+    load_and_normalize,
+    load_current_reviewed_transcript,
+    is_asr_transcript,
+)
 from .validation import require_valid
 
 
@@ -64,6 +73,38 @@ def _parser() -> argparse.ArgumentParser:
     ingest = sub.add_parser("ingest-transcript", help="Normalize JSON/Whisper/Markdown/SRT/VTT into transcripts/active.json.")
     ingest.add_argument("project", metavar="workspace")
     ingest.add_argument("transcript")
+    ingest.add_argument(
+        "--replace-raw",
+        action="store_true",
+        help="Explicitly archive the prior immutable raw record before replacing it.",
+    )
+
+    review_transcript = sub.add_parser(
+        "review-transcript",
+        help="Register a bounded reviewed transcript truth against the immutable raw record.",
+    )
+    review_transcript.add_argument("project", metavar="workspace")
+    review_transcript.add_argument("transcript")
+    review_transcript.add_argument("--by", required=True, help="Reviewer identity.")
+    review_transcript.add_argument(
+        "--status",
+        choices=["reviewed", "partially_reviewed", "partial", "rejected"],
+        default="reviewed",
+        help="Reviewed truth state; partial is accepted only when the selected ranges are covered.",
+    )
+    review_transcript.add_argument("--note", default="", help="Human-readable review note.")
+
+    adapter = sub.add_parser(
+        "import-adapter",
+        help="Supervisedly import a rendered adapter output plus its JSON plan/manifest into normal ACS proof.",
+    )
+    adapter.add_argument("project", metavar="workspace")
+    adapter.add_argument("output", metavar="rendered-output")
+    adapter.add_argument("--manifest", required=True, help="Adapter JSON plan or output manifest.")
+    adapter.add_argument("--adapter", required=True, help="Named adapter, for example video-edit-cli.")
+    adapter.add_argument("--version", default="", help="Optional adapter version or snapshot label.")
+    adapter.add_argument("--by", required=True, help="Reviewer who approved this import.")
+    adapter.add_argument("--provenance", default="", help="Source/provenance note bound to the imported result.")
 
     render = sub.add_parser("render", help="Render approved long-form and/or vertical short media with FFmpeg.")
     render.add_argument("project", metavar="workspace")
@@ -198,12 +239,105 @@ def command_plan(args: argparse.Namespace) -> int:
 def command_ingest(args: argparse.Namespace) -> int:
     contracts, project_dir = _load(args.project)
     require_valid_project(contracts, require_sources=True)
-    normalized = load_and_normalize(Path(args.transcript).expanduser().resolve())
+    input_path = Path(args.transcript).expanduser().resolve()
+    normalized = load_and_normalize(input_path)
+    raw_record = build_raw_record(
+        normalized,
+        project_dir=project_dir,
+        project=contracts.project,
+        input_path=input_path,
+    )
+    raw_path = project_dir / RAW_TRANSCRIPT_RELATIVE
+    if raw_path.exists():
+        previous_raw = read_json(raw_path)
+        if previous_raw.get("content_hash") != raw_record.get("content_hash"):
+            if not args.replace_raw:
+                raise ACSUserError(
+                    "Immutable raw transcript already exists with different content. "
+                    "Pass --replace-raw to archive it before ingesting a new raw input."
+                )
+            archive = project_dir / "transcripts" / "raw-revisions" / f"raw-{previous_raw.get('content_hash', 'unknown')[:16]}.json"
+            if not archive.exists():
+                copy_file(raw_path, archive)
+        else:
+            raw_record = previous_raw
+    write_json(raw_path, raw_record)
+    # Keep the long-standing active.json path as a raw adapter view. It is
+    # deliberately not used by publish-ready text or captions.
     target = inside_project(project_dir, contracts.project["transcript"]["path"], label="project.transcript.path")
     target.parent.mkdir(parents=True, exist_ok=True)
     write_json(target, normalized)
+    if not is_asr_transcript(normalized, input_path):
+        reviewed_path = project_dir / REVIEWED_TRANSCRIPT_RELATIVE
+        previous_revision = 0
+        if reviewed_path.exists():
+            try:
+                previous_revision = int(read_json(reviewed_path).get("revision", 0) or 0)
+            except ACSUserError:
+                previous_revision = 0
+        reviewed = build_reviewed_record(
+            normalized,
+            raw_record=raw_record,
+            project_dir=project_dir,
+            project=contracts.project,
+            reviewer="provided-transcript",
+            status="reviewed",
+            note="Provided transcript registered as reviewed truth; replace with human corrections when needed.",
+            revision=previous_revision + 1,
+        )
+        write_json(reviewed_path, reviewed)
     print(f"Ingested transcript: {target}")
     print(f"Segments: {len(normalized['segments'])}")
+    print(f"Raw transcript: {raw_path}")
+    if is_asr_transcript(normalized, input_path):
+        print("ASR input remains raw; run `acs review-transcript` before publish-ready steps.")
+    else:
+        print(f"Reviewed truth: {project_dir / REVIEWED_TRANSCRIPT_RELATIVE}")
+    return 0
+
+
+def command_review_transcript(args: argparse.Namespace) -> int:
+    contracts, project_dir = _load(args.project)
+    require_valid_project(contracts, require_sources=True)
+    raw_path = project_dir / RAW_TRANSCRIPT_RELATIVE
+    if not raw_path.exists():
+        raise ACSUserError("Review requires an immutable raw transcript; run `acs ingest-transcript` first.")
+    raw_record = read_json(raw_path)
+    normalized = load_and_normalize(Path(args.transcript).expanduser().resolve())
+    reviewed_path = project_dir / REVIEWED_TRANSCRIPT_RELATIVE
+    previous_revision = 0
+    if reviewed_path.exists():
+        previous_revision = int(read_json(reviewed_path).get("revision", 0) or 0)
+    reviewed = build_reviewed_record(
+        normalized,
+        raw_record=raw_record,
+        project_dir=project_dir,
+        project=contracts.project,
+        reviewer=args.by,
+        status=args.status,
+        note=args.note,
+        revision=previous_revision + 1,
+    )
+    write_json(reviewed_path, reviewed)
+    print(f"Reviewed transcript revision {reviewed['revision']}: {reviewed_path}")
+    print(f"Status: {reviewed['status']}; coverage ranges: {len(reviewed['coverage'])}")
+    return 0
+
+
+def command_import_adapter(args: argparse.Namespace) -> int:
+    contracts, _ = _load(args.project)
+    manifest = Path(args.manifest).expanduser().resolve()
+    provenance = args.provenance.strip() or "Supervised local adapter output; source rights remain owned by the ACS production."
+    record = import_adapter_output(
+        contracts,
+        Path(args.output),
+        manifest,
+        adapter=args.adapter,
+        reviewer=args.by,
+        provenance=provenance,
+        adapter_version=args.version,
+    )
+    print(f"Imported adapter result: {record}")
     return 0
 
 
@@ -276,6 +410,8 @@ COMMANDS = {
     "validate": command_validate,
     "plan": command_plan,
     "ingest-transcript": command_ingest,
+    "review-transcript": command_review_transcript,
+    "import-adapter": command_import_adapter,
     "render": command_render,
     "derive": command_derive,
     "package": command_package,

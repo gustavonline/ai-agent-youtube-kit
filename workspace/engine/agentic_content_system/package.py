@@ -9,6 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from .derive import prune_disabled_derivatives, require_current_linkedin_derivative
+from .captions import caption_intent
+from .adapters import load_current_adapter_import
+from .creative import require_creative_direction
 from .delivery import current_delivery_intent_hash
 from .errors import ACSUserError
 from .inspect import require_current_inspection
@@ -54,9 +57,19 @@ def _expected_routes(
     contracts: ProjectContracts,
     *,
     asset_paths: dict[str, str],
+    caption_paths: dict[str, str] | None = None,
+    adapter_paths: list[str] | None = None,
     post_path: str,
 ) -> list[dict[str, Any]]:
     routes: list[dict[str, Any]] = []
+    first_media_channel = next(
+        (
+            channel["id"]
+            for channel in enabled_channels(contracts.brand)
+            if set(channel.get("allowed_asset_types", [])) & {"long", "short"}
+        ),
+        None,
+    )
     for channel in enabled_channels(contracts.brand):
         channel_id = channel["id"]
         allowed = set(channel.get("allowed_asset_types", []))
@@ -65,11 +78,45 @@ def _expected_routes(
             route_assets.append(asset_paths["long"])
         if "short" in allowed and "short" in asset_paths:
             route_assets.append(asset_paths["short"])
+        for kind, caption_path in (caption_paths or {}).items():
+            if kind in allowed:
+                route_assets.append(caption_path)
+        if adapter_paths and channel_id == first_media_channel:
+            route_assets.extend(adapter_paths)
         route_post = post_path if channel_id == "linkedin" and "text" in allowed else ""
         if not route_assets and not route_post:
             raise ACSUserError(f"Enabled channel {channel_id!r} has no enabled asset route in this edit plan.")
         routes.append({"channel": channel_id, "assets": route_assets, "post_path": route_post})
     return routes
+
+
+def _current_caption_paths(contracts: ProjectContracts) -> dict[str, str]:
+    record_path = contracts.directory / "renders" / "render-record.json"
+    if not record_path.exists():
+        return {}
+    record = read_json(record_path)
+    paths: dict[str, str] = {}
+    for kind in ("long", "short"):
+        if not contracts.edit_plan.get(f"{kind}_form", {}).get("enabled"):
+            continue
+        if caption_intent(contracts.edit_plan, kind) is None:
+            continue
+        captions = record.get("renders", {}).get(kind, {}).get("captions") or {}
+        sidecar = captions.get("sidecar_path")
+        if captions.get("sidecar") and sidecar:
+            paths[kind] = "publish/captions/" + Path(str(sidecar)).name
+    return paths
+
+
+def _current_adapter_paths(contracts: ProjectContracts) -> list[str]:
+    state = load_current_adapter_import(contracts)
+    if state is None:
+        return []
+    record, _ = state
+    return [
+        "publish/adapters/" + Path(record["output"]["path"]).name,
+        "publish/adapters/" + Path(record["manifest"]["path"]).name,
+    ]
 
 
 def _expected_provenance(contracts: ProjectContracts) -> list[dict[str, Any]]:
@@ -90,6 +137,7 @@ def package_project(contracts: ProjectContracts) -> Path:
     """Stage a fresh package and replace the old handoff only after success."""
 
     require_current_approval(contracts)
+    creative_proof = require_creative_direction(contracts)
     # Keep disabled routes out of the active derivative state even when the
     # caller goes straight from policy change to package without a separate
     # `acs derive` invocation.
@@ -99,6 +147,9 @@ def package_project(contracts: ProjectContracts) -> Path:
     enabled = _enabled_media_kinds(contracts)
     render_kinds = [kind for kind in ("long", "short") if kind in enabled and contracts.edit_plan[f"{kind}_form"].get("enabled")]
     renders = require_current_render_outputs(contracts, render_kinds)
+    caption_paths = _current_caption_paths(contracts)
+    adapter_state = load_current_adapter_import(contracts)
+    adapter_paths = _current_adapter_paths(contracts)
     channels = channels_by_id(contracts.brand)
 
     staging_dir: Path | None = Path(
@@ -122,6 +173,36 @@ def package_project(contracts: ProjectContracts) -> Path:
             assets.append(_asset_record(kind, source, destination, path_text))
             asset_paths[kind] = path_text
 
+        for kind, publish_path in caption_paths.items():
+            caption_source = inside_project(
+                contracts.directory,
+                str(read_json(contracts.directory / "renders" / "render-record.json")["renders"][kind]["captions"]["sidecar_path"]),
+                label=f"{kind} caption sidecar",
+            )
+            destination = staging_dir / "captions" / Path(publish_path).name
+            assets.append(_asset_record("caption", caption_source, destination, publish_path))
+
+        if adapter_state is not None:
+            adapter_record, _ = adapter_state
+            adapter_output = inside_project(contracts.directory, adapter_record["output"]["path"], label="adapter output")
+            adapter_manifest = inside_project(contracts.directory, adapter_record["manifest"]["path"], label="adapter manifest")
+            assets.append(
+                _asset_record(
+                    "adapter",
+                    adapter_output,
+                    staging_dir / "adapters" / Path(adapter_paths[0]).name,
+                    adapter_paths[0],
+                )
+            )
+            assets.append(
+                _asset_record(
+                    "adapter-manifest",
+                    adapter_manifest,
+                    staging_dir / "adapters" / Path(adapter_paths[1]).name,
+                    adapter_paths[1],
+                )
+            )
+
         post_path = ""
         if channels.get("linkedin", {}).get("enabled"):
             if "text" not in channels["linkedin"].get("allowed_asset_types", []):
@@ -131,7 +212,13 @@ def package_project(contracts: ProjectContracts) -> Path:
             post_path = "publish/posts/linkedin.md"
             assets.append(_asset_record("text", linkedin_source, linkedin_destination, post_path))
 
-        routes = _expected_routes(contracts, asset_paths=asset_paths, post_path=post_path)
+        routes = _expected_routes(
+            contracts,
+            asset_paths=asset_paths,
+            caption_paths=caption_paths,
+            adapter_paths=adapter_paths,
+            post_path=post_path,
+        )
         manifest_basis = {
             "project_id": contracts.project["project_id"],
             "plan_id": contracts.edit_plan["plan_id"],
@@ -166,6 +253,7 @@ def package_project(contracts: ProjectContracts) -> Path:
                 for channel in disabled_channels(contracts.brand)
             ],
             "provenance": _expected_provenance(contracts),
+            "creative_direction": creative_proof,
             "verification": {"status": "not_run", "external_posting": False},
         }
         require_valid(manifest, load_schema("publish-manifest"), "publish manifest")
@@ -259,6 +347,8 @@ def validate_current_package(contracts: ProjectContracts) -> dict[str, Any]:
         for kind in _enabled_media_kinds(contracts)
         if contracts.edit_plan[f"{kind}_form"].get("enabled")
     }
+    expected_asset_paths.update(_current_caption_paths(contracts).values())
+    expected_asset_paths.update(_current_adapter_paths(contracts))
     if channels_by_id(contracts.brand).get("linkedin", {}).get("enabled"):
         expected_asset_paths.add("publish/posts/linkedin.md")
     if set(asset_map) != expected_asset_paths:
@@ -274,12 +364,16 @@ def validate_current_package(contracts: ProjectContracts) -> dict[str, Any]:
             for kind in ("long", "short")
             if f"publish/assets/{kind}.mp4" in asset_map or kind == "short" and "publish/assets/short-vertical.mp4" in asset_map
         },
+        caption_paths={kind: path for kind, path in _current_caption_paths(contracts).items() if path in asset_map},
+        adapter_paths=[path for path in _current_adapter_paths(contracts) if path in asset_map],
         post_path="publish/posts/linkedin.md" if "publish/posts/linkedin.md" in asset_map else "",
     )
     if manifest.get("routes") != expected_routes:
         raise ACSUserError("Publish manifest routes do not exactly match current channel policy.")
     if manifest.get("provenance") != _expected_provenance(contracts):
         raise ACSUserError("Publish manifest provenance entries do not match project.json.")
+    if manifest.get("creative_direction") != require_creative_direction(contracts):
+        raise ACSUserError("Publish manifest creative direction is stale; repackage after the current review.")
 
     render_kinds = [
         kind

@@ -42,6 +42,33 @@
     "publisher_handoff_path": {"type": "string", "const": "publish/publisher-handoff.json"},
     "publisher_handoff_sha256": {"type": "string", "pattern": "^$|^[a-f0-9]{64}$"},
     "verification_status": {"type": "string", "enum": ["not_packaged", "not_run", "passed"]},
-    "verification_sha256": {"type": "string", "pattern": "^$|^[a-f0-9]{64}$"}
+    "verification_sha256": {"type": "string", "pattern": "^$|^[a-f0-9]{64}$"},
+    "render_proof": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "output", "output_sha256", "framing", "captions"],
+        "properties": {
+          "kind": {"type": "string", "enum": ["long", "short"]},
+          "output": {"type": "string"},
+          "output_sha256": {"type": "string", "pattern": "^$|^[a-f0-9]{64}$"},
+          "framing": {"type": "object"},
+          "captions": {"type": "object"}
+        }
+      }
+    },
+    "qa_proof": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    }
   }
 }
