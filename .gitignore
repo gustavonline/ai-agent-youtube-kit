@@ -16,7 +16,6 @@ workspace/productions/*/edit-plan.previous.json
 workspace/productions/*/edit/
 workspace/productions/*/adapters/*
 workspace/productions/*/local-whisper/
-workspace/productions/acs-real-owner-footage-acceptance/
 examples/*/download/
 examples/*/frames/
 __pycache__/

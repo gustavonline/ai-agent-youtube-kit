@@ -43,6 +43,7 @@
               "source": {"type": "string", "minLength": 1},
               "start": {"type": "number", "minimum": 0},
               "duration": {"type": "number", "minimum": 0},
+              "audio_start": {"type": "number", "minimum": 0},
               "audio": {"type": "string", "enum": ["source", "primary", "mute"]},
               "overlay": {"type": "string", "minLength": 1}
             }
@@ -93,6 +94,7 @@
               "source": {"type": "string", "minLength": 1},
               "start": {"type": "number", "minimum": 0},
               "duration": {"type": "number", "minimum": 0},
+              "audio_start": {"type": "number", "minimum": 0},
               "audio": {"type": "string", "enum": ["source", "primary", "mute"]},
               "overlay": {"type": "string", "minLength": 1}
             }

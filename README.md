@@ -75,7 +75,7 @@ the portable burned-caption fallback.
 
 ## Tested boundary and current limitation
 
-The v0.2 boundary is the cross-platform Python CLI, versioned JSON contracts,
+The v0.3 boundary is the cross-platform Python CLI, versioned JSON contracts,
 FFmpeg/ffprobe, local transcript adapters, static reports, and explicit human
 approval. `external_posting` remains `false`; the publisher handoff is
 `not_posted: true` and awaits separate authorization. Full local tests and the

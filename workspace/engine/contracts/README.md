@@ -21,7 +21,7 @@ explicit timezone. When the host exposes the standard-library IANA zoneinfo
 database, ACS also rejects unknown timezone names; on a bare host without that
 database it still requires a non-empty timezone but makes no semantic name
 claim. The publisher handoff is generated from that intent and is
-the only v0.2 scheduling/publisher boundary; it never grants posting
+the only v0.3 scheduling/publisher boundary; it never grants posting
 permission. Its manifest binding excludes only the mutable verify-time
 `verification` block; the handoff's asset hashes and the package's verification
 record still bind the current bytes.
@@ -37,5 +37,5 @@ and verification are publish gates: every source must be `owned`, `licensed`,
 cleared for a publish-ready handoff.
 
 Keep schema changes additive or bump the schema version and migration docs.
-The v0.2 validator intentionally covers the transparent subset needed by the
+The v0.3 validator intentionally covers the transparent subset needed by the
 CLI and does not require a third-party validation service.

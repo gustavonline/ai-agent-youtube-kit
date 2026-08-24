@@ -3,7 +3,7 @@
 Agentic Content System is a local-first, cloneable execution system. It runs
 without AIOS and keeps the durable truth in inspectable files. There is no
 hosted backend, auth, database, queue, Electron/Tauri shell, cloud AI, or real
-publisher in v0.2.
+publisher in v0.3.
 
 ```text
 Conversation, brief, AIOS task, or standalone context
@@ -32,7 +32,7 @@ verify -> static HTML review -> local proof/result -> caller reads learning
 - `edit-plan.json` owns the deterministic render intent and explicit approval
   state. It is the gate before render, derivative generation, and packaging.
 - `publish/manifest.json` owns the generated publish-ready handoff, hashes,
-  enabled routes, disabled routes, and the v0.2 no-external-posting assertion.
+  enabled routes, disabled routes, and the v0.3 no-external-posting assertion.
 - `context/` is optional human/source-note space. It is not a contract and is
   never read by runtime validation, approval, rendering, packaging, or result
   export.
@@ -76,7 +76,15 @@ surface is a static report, not an editing studio.
 The dated editor/engine comparison and the rationale for keeping this narrow
 contract + FFmpeg boundary are recorded in
 [`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md); full editors remain
-supervised adapters rather than v0.2 core dependencies.
+supervised adapters rather than v0.3 core dependencies.
+
+The edit plan may bind `audio_start` for a primary-audio B-roll segment. The
+visual source still determines the output window and duration; the primary
+source at `audio_start` determines audio and reviewed transcript/caption
+coverage. Captions map ordered segments to output time, skip muted segments,
+and are burned last. A supplied approved LUT is applied with FFmpeg `lut3d`
+inside each segment render before concat; a build without that filter fails
+closed to a supervised adapter.
 
 The persistent AIOS Space may remain the owner of durable business defaults and
 learning. A task-level caller or judgment layer copies resolved values into a

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 import shutil
 import tempfile
 import textwrap
@@ -10,9 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from .errors import ACSUserError
-from .io import canonical_hash, sha256_file, write_json
+from .io import canonical_hash, sha256_file
 from .media import probe, require_media_tools, run_media_command
-from .paths import display_path
+from .paths import display_path, inside_project
 from .transcript import (
     current_reviewed_segments,
     plan_transcript_ranges,
@@ -35,6 +34,17 @@ DEFAULTS: dict[str, Any] = {
     "outline_width": 3,
     "margin": 64,
 }
+
+
+FONT_CANDIDATES = (
+    Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+    Path("/Library/Fonts/Arial.ttf"),
+    Path(r"C:\Windows\Fonts\arial.ttf"),
+    Path(r"C:\Windows\Fonts\segoeui.ttf"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+    Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"),
+)
+PILLOW_DEFAULT_FONT_HASH = canonical_hash({"font": "pillow-default-bitmap-v1"})
 
 
 def _merge_config(value: dict[str, Any]) -> dict[str, Any]:
@@ -102,17 +112,51 @@ def _chunks(text: str, start: float, end: float, words: list[dict[str, Any]], co
         ]
 
     text = _case(text.strip(), str(config.get("case", "preserve")))
-    if len(text) <= max_chars:
-        return [{"start": start, "end": max(end, start + 0.05), "text": text}]
-    pieces = textwrap.wrap(text, width=max_chars, break_long_words=False, break_on_hyphens=False)
+    if not text:
+        return []
+    tokens = text.split()
+    groups: list[list[str]] = []
+    current: list[str] = []
+    for token in tokens:
+        # A no-word transcript still honors both configured limits. A single
+        # overlong token is the only unavoidable exception to the usual
+        # word-boundary preference, so split that token deterministically.
+        if len(token) > max_chars:
+            if current:
+                groups.append(current)
+                current = []
+            groups.extend(
+                [
+                    [piece]
+                    for piece in textwrap.wrap(
+                        token,
+                        width=max_chars,
+                        break_long_words=True,
+                        break_on_hyphens=False,
+                    )
+                ]
+            )
+            continue
+        proposed = " ".join(current + [token])
+        if current and (len(proposed) > max_chars or len(current) >= max_words):
+            groups.append(current)
+            current = []
+        current.append(token)
+    if current:
+        groups.append(current)
+    pieces = [" ".join(group) for group in groups if group]
     if not pieces:
         return []
-    span = max(end - start, 0.05)
-    step = span / len(pieces)
-    return [
-        {"start": start + index * step, "end": start + (index + 1) * step, "text": piece}
-        for index, piece in enumerate(pieces)
-    ]
+    timing_end = max(float(end), float(start) + 0.05)
+    span = timing_end - float(start)
+    total_weight = sum(max(1, len(piece)) for piece in pieces)
+    cursor = start
+    result: list[dict[str, Any]] = []
+    for index, piece in enumerate(pieces):
+        piece_end = timing_end if index == len(pieces) - 1 else cursor + span * max(1, len(piece)) / total_weight
+        result.append({"start": cursor, "end": piece_end, "text": piece})
+        cursor = piece_end
+    return result
 
 
 def _source_duration(segment: dict[str, Any]) -> float:
@@ -122,6 +166,104 @@ def _source_duration(segment: dict[str, Any]) -> float:
     if duration > 0:
         return min(duration, available) if available > 0 else duration
     return available
+
+
+def _font_candidate_is_loadable(path: Path, size: int) -> bool:
+    try:
+        from PIL import ImageFont
+
+        ImageFont.truetype(str(path), size)
+    except (ImportError, OSError):
+        return False
+    return True
+
+
+def _resolve_font(
+    config: dict[str, Any],
+    project_dir: Path | None,
+    *,
+    size: int,
+    validate: bool,
+) -> tuple[dict[str, Any], Path | None]:
+    """Resolve the exact font input used by Pillow and return public proof."""
+
+    font_value = str(config.get("font") or "").strip()
+    if font_value:
+        if project_dir is None:
+            raise ACSUserError("An explicit caption font must be a production-local relative path.")
+        path = inside_project(project_dir, font_value, label="caption font")
+        if not path.is_file():
+            raise ACSUserError(f"Caption font does not exist: {display_path(project_dir, path)}")
+        if validate and not _font_candidate_is_loadable(path, size):
+            raise ACSUserError(f"Caption font cannot be loaded by Pillow: {display_path(project_dir, path)}")
+        return (
+            {
+                "kind": "custom",
+                "identity": path.name,
+                "path": display_path(project_dir, path),
+                "sha256": sha256_file(path),
+                "bytes": path.stat().st_size,
+            },
+            path,
+        )
+
+    for candidate in FONT_CANDIDATES:
+        if candidate.is_file() and (not validate or _font_candidate_is_loadable(candidate, size)):
+            return (
+                {
+                    "kind": "system-fallback",
+                    "identity": candidate.name,
+                    "path": str(candidate),
+                    "sha256": sha256_file(candidate),
+                    "bytes": candidate.stat().st_size,
+                },
+                candidate,
+            )
+    return (
+        {
+            "kind": "pillow-default",
+            "identity": "Pillow default bitmap font",
+            "path": "Pillow default bitmap font",
+            "sha256": PILLOW_DEFAULT_FONT_HASH,
+            "bytes": 0,
+        },
+        None,
+    )
+
+
+def caption_font_proof(
+    config: dict[str, Any],
+    project_dir: Path,
+    *,
+    size: int | None = None,
+    validate: bool = False,
+) -> dict[str, Any]:
+    """Return hash-bound proof for a custom or resolved fallback font."""
+
+    proof, _ = _resolve_font(
+        config,
+        project_dir,
+        size=max(1, int(size or config.get("font_size", DEFAULTS["font_size"]))),
+        validate=validate,
+    )
+    return proof
+
+
+def caption_render_fingerprint(contracts: Any, kind: str) -> dict[str, Any] | None:
+    config = caption_intent(contracts.edit_plan, kind)
+    if config is None:
+        return None
+    reviewed = reviewed_transcript_proof(contracts)
+    return {
+        "intent_hash": canonical_hash(config),
+        "reviewed_transcript_revision": reviewed["revision"],
+        "reviewed_transcript_sha256": reviewed["sha256"],
+        "font_proof": caption_font_proof(
+            config,
+            contracts.directory,
+            validate=bool(config.get("burn", False)),
+        ),
+    }
 
 
 def build_caption_cues(contracts: Any, kind: str, edit_segments: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -142,13 +284,25 @@ def build_caption_cues(contracts: Any, kind: str, edit_segments: list[dict[str, 
         source = str(edit_segment.get("source") or default_source)
         source_start = float(edit_segment.get("start") or 0)
         source_duration = _source_duration(edit_segment)
-        source_end = source_start + source_duration
+        if str(edit_segment.get("audio") or "source") == "mute":
+            # Muted B-roll still occupies the ordered output timeline, but it
+            # cannot contribute spoken text even when a reviewed transcript
+            # happens to cover the same source bytes.
+            output_offset += source_duration
+            continue
+        transcript_source = default_source if str(edit_segment.get("audio") or "source") == "primary" else source
+        transcript_start = (
+            float(edit_segment.get("audio_start"))
+            if str(edit_segment.get("audio") or "source") == "primary" and edit_segment.get("audio_start") is not None
+            else source_start
+        )
+        transcript_end = transcript_start + source_duration
         for reviewed in reviewed_segments:
             reviewed_source = str(reviewed.get("source") or default_source)
-            if reviewed_source != source:
+            if reviewed_source != transcript_source:
                 continue
-            overlap_start = max(float(reviewed.get("start") or 0), source_start)
-            overlap_end = min(float(reviewed.get("end") or 0), source_end)
+            overlap_start = max(float(reviewed.get("start") or 0), transcript_start)
+            overlap_end = min(float(reviewed.get("end") or 0), transcript_end)
             if overlap_end <= overlap_start:
                 continue
             for chunk in _chunks(
@@ -158,15 +312,15 @@ def build_caption_cues(contracts: Any, kind: str, edit_segments: list[dict[str, 
                 [word for word in reviewed.get("words", []) if isinstance(word, dict) and float(word.get("end", 0)) > overlap_start and float(word.get("start", 0)) < overlap_end],
                 config,
             ):
-                start = output_offset + max(0.0, chunk["start"] - source_start)
-                end = output_offset + min(source_duration, chunk["end"] - source_start)
+                start = output_offset + max(0.0, chunk["start"] - transcript_start)
+                end = output_offset + min(source_duration, chunk["end"] - transcript_start)
                 if end > start:
                     cues.append(
                         {
                             "start": round(start, 3),
                             "end": round(end, 3),
                             "text": chunk["text"],
-                            "source": source,
+                            "source": transcript_source,
                             "source_start": round(chunk["start"], 3),
                             "source_end": round(chunk["end"], 3),
                         }
@@ -197,50 +351,37 @@ def caption_text(cues: list[dict[str, Any]], format_name: str) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def _font_and_color(config: dict[str, Any], size: int):
+def _font_and_color(
+    config: dict[str, Any],
+    size: int,
+    *,
+    project_dir: Path | None = None,
+    font_path: Path | None = None,
+    font_proof: dict[str, Any] | None = None,
+):
     try:
         from PIL import ImageColor, ImageFont
     except ImportError as exc:
         raise ACSUserError(
             "Burned captions need the portable Pillow fallback. Install the ACS dependency with `python -m pip install -e .`."
         ) from exc
-    font_value = str(config.get("font") or "")
-
-    def portable_font():
-        # Prefer a widely available Unicode font so reviewed text such as
-        # Danish, German, or accented names does not become tofu glyphs. The
-        # list is deliberately small and platform-neutral; an explicit font
-        # in the caption intent still wins.
-        candidates = (
-            Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
-            Path("/Library/Fonts/Arial.ttf"),
-            Path(r"C:\Windows\Fonts\arial.ttf"),
-            Path(r"C:\Windows\Fonts\segoeui.ttf"),
-            Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
-            Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"),
-        )
-        for candidate in candidates:
-            if candidate.exists():
-                try:
-                    return ImageFont.truetype(str(candidate), size)
-                except OSError:
-                    continue
-        return None
+    if font_proof is None:
+        font_proof, font_path = _resolve_font(config, project_dir, size=size, validate=True)
 
     def default_font():
         # Pillow 10+ exposes a scalable default bitmap font. Keep a fallback
         # for older Pillow builds so the ACS dependency remains portable.
-        selected = portable_font()
-        if selected is not None:
-            return selected
         try:
             return ImageFont.load_default(size=size)
         except TypeError:
             return ImageFont.load_default()
 
-    try:
-        font = ImageFont.truetype(font_value, size) if font_value else default_font()
-    except OSError:
+    if font_path is not None:
+        try:
+            font = ImageFont.truetype(str(font_path), size)
+        except OSError as exc:
+            raise ACSUserError(f"Caption font cannot be loaded: {font_proof.get('path', '')}") from exc
+    else:
         font = default_font()
     try:
         color = ImageColor.getrgb(str(config.get("color", "#ffffff")))
@@ -250,7 +391,17 @@ def _font_and_color(config: dict[str, Any], size: int):
     return font, (*color, 255), (*outline, 255)
 
 
-def _caption_image(path: Path, width: int, height: int, text: str, config: dict[str, Any]) -> None:
+def _caption_image(
+    path: Path,
+    width: int,
+    height: int,
+    text: str,
+    config: dict[str, Any],
+    *,
+    project_dir: Path | None = None,
+    font_path: Path | None = None,
+    font_proof: dict[str, Any] | None = None,
+) -> None:
     try:
         from PIL import Image, ImageDraw
     except ImportError as exc:
@@ -258,7 +409,13 @@ def _caption_image(path: Path, width: int, height: int, text: str, config: dict[
             "Burned captions need the portable Pillow fallback. Install the ACS dependency with `python -m pip install -e .`."
         ) from exc
     font_size = max(1, int(config.get("font_size", DEFAULTS["font_size"])))
-    font, color, outline = _font_and_color(config, font_size)
+    font, color, outline = _font_and_color(
+        config,
+        font_size,
+        project_dir=project_dir,
+        font_path=font_path,
+        font_proof=font_proof,
+    )
     image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     max_width = max(80, width - 2 * int(config.get("margin", DEFAULTS["margin"])))
@@ -292,7 +449,16 @@ def _caption_image(path: Path, width: int, height: int, text: str, config: dict[
     image.save(path, format="PNG", optimize=True)
 
 
-def burn_captions(base_output: Path, final_output: Path, cues: list[dict[str, Any]], config: dict[str, Any], work_dir: Path) -> str:
+def burn_captions(
+    base_output: Path,
+    final_output: Path,
+    cues: list[dict[str, Any]],
+    config: dict[str, Any],
+    work_dir: Path,
+    *,
+    project_dir: Path | None = None,
+    font_proof: dict[str, Any] | None = None,
+) -> str:
     if not cues:
         shutil.copy2(base_output, final_output)
         return "none"
@@ -302,12 +468,30 @@ def burn_captions(base_output: Path, final_output: Path, cues: list[dict[str, An
     if width <= 0 or height <= 0:
         raise ACSUserError("Cannot burn captions into an output without video dimensions.")
     ffmpeg, _ = require_media_tools()
+    font_size = max(1, int(config.get("font_size", DEFAULTS["font_size"])))
+    resolved_font_proof, font_path = _resolve_font(
+        config,
+        project_dir,
+        size=font_size,
+        validate=True,
+    )
+    if font_proof is not None and resolved_font_proof != font_proof:
+        raise ACSUserError("Caption font resolution changed between proof and burn; rerun the render.")
     with tempfile.TemporaryDirectory(prefix=".acs-caption-", dir=str(work_dir)) as temp_name:
         temp_dir = Path(temp_name)
         images: list[Path] = []
         for index, cue in enumerate(cues):
             image_path = temp_dir / f"cue-{index:04d}.png"
-            _caption_image(image_path, width, height, cue["text"], config)
+            _caption_image(
+                image_path,
+                width,
+                height,
+                cue["text"],
+                config,
+                project_dir=project_dir,
+                font_path=font_path,
+                font_proof=resolved_font_proof,
+            )
             images.append(image_path)
         filter_parts: list[str] = []
         current = "[0:v]"
@@ -366,6 +550,13 @@ def render_caption_assets(
     caption_dir = contracts.directory / "renders" / "captions"
     caption_dir.mkdir(parents=True, exist_ok=True)
     format_name = str(config.get("format", "srt"))
+    font_size = max(1, int(config.get("font_size", DEFAULTS["font_size"])))
+    font_proof, _ = _resolve_font(
+        config,
+        contracts.directory,
+        size=font_size,
+        validate=bool(config.get("burn", False)),
+    )
     sidecar_path = caption_dir / f"{kind}.{format_name}"
     if bool(config.get("sidecar", True)):
         sidecar_path.write_text(caption_text(cues, format_name), encoding="utf-8")
@@ -373,7 +564,15 @@ def render_caption_assets(
         sidecar_path.unlink()
     renderer = "none"
     if bool(config.get("burn", False)):
-        renderer = burn_captions(base_output, final_output, cues, config, work_dir)
+        renderer = burn_captions(
+            base_output,
+            final_output,
+            cues,
+            config,
+            work_dir,
+            project_dir=contracts.directory,
+            font_proof=font_proof,
+        )
     elif base_output != final_output:
         shutil.copy2(base_output, final_output)
     proof = reviewed_transcript_proof(contracts)
@@ -390,6 +589,7 @@ def render_caption_assets(
         "caption_intent_hash": canonical_hash(config),
         "reviewed_transcript_revision": proof["revision"],
         "reviewed_transcript_sha256": proof["sha256"],
+        "font_proof": font_proof,
         "cue_count": len(cues),
         "cues": cues,
     }

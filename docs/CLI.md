@@ -42,7 +42,22 @@ approved edit plan. Each can set `format` (`srt` or `vtt`), `sidecar`, `burn`,
 `max_chars`, `max_words`, `case`, `placement`, `font`, `color`, and outline
 settings. Captions are mapped to output time after ordered segment assembly;
 burning uses the portable Pillow overlay fallback when FFmpeg has no text
-filter.
+filter. No-word transcript segments are chunked by both `max_words` and
+`max_chars` with deterministic proportional timing. The fallback records the
+resolved font path/identity and SHA-256; explicit custom fonts must be files
+inside the production workspace. Dense hundreds-of-cue overlays can be slow,
+so choose an FFmpeg text filter or supervised adapter for that workload.
+
+An edit segment with `audio: "primary"` may set `audio_start`; it defaults to
+the visual `start` for compatibility. The visual source/start/duration remains
+the output picture, while the project primary source at `audio_start` supplies
+audio and reviewed caption truth. A muted segment advances output time but
+cannot emit captions.
+
+An approved creative LUT is applied per segment with FFmpeg `lut3d` before
+ordered concat and before the final caption overlay. If the local FFmpeg lacks
+`lut3d`, rendering fails closed with the supervised adapter route; it is never
+recorded as applied without the filter.
 
 An independently rendered editor result can be imported under supervision:
 

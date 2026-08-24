@@ -5,7 +5,7 @@ rendering, derivation, verification, and handoff. External tools are adapters.
 The dated technical comparison and decision rationale are in
 [`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md).
 
-| Adapter | Boundary | v0.2 position |
+| Adapter | Boundary | v0.3 position |
 | --- | --- | --- |
 | FFmpeg / ffprobe | Source inspection and long/vertical media output | Required deterministic boundary |
 | Local Whisper | Audio to agent-readable transcript | Optional; existing script remains supported |
@@ -13,7 +13,7 @@ The dated technical comparison and decision rationale are in
 | OpenReelio | Read/write adapter for a future supervised editor | Document seam only; not vendored |
 | HyperFrames | Motion asset or overlay for a specific explanatory beat | Optional motion adapter, never product identity |
 | `computerlovetech/video-edit-cli` | Supervised render/edit adapter with explicit plans, crop, manifests, and caption mapping | Relevant optional reference/import seam; not vendored or required |
-| Supervised publisher | Consume `publish/publisher-handoff.json` after separate human authorization | Handoff contract only; v0.2 never posts |
+| Supervised publisher | Consume `publish/publisher-handoff.json` after separate human authorization | Handoff contract only; v0.3 never posts |
 
 Adapters must not become hidden owners of workspace truth. They may consume or
 produce files named by the contract and should report hashes and failures back
@@ -32,3 +32,11 @@ source, output manifests, and transcript-to-output caption mapping. Its 69
 tests pass with one integration test deselected. It is macOS/Linux-first and
 documents Windows as untested via WSL, so ACS does not claim native Windows
 support from it.
+
+When a caption intent uses the Pillow fallback, normal workloads are supported
+and the resolved font (custom production-local file or selected system
+fallback) is hash-bound in render proof. Hundreds of dense cues can make the
+per-cue Pillow overlay slow; choose an FFmpeg text-filter path where supported
+or use a supervised adapter for that workload. ACS does not silently record an
+unapplied LUT: an approved LUT uses FFmpeg `lut3d` per segment, or fails closed
+with the adapter route above.

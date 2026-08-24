@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -37,6 +38,39 @@ def run_media_command(command: list[str]) -> subprocess.CompletedProcess[str]:
         detail = (result.stderr or result.stdout or "media command failed").strip()
         raise ACSCommandError(f"Media command failed ({result.returncode}): {detail}")
     return result
+
+
+def _supports_ffmpeg_filter(filter_name: str) -> bool:
+    ffmpeg, _ = require_media_tools()
+    result = subprocess.run(
+        [ffmpeg, "-hide_banner", "-filters"],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    return result.returncode == 0 and re.search(rf"\b{re.escape(filter_name)}\b", result.stdout or "") is not None
+
+
+def require_lut3d_filter() -> None:
+    if not _supports_ffmpeg_filter("lut3d"):
+        raise ACSUserError(
+            "This FFmpeg build lacks the lut3d filter required by the approved LUT. "
+            "Use a supervised editor adapter that can apply the LUT and import its proved output."
+        )
+
+
+def _ffmpeg_filter_path(path: Path) -> str:
+    """Escape a local path for an FFmpeg filter option on all supported OSes."""
+
+    value = str(path.resolve()).replace("\\", "/")
+    return value.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
+
+
+def _lut_filter(lut_source: Path) -> str:
+    if not lut_source.is_file():
+        raise ACSUserError(f"Approved LUT does not exist: {lut_source}")
+    require_lut3d_filter()
+    return f"lut3d=file='{_ffmpeg_filter_path(lut_source)}'"
 
 
 def probe(path: Path) -> dict[str, Any]:
@@ -85,6 +119,8 @@ def render_media(
     overlay_source: Path | None = None,
     audio_mode: str = "source",
     primary_audio_source: Path | None = None,
+    audio_start: float | None = None,
+    lut_source: Path | None = None,
     audio_fade: bool = False,
 ) -> dict[str, Any]:
     ffmpeg, _ = require_media_tools()
@@ -106,7 +142,8 @@ def render_media(
     if audio_mode == "primary":
         if primary_audio_source is None or not primary_audio_source.exists():
             raise ACSUserError("A segment using primary audio requires an existing project primary source.")
-        command.extend(["-ss", f"{max(0.0, start):.3f}", "-i", str(primary_audio_source)])
+        primary_start = start if audio_start is None else audio_start
+        command.extend(["-ss", f"{max(0.0, primary_start):.3f}", "-i", str(primary_audio_source)])
         audio_input_index = 1
     if overlay_source is not None:
         command.extend(["-loop", "1", "-i", str(overlay_source)])
@@ -114,9 +151,11 @@ def render_media(
     if duration is not None:
         command.extend(["-t", f"{duration:.3f}"])
     video_filter = _frame_filter(kind, frame)
+    lut_filter = _lut_filter(lut_source) if lut_source is not None else ""
     if kind == "long":
         if normalize_long and not video_filter:
             video_filter = "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,setsar=1"
+        video_filter = ",".join(filter_part for filter_part in (video_filter, lut_filter) if filter_part)
         if overlay_source is not None:
             video_filter = video_filter or "null"
             video_filter = f"[0:v]{video_filter}[base];[{overlay_input_index}:v]format=rgba[overlay];[base][overlay]overlay=0:0:shortest=1[vout]"
@@ -151,6 +190,7 @@ def render_media(
     elif kind == "short":
         if not video_filter:
             video_filter = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920:(iw-ow)/2:(ih-oh)/2,setsar=1"
+        video_filter = ",".join(filter_part for filter_part in (video_filter, lut_filter) if filter_part)
         if overlay_source is not None:
             video_filter = f"[0:v]{video_filter}[base];[{overlay_input_index}:v]format=rgba[overlay];[base][overlay]overlay=0:0:shortest=1[vout]"
             command.extend(["-filter_complex", video_filter, "-map", "[vout]"])
@@ -234,6 +274,7 @@ def render_segments(
     work_dir: Path,
     frame: dict[str, Any] | None = None,
     primary_audio_source: Path | None = None,
+    lut_source: Path | None = None,
 ) -> dict[str, Any]:
     """Render ordered source windows and concatenate them deterministically."""
 
@@ -252,6 +293,8 @@ def render_segments(
             overlay_source=Path(segment["resolved_overlay_source"]) if segment.get("resolved_overlay_source") else None,
             audio_mode=str(segment.get("audio") or "source"),
             primary_audio_source=primary_audio_source,
+            audio_start=float(segment["audio_start"]) if segment.get("audio_start") is not None else None,
+            lut_source=lut_source,
         )
 
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -272,6 +315,8 @@ def render_segments(
                 overlay_source=Path(segment["resolved_overlay_source"]) if segment.get("resolved_overlay_source") else None,
                 audio_mode=str(segment.get("audio") or "source"),
                 primary_audio_source=primary_audio_source,
+                audio_start=float(segment["audio_start"]) if segment.get("audio_start") is not None else None,
+                lut_source=lut_source,
                 audio_fade=True,
             )
             clips.append(clip)

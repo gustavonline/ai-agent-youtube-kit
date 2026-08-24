@@ -144,7 +144,7 @@ HyperFrames workspaces under
 `workspace/engine/motion-adapters/video-projects/` remain available for a
 motion asset when motion clarifies a point. They are optional adapter material,
 not the ACS product identity. Timeline Studio, OpenReelio, and supervised
-publishers are documented seams only; v0.2 does not vendor or depend on them.
+publishers are documented seams only; v0.3 does not vendor or depend on them.
 
 ## Cleanup
 

@@ -1,6 +1,6 @@
 # Optional Codex Tooling
 
-Agentic Content System v0.2 does not require a Codex plugin or an external
+Agentic Content System v0.3 does not require a Codex plugin or an external
 editor,
 HyperFrames to run its contract/CLI/render/package workflow. Install FFmpeg and
 use the Python CLI first.

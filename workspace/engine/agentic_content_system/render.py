@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Any
 import tempfile
 
-from .captions import caption_intent, render_caption_assets
-from .creative import require_creative_direction
+from .captions import caption_intent, caption_render_fingerprint, render_caption_assets
+from .creative import creative_direction_fingerprints, require_creative_direction
 from .errors import ACSUserError
 from .io import canonical_hash, read_json, sha256_file, write_json
 from .media import probe, render_segments
@@ -128,20 +128,19 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
     approval_hash = current_approval_hash(contracts)
     approval_revision = contracts.edit_plan["approval"]["approval_revision"]
     primary_audio_source = _primary_audio_source(contracts)
+    creative_fingerprints = creative_direction_fingerprints(contracts)
+    lut_source = (
+        inside_project(contracts.directory, creative_proof["lut"]["path"], label="creative LUT")
+        if isinstance(creative_proof.get("lut"), dict)
+        else None
+    )
     for kind in kinds:
         section, segments, output = _render_spec(contracts, kind)
         if not section.get("enabled"):
             results.append({"kind": kind, "status": "disabled"})
             continue
         caption_config = caption_intent(contracts.edit_plan, kind)
-        caption_fingerprint: dict[str, Any] | None = None
-        if caption_config is not None:
-            reviewed = reviewed_transcript_proof(contracts)
-            caption_fingerprint = {
-                "intent_hash": canonical_hash(caption_config),
-                "reviewed_transcript_revision": reviewed["revision"],
-                "reviewed_transcript_sha256": reviewed["sha256"],
-            }
+        caption_fingerprint = caption_render_fingerprint(contracts, kind)
         source_fingerprints = _used_source_fingerprints(segments)
         previous = record.get("renders", {}).get(kind, {})
         if (
@@ -151,6 +150,7 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
             and previous.get("approval_hash") == approval_hash
             and previous.get("approval_revision") == approval_revision
             and previous.get("source_fingerprints") == source_fingerprints
+            and previous.get("creative_direction_fingerprints") == creative_fingerprints
             and previous.get("caption_fingerprint") == caption_fingerprint
             and previous.get("output_sha256") == sha256_file(output)
         ):
@@ -173,6 +173,7 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
                 work_dir=contracts.directory / "renders",
                 frame=section.get("frame") or section.get("framing"),
                 primary_audio_source=primary_audio_source,
+                lut_source=lut_source,
             )
         else:
             with tempfile.TemporaryDirectory(prefix=".acs-caption-base-", dir=str(contracts.directory / "renders")) as temp_name:
@@ -184,6 +185,7 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
                     work_dir=contracts.directory / "renders",
                     frame=section.get("frame") or section.get("framing"),
                     primary_audio_source=primary_audio_source,
+                    lut_source=lut_source,
                 )
                 caption_metadata = render_caption_assets(
                     contracts,
@@ -206,7 +208,15 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
             if len(segments) > 1
             else "single ordered segment; no join boundary"
         )
-        metadata["creative_direction"] = creative_proof
+        render_creative = dict(creative_proof)
+        if isinstance(render_creative.get("lut"), dict):
+            render_creative["lut"] = {
+                **render_creative["lut"],
+                "applied": True,
+                "filter": "lut3d",
+                "stage": "per-segment-before-concat",
+            }
+        metadata["creative_direction"] = render_creative
         output_hash = sha256_file(output)
         record.setdefault("renders", {})[kind] = {
             "kind": kind,
@@ -216,6 +226,7 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
                 for segment in segments
             ],
             "source_fingerprints": source_fingerprints,
+            "creative_direction_fingerprints": creative_fingerprints,
             "plan_hash": intent_hash,
             "approval_hash": approval_hash,
             "approval_revision": approval_revision,
@@ -262,6 +273,9 @@ def require_current_render_outputs(contracts: ProjectContracts, kinds: list[str]
             raise ACSUserError(f"Stale {kind} render approval: run `acs render` after the current approval.")
         if entry.get("source_fingerprints") != expected_sources:
             raise ACSUserError(f"Stale {kind} render source: a declared input changed; run `acs render` again.")
+        expected_creative = creative_direction_fingerprints(contracts)
+        if entry.get("creative_direction_fingerprints") != expected_creative:
+            raise ACSUserError(f"Stale {kind} render grade/LUT proof: creative input changed; run `acs render` again.")
         if not output.exists():
             raise ACSUserError(f"Missing current {kind} render: {display_path(contracts.directory, output)}")
         if entry.get("output_sha256") != sha256_file(output):
@@ -273,11 +287,15 @@ def require_current_render_outputs(contracts: ProjectContracts, kinds: list[str]
                 raise ACSUserError(f"{kind} render caption record is stale; rerun `acs render`.")
         else:
             expected_review = reviewed_transcript_proof(contracts)
+            expected_caption_fingerprint = caption_render_fingerprint(contracts, kind)
             if (
+                entry.get("caption_fingerprint") != expected_caption_fingerprint
+                or
                 not caption_record.get("enabled")
                 or caption_record.get("caption_intent_hash") != canonical_hash(expected_captions)
                 or caption_record.get("reviewed_transcript_revision") != expected_review["revision"]
                 or caption_record.get("reviewed_transcript_sha256") != expected_review["sha256"]
+                or caption_record.get("font_proof") != expected_caption_fingerprint.get("font_proof")
             ):
                 raise ACSUserError(f"{kind} render captions are stale; rerun `acs render`.")
             sidecar_path = caption_record.get("sidecar_path")

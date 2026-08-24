@@ -139,6 +139,165 @@ class ProductionLoopTests(unittest.TestCase):
             self.assertIn("00:00:02,200 --> 00:00:02,900", subtitle)
             self.assertNotIn("raw", subtitle)
 
+    def test_no_word_caption_fallback_honors_word_char_limits_and_proportional_timing(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            contracts = self.make_contracts(root)
+            contracts.edit_plan["long_form"]["segments"] = [
+                {"source": "sources/source.mp4", "start": 0, "duration": 4}
+            ]
+            contracts.edit_plan["captions"] = {
+                "long": {"enabled": True, "format": "srt", "max_words": 5, "max_chars": 20}
+            }
+            text = "One two three four five six seven eight nine ten eleven twelve."
+            self.add_reviewed_transcript(
+                contracts,
+                raw_segments=[{"start": 0, "end": 4, "text": text}],
+                reviewed_segments=[{"start": 0, "end": 4, "text": text}],
+            )
+            resolved = [{"source": "sources/source.mp4", "start": 0, "duration": 4, "resolved_source": str(root / "sources/source.mp4")}]
+            with patch.object(captions, "_source_duration", return_value=4.0):
+                cues = captions.build_caption_cues(contracts, "long", resolved)
+            self.assertGreater(len(cues), 1)
+            self.assertTrue(all(len(cue["text"].split()) <= 5 for cue in cues))
+            self.assertTrue(all(len(cue["text"]) <= 20 for cue in cues))
+            self.assertAlmostEqual(0.0, cues[0]["start"])
+            self.assertAlmostEqual(4.0, cues[-1]["end"])
+            self.assertNotEqual(cues[0]["end"] - cues[0]["start"], cues[-1]["end"] - cues[-1]["start"])
+
+    def test_muted_segment_never_emits_reviewed_caption_and_still_advances_time(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            contracts = self.make_contracts(root)
+            broll = root / "sources" / "broll.mp4"
+            broll.write_bytes(b"b-roll bytes")
+            contracts.edit_plan["long_form"]["segments"] = [
+                {"source": "sources/broll.mp4", "start": 0, "duration": 2, "audio": "mute"}
+            ]
+            contracts.edit_plan["captions"] = {"long": {"enabled": True, "max_words": 5}}
+            self.add_reviewed_transcript(
+                contracts,
+                raw_segments=[{"start": 0, "end": 2, "text": "Må ikke vises"}],
+                reviewed_segments=[{"start": 0, "end": 2, "text": "Må ikke vises", "source": "sources/broll.mp4"}],
+            )
+            resolved = [{"source": "sources/broll.mp4", "start": 0, "duration": 2, "audio": "mute", "resolved_source": str(broll)}]
+            with patch.object(captions, "_source_duration", return_value=2.0):
+                cues = captions.build_caption_cues(contracts, "long", resolved)
+            self.assertEqual([], cues)
+
+    def test_primary_audio_broll_uses_independent_audio_start_for_ranges_captions_and_render(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            contracts = self.make_contracts(root)
+            broll = root / "sources" / "broll.mp4"
+            broll.write_bytes(b"b-roll bytes")
+            contracts.project["sources"].append(
+                {
+                    "path": "sources/broll.mp4",
+                    "kind": "camera",
+                    "role": "b-roll",
+                    "rights": {
+                        "status": "owned",
+                        "owner": "owner",
+                        "license": "fixture",
+                        "source_url": "",
+                        "attribution": "",
+                    },
+                }
+            )
+            segment = {
+                "source": "sources/broll.mp4",
+                "start": 20,
+                "duration": 2,
+                "audio": "primary",
+                "audio_start": 7.5,
+            }
+            contracts.edit_plan["long_form"]["segments"] = [segment]
+            contracts.edit_plan["captions"] = {"long": {"enabled": True, "max_words": 5}}
+            self.add_reviewed_transcript(
+                contracts,
+                raw_segments=[{"start": 7.5, "end": 9.5, "text": "Primary voice"}],
+                reviewed_segments=[{"start": 7.5, "end": 9.5, "text": "Primary voice"}],
+            )
+            self.assertEqual(
+                [{"source": "sources/source.mp4", "start": 7.5, "end": 9.5}],
+                plan_transcript_ranges(contracts, "long"),
+            )
+            resolved = [{**segment, "resolved_source": str(broll)}]
+            with patch.object(captions, "_source_duration", return_value=2.0):
+                cues = captions.build_caption_cues(contracts, "long", resolved)
+            self.assertEqual(["Primary voice"], [cue["text"] for cue in cues])
+            self.assertEqual("sources/source.mp4", cues[0]["source"])
+            self.assertEqual(7.5, cues[0]["source_start"])
+            work = root / "renders"
+            work.mkdir()
+            with patch.object(media, "render_media") as render_media, patch.object(media, "run_media_command"):
+                media.render_segments(
+                    segments=resolved,
+                    output=root / "out.mp4",
+                    kind="long",
+                    work_dir=work,
+                    primary_audio_source=root / "sources/source.mp4",
+                )
+            self.assertEqual(20.0, render_media.call_args.kwargs["start"])
+            self.assertEqual(7.5, render_media.call_args.kwargs["audio_start"])
+
+    def test_approved_lut_is_in_per_segment_filter_chain_before_concat(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "source.mp4"
+            source.write_bytes(b"source")
+            lut = root / "creative" / "grade.cube"
+            lut.parent.mkdir()
+            lut.write_text("LUT_3D_SIZE 2\n", encoding="utf-8")
+            output = root / "render.mp4"
+            with (
+                patch.object(media, "require_media_tools", return_value=("ffmpeg", "ffprobe")),
+                patch.object(media, "require_lut3d_filter"),
+                patch.object(media, "run_media_command") as run_command,
+                patch.object(media, "probe", return_value={"duration_seconds": 1.0, "width": 1280, "height": 720}),
+            ):
+                media.render_media(
+                    source=source,
+                    output=output,
+                    kind="long",
+                    duration=1,
+                    normalize_long=True,
+                    lut_source=lut,
+                )
+            command = run_command.call_args.args[0]
+            video_filter = command[command.index("-vf") + 1]
+            self.assertIn("scale=1280:720", video_filter)
+            self.assertIn("lut3d=file=", video_filter)
+
+    def test_custom_caption_font_is_local_and_changes_render_fingerprint_when_tampered(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            contracts = self.make_contracts(root)
+            contracts.edit_plan["long_form"]["segments"] = [
+                {"source": "sources/source.mp4", "start": 0, "duration": 1}
+            ]
+            contracts.edit_plan["captions"] = {
+                "long": {"enabled": True, "font": "creative/fonts/custom.ttf"}
+            }
+            font = root / "creative" / "fonts" / "custom.ttf"
+            font.parent.mkdir(parents=True)
+            font.write_bytes(b"font-v1")
+            self.add_reviewed_transcript(
+                contracts,
+                raw_segments=[{"start": 0, "end": 1, "text": "spoken"}],
+                reviewed_segments=[{"start": 0, "end": 1, "text": "spoken"}],
+            )
+            first = captions.caption_render_fingerprint(contracts, "long")
+            self.assertEqual("custom", first["font_proof"]["kind"])
+            self.assertEqual("creative/fonts/custom.ttf", first["font_proof"]["path"])
+            font.write_bytes(b"font-v2")
+            second = captions.caption_render_fingerprint(contracts, "long")
+            self.assertNotEqual(first["font_proof"]["sha256"], second["font_proof"]["sha256"])
+            contracts.edit_plan["captions"]["long"]["font"] = "../outside.ttf"
+            with self.assertRaises(ACSUserError):
+                captions.caption_render_fingerprint(contracts, "long")
+
     def test_burn_fallback_builds_overlay_graph_without_text_filter(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -164,6 +323,84 @@ class ProductionLoopTests(unittest.TestCase):
             self.assertNotIn("drawtext", filter_graph)
             self.assertNotIn("ass", filter_graph)
             self.assertFalse(final.exists())  # the media command was intentionally mocked
+
+    def test_primary_audio_start_is_separate_from_visual_start_in_ffmpeg_command(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            visual = root / "visual.mp4"
+            primary = root / "primary.mp4"
+            visual.write_bytes(b"visual")
+            primary.write_bytes(b"primary")
+            with (
+                patch.object(media, "require_media_tools", return_value=("ffmpeg", "ffprobe")),
+                patch.object(media, "probe", return_value={"duration_seconds": 1.0}),
+                patch.object(media, "run_media_command") as run_command,
+            ):
+                media.render_media(
+                    source=visual,
+                    output=root / "out.mp4",
+                    kind="long",
+                    start=50,
+                    duration=1,
+                    audio_mode="primary",
+                    primary_audio_source=primary,
+                    audio_start=2,
+                )
+            command = run_command.call_args.args[0]
+            self.assertEqual(["-ss", "50.000", "-i", str(visual)], command[command.index("-ss") : command.index("-ss") + 4])
+            primary_index = command.index(str(primary))
+            self.assertEqual("2.000", command[primary_index - 2])
+
+    def test_approved_lut_is_applied_in_per_segment_filter_or_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "source.mp4"
+            lut = root / "creative" / "archive.cube"
+            source.write_bytes(b"source")
+            lut.parent.mkdir()
+            lut.write_text("LUT_3D_SIZE 2\n", encoding="utf-8")
+            with (
+                patch.object(media, "require_media_tools", return_value=("ffmpeg", "ffprobe")),
+                patch.object(media, "_supports_ffmpeg_filter", return_value=True),
+                patch.object(media, "probe", return_value={"duration_seconds": 1.0}),
+                patch.object(media, "run_media_command") as run_command,
+            ):
+                media.render_media(
+                    source=source,
+                    output=root / "out.mp4",
+                    kind="short",
+                    duration=1,
+                    lut_source=lut,
+                )
+            command = run_command.call_args.args[0]
+            video_filter = command[command.index("-vf") + 1]
+            self.assertIn("lut3d=file=", video_filter)
+            self.assertIn("archive.cube", video_filter)
+            with patch.object(media, "_supports_ffmpeg_filter", return_value=False):
+                with self.assertRaisesRegex(ACSUserError, "supervised editor adapter"):
+                    media.render_media(
+                        source=source,
+                        output=root / "out-failed.mp4",
+                        kind="short",
+                        duration=1,
+                        lut_source=lut,
+                    )
+
+    def test_caption_font_proof_is_local_and_changes_when_custom_bytes_change(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            font = root / "creative" / "fonts" / "caption.ttf"
+            font.parent.mkdir(parents=True)
+            font.write_bytes(b"font-v1")
+            config = {"font": "creative/fonts/caption.ttf", "font_size": 42}
+            first = captions.caption_font_proof(config, root)
+            self.assertEqual("custom", first["kind"])
+            self.assertEqual("creative/fonts/caption.ttf", first["path"])
+            font.write_bytes(b"font-v2")
+            second = captions.caption_font_proof(config, root)
+            self.assertNotEqual(first["sha256"], second["sha256"])
+            with self.assertRaises(ACSUserError):
+                captions.caption_font_proof({"font": str(font)}, root)
 
     def test_adapter_import_is_hash_bound_and_tamper_evident(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

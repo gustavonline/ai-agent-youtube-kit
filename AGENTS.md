@@ -5,7 +5,7 @@ a hosted web app, phone-first editor, mini-Premiere, or publishing bot unless
 the user explicitly asks. Prefer transparent contracts, local scripts, and
 agent-readable Markdown over dashboards, databases, auth, or server state.
 
-The v0.2 system boundary is the Python `agentic_content_system` CLI,
+The v0.3 system boundary is the Python `agentic_content_system` CLI,
 versioned JSON contracts, FFmpeg/ffprobe, local transcript adapters, static
 review reports, and human approval. HyperFrames and full editors are optional
 adapters, not product identity.

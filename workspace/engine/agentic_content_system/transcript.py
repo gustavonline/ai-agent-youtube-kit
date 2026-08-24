@@ -539,6 +539,13 @@ def plan_transcript_ranges(contracts: Any, kind: str | None = None) -> list[dict
             start = float(segment.get("start") or 0)
             duration = float(segment.get("duration") or 0)
             source = str(segment.get("source") or _default_source(contracts.project))
+            if str(segment.get("audio") or "source") == "primary":
+                # Primary audio is read from the project's primary source, not
+                # from the visual B-roll source. Keep the old aligned behavior
+                # when audio_start is omitted, while allowing independent
+                # source timing for a primary-audio B-roll cut.
+                source = _default_source(contracts.project)
+                start = float(segment.get("audio_start") if segment.get("audio_start") is not None else start)
             # Muted B-roll is a visual-only edit input. It has no spoken
             # transcript range to review, while captions still account for
             # its duration when mapping the ordered edit segments.

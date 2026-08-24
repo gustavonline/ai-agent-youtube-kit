@@ -29,7 +29,7 @@ the system is not a phone-first editor.
    `acs review-report`, and `acs export-result`.
 9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
    `results/run-result.json` through its normal task flow. The publisher handoff
-   is awaiting separate authorization; v0.2 never posts externally.
+   is awaiting separate authorization; v0.3 never posts externally.
 10. For a repeat or explicit recovery, inspect relevant entries in
     `workspace/history/runs.jsonl` and their `workspace/runs/<run-id>/run.json`
     evidence before choosing `predecessor` or an explicit `--recover <run-id>`.
@@ -65,7 +65,7 @@ videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority
 - FFmpeg/ffprobe own deterministic inspection and render boundaries.
 - HyperFrames can supply a motion asset when it clarifies a point.
 - Timeline Studio, OpenReelio, and supervised publishers are documented seams,
-  not v0.2 dependencies.
+  not v0.3 dependencies.
 
 See `docs/ADAPTERS.md` for boundary rules and `docs/RECOVERY.md` for safe
 cleanup.
