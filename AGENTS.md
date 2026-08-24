@@ -101,7 +101,7 @@ Use local Whisper transcription as the default workflow for this repo.
 ```
 
 - Add `--language da` for Danish footage when appropriate.
-- Whisper models should stay in repo-local `.cache/whisper/`, which is the script default.
+- Whisper models should stay in ignored `workspace/engine/.cache/whisper/` by default; use `ACS_WHISPER_CACHE_DIR` for one portable override.
 - The optional editor transcript cache lives in
   `workspace/productions/<slug>/edit/transcripts/`. For an ACS production,
   ingest the resulting open JSON into its canonical `transcripts/active.json`
