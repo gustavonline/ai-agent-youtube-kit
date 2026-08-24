@@ -5,7 +5,7 @@ declarative contracts, a Python cross-platform CLI, and FFmpeg/ffprobe as the
 deterministic media boundary. Treat full editors and motion systems as
 supervised, optional adapters.
 
-**Research snapshot:** 2026-08-21
+**Research snapshot:** 2026-08-24
 
 This is a dated technical repository comparison. License, star count, README
 status, and feature statements below are GitHub snapshots, not permanent truth
@@ -99,6 +99,14 @@ failures without becoming a hidden source of truth.
 - **Local Whisper and transcript/EDL workflows:** optional input adapters that
   produce agent-readable transcript/cut intent; they do not require cloud
   credentials or own final approval.
+- **`computerlovetech/video-edit-cli`:** a relevant supervised reference for
+  explicit edit plans, immutable source/provenance sidecars, per-segment crop
+  and separate video-source concepts, output manifests, JSON result envelopes,
+  and transcript-to-output caption mapping. The 2026-08-24 snapshot is MIT,
+  alpha v0.1.2, Python 3.11+, and FFmpeg, with 69 tests passing and one
+  integration test deselected. It is macOS/Linux-first and documents Windows
+  as untested via WSL, so it is not an ACS dependency or proof of native
+  Windows support; use the supervised `import-adapter` seam instead.
 - **Supervised publisher:** consumes only the current
 `publish/publisher-handoff.json`, honors enabled routes and manual/scheduled
   intent, and requires authorization outside ACS. v0.1 keeps

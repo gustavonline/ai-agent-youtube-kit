@@ -21,6 +21,7 @@ acs init <workspace> --brand workspace/channel/brand.json
 acs inspect <workspace>
 acs validate <workspace>
 acs ingest-transcript <workspace> <transcript.json>
+acs review-transcript <workspace> <reviewed.json> --by <reviewer>
 acs plan <workspace> --approve --by <reviewer>
 acs render <workspace> --kind all
 acs derive <workspace>
@@ -30,11 +31,34 @@ acs review-report <workspace>
 acs export-result <workspace>
 ```
 
+Local ASR is first written to `transcripts/raw.json` and is never overwritten
+by corrections. Use `review-transcript` for corrected or bounded truth; its
+revision, reviewer, coverage, raw hash, and source-byte binding are checked by
+derive, caption, package, and export steps. A rejected or stale review blocks
+publish-ready text and captions.
+
+For optional captions, add `captions.long` and/or `captions.short` to the
+approved edit plan. Each can set `format` (`srt` or `vtt`), `sidecar`, `burn`,
+`max_chars`, `max_words`, `case`, `placement`, `font`, `color`, and outline
+settings. Captions are mapped to output time after ordered segment assembly;
+burning uses the portable Pillow overlay fallback when FFmpeg has no text
+filter.
+
+An independently rendered editor result can be imported under supervision:
+
+```text
+acs import-adapter <workspace> <rendered-output> --manifest <plan-or-manifest.json> --adapter <name> --by <reviewer>
+```
+
+The copied output and manifest are hash-bound in `adapters/import.json`, then
+included in `publish/manifest.json`, verification, review, result, and
+`results/index.md`.
+
 `render`, `derive`, and `package` stop with an understandable error until the
 edit plan is explicitly approved. `package` includes only enabled channels;
 disabled channels remain visible with their policy reason. A successful package
 installation invalidates the active `reports/review.html`, bound
-`reports/review.json`, and `results/run-result.json`; rerun `verify`,
+`reports/review.json`, `results/run-result.json`, and `results/index.md`; rerun `verify`,
 `review-report`, and `export-result` for the new package. With no manifest,
 `review-report` may produce a valid `not_packaged` review; once a manifest
 exists it rechecks the complete current package before replacing any report

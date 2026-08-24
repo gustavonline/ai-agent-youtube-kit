@@ -64,6 +64,16 @@ about outcomes:
   broader content journey. In `QAO75cIJUL4` (roughly 00:10:50–00:11:20 and
   00:21:04–00:21:20), the transcript contrasts short-form and long-form and
   describes a short-form item pointing back to a useful long-form video.
+- Across `mE6EhJiYhlo`, `mo9O8uzB8EE`, `E1kMcs5O1qg`, and `R_ZNN26u80g`, the
+  reusable planning mechanic is one useful core idea moving from client or
+  workshop questions to a library video, then being reformatted for selected
+  Reels/carousels/stories, LinkedIn, and email according to context. The
+  observation supports repurposing the idea and copy, not blindly duplicating
+  one video file.
+- The working channel model distinguishes short-form/LinkedIn attention and
+  relationship from YouTube/email long-form trust and CTA. Start with the
+  ICP's situation, goal, and problem; treat the conversion CTA as contextual
+  handoff/offer language rather than a mandatory platform behavior.
 
 Caption text can be imperfect, language-specific, or automatically generated.
 It is used here to explain why a design choice was made, not as proof of a
