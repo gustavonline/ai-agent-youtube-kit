@@ -33,10 +33,11 @@ tests pass with one integration test deselected. It is macOS/Linux-first and
 documents Windows as untested via WSL, so ACS does not claim native Windows
 support from it.
 
-When a caption intent uses the Pillow fallback, normal workloads are supported
-and the resolved font (custom production-local file or selected system
-fallback) is hash-bound in render proof. Hundreds of dense cues can make the
-per-cue Pillow overlay slow; choose an FFmpeg text-filter path where supported
-or use a supervised adapter for that workload. ACS does not silently record an
+ACS v0.3 burns captions through its Pillow overlay implementation; it does not
+select or expose a built-in FFmpeg text-filter route. Normal workloads are
+supported and the resolved font (custom production-local file or selected
+system fallback) is hash-bound in render proof. Hundreds of dense cues can
+make the per-cue Pillow overlay slow; use a supervised adapter, which may use
+FFmpeg text filters, for that workload. ACS does not silently record an
 unapplied LUT: an approved LUT uses FFmpeg `lut3d` per segment, or fails closed
 with the adapter route above.

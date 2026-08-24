@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from agentic_content_system import adapters, captions, media
+from agentic_content_system import adapters, captions, media, render
 from agentic_content_system.creative import require_creative_direction
 from agentic_content_system.derive import derive_project
 from agentic_content_system.errors import ACSUserError
@@ -138,6 +138,66 @@ class ProductionLoopTests(unittest.TestCase):
             subtitle = captions.caption_text(cues, "srt")
             self.assertIn("00:00:02,200 --> 00:00:02,900", subtitle)
             self.assertNotIn("raw", subtitle)
+
+    def test_overlay_render_record_strips_runtime_paths_and_stays_current(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            contracts = self.make_contracts(root)
+            overlay = root / "overlays" / "card.mp4"
+            overlay.parent.mkdir(parents=True)
+            overlay.write_bytes(b"overlay bytes")
+            contracts.project["sources"].append(
+                {
+                    "path": "overlays/card.mp4",
+                    "kind": "video-overlay",
+                    "role": "graphic",
+                    "rights": {
+                        "status": "owned",
+                        "owner": "owner",
+                        "license": "fixture",
+                        "source_url": "",
+                        "attribution": "",
+                    },
+                }
+            )
+            contracts.edit_plan["long_form"]["segments"] = [
+                {
+                    "source": "sources/source.mp4",
+                    "start": 0,
+                    "duration": 1,
+                    "overlay": "overlays/card.mp4",
+                }
+            ]
+            contracts.edit_plan["short_form"]["enabled"] = False
+            self.approve(contracts)
+
+            def fake_render_segments(**kwargs: object) -> dict[str, float | int]:
+                output = kwargs["output"]
+                assert isinstance(output, Path)
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.write_bytes(b"rendered overlay output")
+                return {"duration_seconds": 1.0, "width": 1280, "height": 720}
+
+            with patch.object(render, "render_segments", side_effect=fake_render_segments):
+                render.render_project(contracts, ["long"])
+
+            record = read_json(root / "renders" / "render-record.json")["renders"]["long"]
+            persisted_segment = record["segments"][0]
+            self.assertEqual("overlays/card.mp4", persisted_segment["overlay"])
+            self.assertNotIn("resolved_source", persisted_segment)
+            self.assertNotIn("resolved_overlay_source", persisted_segment)
+            serialized_record = str(record)
+            self.assertNotIn("resolved_source", serialized_record)
+            self.assertNotIn("resolved_overlay_source", serialized_record)
+            self.assertNotIn(str(root), serialized_record)
+            self.assertEqual(
+                (root / "renders" / "long.mp4").resolve(),
+                render.require_current_render_outputs(contracts, ["long"])["long"],
+            )
+
+            overlay.write_bytes(b"changed overlay bytes")
+            with self.assertRaisesRegex(ACSUserError, "stale"):
+                render.require_current_render_outputs(contracts, ["long"])
 
     def test_no_word_caption_fallback_honors_word_char_limits_and_proportional_timing(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

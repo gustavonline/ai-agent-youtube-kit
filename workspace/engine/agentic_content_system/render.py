@@ -222,7 +222,11 @@ def render_project(contracts: ProjectContracts, kinds: list[str], *, force: bool
             "kind": kind,
             "output": display_path(contracts.directory, output),
             "segments": [
-                {key: value for key, value in segment.items() if key != "resolved_source"}
+                {
+                    key: value
+                    for key, value in segment.items()
+                    if key not in {"resolved_source", "resolved_overlay_source"}
+                }
                 for segment in segments
             ],
             "source_fingerprints": source_fingerprints,

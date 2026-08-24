@@ -41,12 +41,13 @@ For optional captions, add `captions.long` and/or `captions.short` to the
 approved edit plan. Each can set `format` (`srt` or `vtt`), `sidecar`, `burn`,
 `max_chars`, `max_words`, `case`, `placement`, `font`, `color`, and outline
 settings. Captions are mapped to output time after ordered segment assembly;
-burning uses the portable Pillow overlay fallback when FFmpeg has no text
-filter. No-word transcript segments are chunked by both `max_words` and
+burning uses ACS's portable Pillow overlay implementation. ACS v0.3 does not
+select or expose a built-in FFmpeg text-filter caption route. No-word transcript
+segments are chunked by both `max_words` and
 `max_chars` with deterministic proportional timing. The fallback records the
 resolved font path/identity and SHA-256; explicit custom fonts must be files
-inside the production workspace. Dense hundreds-of-cue overlays can be slow,
-so choose an FFmpeg text filter or supervised adapter for that workload.
+inside the production workspace. Dense hundreds-of-cue overlays can be slow;
+use a supervised adapter, which may use FFmpeg text filters, for that workload.
 
 An edit segment with `audio: "primary"` may set `audio_start`; it defaults to
 the visual `start` for compatibility. The visual source/start/duration remains
