@@ -22,6 +22,7 @@ acs = "agentic_content_system.cli:main"
 agentic-content-system = "agentic_content_system.cli:main"
 
 [tool.setuptools.packages.find]
+where = ["workspace/engine"]
 include = ["agentic_content_system*", "contracts*"]
 
 [tool.setuptools.package-data]

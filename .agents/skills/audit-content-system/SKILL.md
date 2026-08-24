@@ -42,8 +42,8 @@ truth and upstream context. Use read-only checks such as:
 python -m agentic_content_system --help
 python -m agentic_content_system --version
 python -m agentic_content_system doctor
-python scripts/check-system-shell.py
-python -m unittest discover -s tests -v
+python workspace/engine/checks.py
+PYTHONPATH=workspace/engine python -m unittest discover -s workspace/engine/tests -v
 git status --short --branch
 git diff --check
 ```

@@ -41,7 +41,7 @@ workspace.
 ## Execution sequence
 
 1. Start from configured clone defaults with
-   `python -m agentic_content_system init <workspace> --brand channel/brand.json`.
+   `python -m agentic_content_system init <workspace> --brand workspace/channel/brand.json`.
    Generic `init <workspace>` remains valid when a starter policy is enough.
 2. Use bounded context and format guidance to draft/refine
    `content-brief.md` and `recording-plan.md` before capture. Carry the
@@ -63,6 +63,13 @@ workspace.
 8. Return proof paths/hashes, enabled/disabled route results, and the
    `publish/publisher-handoff.json` path/hash/status to the calling context. Do
    not post externally.
+9. After the complete route succeeds or fails, record exactly one deliberate
+   attempt with `python workspace/engine/tracer.py record
+   workspace/productions/<slug> --status succeeded|failed`. Low-level ACS CLI
+   subcommands do not create ledger records. Use `--recover <run-id>` only for
+   one explicit recovery of an unresolved failed attempt.
+   The append-only relation is `workspace/history/runs.jsonl`, and evidence
+   directories are kept under `workspace/runs/`.
 
 Re-run `inspect` after changing a declared source, its rights/provenance,
 kind/role, or source order. Verification, review reports, and proof export bind

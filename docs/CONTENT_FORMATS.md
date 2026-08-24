@@ -1,6 +1,6 @@
 # Content Format Library
 
-`content-formats/formats.json` is the machine-readable library. It keeps the
+`workspace/content-formats/formats.json` is the machine-readable library. It keeps the
 nine verified capture formats and the practical groups used by planning:
 
 1. physical guest podcast

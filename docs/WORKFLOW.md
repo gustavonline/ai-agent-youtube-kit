@@ -10,8 +10,8 @@ the system is not a phone-first editor.
 1. Bring useful context from a conversation, brief, AIOS Space task, or
    standalone business/content notes.
 2. Choose a buyer problem, proof requirement, practical group, and one of the
-   nine capture formats in `content-formats/formats.json`.
-3. Configure clone defaults in `channel/PROFILE.md` and `channel/brand.json`,
+   nine capture formats in `workspace/content-formats/formats.json`.
+3. Configure clone defaults in `workspace/channel/PROFILE.md` and `workspace/channel/brand.json`,
    validate them, then scaffold a workspace with `acs init --brand`; copy resolved values into the local
    `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and
    `edit-plan.json`.
@@ -26,6 +26,13 @@ the system is not a phone-first editor.
 9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
    `results/run-result.json` through its normal task flow. The publisher handoff
    is awaiting separate authorization; v0.2 never posts externally.
+10. Record one success or failure for the completed route, then route the
+    attempt through the local tracer exactly once:
+    `python workspace/engine/tracer.py record workspace/productions/<slug>
+    --status succeeded` (or `failed --failure-code <short-code>`). An ordinary
+    repeat uses `predecessor`; an explicit `--recover <run-id>` consumes one
+    unresolved failed run at most once and creates a new record. The tracer is
+    a local proof tool, not a daemon or an AIOS service.
 
 ## Editorial defaults
 
@@ -42,7 +49,7 @@ videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority
 ## Optional adapters
 
 - Local Whisper is the default optional transcription engine through
-  `scripts/transcribe-local-whisper.py`.
+  `workspace/engine/scripts/transcribe-local-whisper.py`.
 - FFmpeg/ffprobe own deterministic inspection and render boundaries.
 - HyperFrames can supply a motion asset when it clarifies a point.
 - Timeline Studio, OpenReelio, and supervised publishers are documented seams,

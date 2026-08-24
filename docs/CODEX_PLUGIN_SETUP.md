@@ -16,9 +16,9 @@ The repo's existing local workflow is the supported default for optional
 transcription:
 
 ```text
-./scripts/setup-local-transcription.sh
-.venv/bin/python scripts/transcribe-local-whisper.py examples/<slug>/sources --recursive --edit-dir examples/<slug>/local-whisper --model large --pack
-python -m agentic_content_system ingest-transcript examples/<slug> examples/<slug>/local-whisper/transcripts/<clip>.json
+./workspace/engine/scripts/setup-local-transcription.sh
+.venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<slug>/sources --recursive --edit-dir workspace/productions/<slug>/local-whisper --model large --pack
+python -m agentic_content_system ingest-transcript workspace/productions/<slug> workspace/productions/<slug>/local-whisper/transcripts/<clip>.json
 ```
 
 Models stay in `.cache/whisper/`, and no API key belongs in this repository.

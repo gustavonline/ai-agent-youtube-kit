@@ -3,7 +3,9 @@
 `.github/workflows/ci.yml` is configured for Ubuntu, macOS, and Windows across
 Python 3.10–3.13. It installs FFmpeg through each runner's bounded package
 manager, installs the package in a venv-backed job environment, runs help and
-the deterministic test suite, and checks whitespace.
+the relocated deterministic test suite, the ACS shell/stale-path/no-runtime
+guard, and checks whitespace. The pre-existing 41 tests and new structural /
+history proof tests are reported separately in local Build evidence.
 
 The checkout and Python setup actions are pinned to immutable commit revisions.
 No third-party FFmpeg action is required. The matrix is configuration proof in

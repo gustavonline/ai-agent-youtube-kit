@@ -27,19 +27,19 @@ credentials, or posting authority.
 
 ## Configure the clone
 
-1. Read `channel/PROFILE.md`, `channel/STYLE_GUIDE.md`, `DESIGN.md`, and
-   `PROJECT_MEMORY.md`.
+1. Read `workspace/channel/PROFILE.md`, `workspace/channel/STYLE_GUIDE.md`, `workspace/channel/DESIGN.md`, and
+   `workspace/learning/PROJECT_MEMORY.md`.
 2. Record resolved channel identity, audience, promise, lanes, offers, CTAs,
-   and constraints in `channel/PROFILE.md`.
+   and constraints in `workspace/channel/PROFILE.md`.
 3. Copy the resolved channel policy and cadence into the ACS-owned,
-   schema-compatible `channel/brand.json`. Keep `delivery_defaults` explicit
-   for every enabled channel. Update `channel/STYLE_GUIDE.md` only with
+   schema-compatible `workspace/channel/brand.json`. Keep `delivery_defaults` explicit
+   for every enabled channel. Update `workspace/channel/STYLE_GUIDE.md` only with
    reusable style decisions, not one-off content or private business notes.
 4. Run environment and profile checks without creating a content workspace:
 
    ```text
    python -m agentic_content_system doctor
-   python -m agentic_content_system validate-profile channel/brand.json
+   python -m agentic_content_system validate-profile workspace/channel/brand.json
    ```
 
 Do not create the first content workspace during setup. Setup is complete when
@@ -52,7 +52,7 @@ When a real content outcome is requested, copy the clone defaults into the
 workspace execution truth with:
 
 ```text
-python -m agentic_content_system init <workspace> --brand channel/brand.json
+python -m agentic_content_system init <workspace> --brand workspace/channel/brand.json
 python -m agentic_content_system validate <workspace> --contracts-only
 ```
 

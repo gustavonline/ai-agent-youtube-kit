@@ -9,26 +9,26 @@ the optional human/agent packaging review around that handoff.
 
 Before packaging a video, read:
 
-1. `channel/PROFILE.md`
-2. `channel/STYLE_GUIDE.md`
-3. `channel/published-videos.csv`
-4. relevant `channel/references/*/analysis.md`
+1. `workspace/channel/PROFILE.md`
+2. `workspace/channel/STYLE_GUIDE.md`
+3. `workspace/channel/published-videos.csv`
+4. relevant `workspace/references/*/analysis.md`
 5. the workspace `edit-plan.json`, `content-brief.md`, and `recording-plan.md`
-6. `DESIGN.md`
-7. `PROJECT_MEMORY.md`
+6. `workspace/channel/DESIGN.md`
+7. `workspace/learning/PROJECT_MEMORY.md`
 
 ## Output
 
 Write the optional human review to:
 
 ```text
-examples/<slug>/packaging-review.md
+workspace/productions/<slug>/packaging-review.md
 ```
 
 Use:
 
 ```text
-templates/packaging-review.md
+workspace/engine/templates/packaging-review.md
 ```
 
 ## Title Bench
@@ -66,7 +66,7 @@ Generate 3-6 thumbnail concepts before choosing one. Score them against:
 - strong contrast at phone size
 - proof object: screen, result, artifact, score, before/after, or recognizable tool
 - minimal text, preferably 1-4 words
-- consistent with `DESIGN.md` and `channel/STYLE_GUIDE.md`
+- consistent with `workspace/channel/DESIGN.md` and `workspace/channel/STYLE_GUIDE.md`
 - honest relationship to the video
 
 Useful visual patterns:
@@ -93,11 +93,11 @@ Avoid:
 4. Score each title and concept.
 5. Pick the strongest title/thumbnail pair.
 6. List exact changes needed before publish.
-7. Save the chosen pair in `examples/<slug>/packaging-review.md` (or the
+7. Save the chosen pair in `workspace/productions/<slug>/packaging-review.md` (or the
    corresponding local workspace).
 
 ## Learning
 
-After publishing, compare performance against `channel/published-videos.csv`.
-Only promote lessons to `channel/STYLE_GUIDE.md` when they are supported by
+After publishing, compare performance against `workspace/channel/published-videos.csv`.
+Only promote lessons to `workspace/channel/STYLE_GUIDE.md` when they are supported by
 reference analysis or real channel results.

@@ -47,7 +47,7 @@ about outcomes:
   approaches and discusses guest and solo conversation, screen recording,
   slides/Miro, physical whiteboard, iPad, outdoor capture, online guest
   conversation, and client/case conversation. The ACS library normalizes the
-  labels to the nine format IDs in `content-formats/formats.json`; it retains
+  labels to the nine format IDs in `workspace/content-formats/formats.json`; it retains
   vlog as the ninth style named by the source rather than treating every vlog
   as a default.
 - In `8HY4tuX50ZQ` (roughly 00:02:27–00:05:00), the transcript describes
@@ -86,5 +86,5 @@ product choices:
 - keep all channel, approval, rights, and render decisions in inspectable local
   contracts rather than presenting research observations as universal truth.
 
-See `content-formats/formats.json` for the machine-readable library and
+See `workspace/content-formats/formats.json` for the machine-readable library and
 `docs/CONTENT_FORMATS.md` for the operational summary.
