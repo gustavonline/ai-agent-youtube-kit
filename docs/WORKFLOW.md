@@ -11,6 +11,8 @@ the system is not a phone-first editor.
    standalone business/content notes.
 2. Choose a buyer problem, proof requirement, practical group, and one of the
    nine capture formats in `workspace/content-formats/formats.json`.
+   Record the core idea and intended sales job first: attention, nurture/proof,
+   or conversion/next step.
 3. Configure clone defaults in `workspace/channel/PROFILE.md` and `workspace/channel/brand.json`,
    validate them, then scaffold a workspace with `acs init --brand`; copy resolved values into the local
    `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and
@@ -18,14 +20,16 @@ the system is not a phone-first editor.
 4. Choose manual/no-date or scheduled delivery for each enabled route in
    `project.json.delivery_intent`. Disabled routes stay disabled.
 5. Add source media and rights/provenance metadata.
-6. Draft/refine `content-brief.md` and `recording-plan.md`, then run
-   `acs inspect`, ingest a transcript, and review the declarative plan.
+6. Draft/refine `content-brief.md`, `recording-plan.md`, and the optional
+   `creative-direction.md`, then run `acs inspect` and ingest a transcript.
+   Keep raw ASR separate; use `acs review-transcript` for corrected or bounded
+   truth before captions or publish-ready text.
 7. Record explicit approval with `acs plan --approve --by <reviewer>`.
 8. Run `acs render`, `acs derive`, `acs package`, `acs verify`,
    `acs review-report`, and `acs export-result`.
 9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
    `results/run-result.json` through its normal task flow. The publisher handoff
-   is awaiting separate authorization; v0.2 never posts externally.
+   is awaiting separate authorization; v0.3 never posts externally.
 10. For a repeat or explicit recovery, inspect relevant entries in
     `workspace/history/runs.jsonl` and their `workspace/runs/<run-id>/run.json`
     evidence before choosing `predecessor` or an explicit `--recover <run-id>`.
@@ -43,11 +47,13 @@ the system is not a phone-first editor.
 ## Editorial defaults
 
 Use promise + proof + plan, usually in three points, with a contextual CTA and
-an outro to the next useful video. Source ideas from work/client questions,
-mistakes, proof, mechanism, and philosophy. Treat attention, nurture, and
-conversion as connected outcomes; buyer relevance is more important than mass
-reach. A core video can be harvested into selected shorts and posts, but
-channel policy decides which derivatives exist.
+an outro to the next useful video. The operational sequence is core idea +
+intended sales job -> chosen capture format -> core video -> only enabled,
+channel-native harvests -> contextual CTA/handoff. Source ideas from
+work/client questions, mistakes, proof, mechanism, philosophy, and current
+tests. Treat attention, nurture, and conversion as connected outcomes; buyer
+relevance is more important than mass reach. Reformat the idea/copy for each
+selected channel rather than blindly duplicating one video file.
 
 The planning reference is three core videos per week for 26 weeks (78 core
 videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority.
@@ -59,7 +65,7 @@ videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority
 - FFmpeg/ffprobe own deterministic inspection and render boundaries.
 - HyperFrames can supply a motion asset when it clarifies a point.
 - Timeline Studio, OpenReelio, and supervised publishers are documented seams,
-  not v0.2 dependencies.
+  not v0.3 dependencies.
 
 See `docs/ADAPTERS.md` for boundary rules and `docs/RECOVERY.md` for safe
 cleanup.

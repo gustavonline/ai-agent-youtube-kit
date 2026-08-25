@@ -15,7 +15,21 @@ from .project import (
     current_intent_hash,
     require_current_approval,
 )
-from .transcript import load_and_normalize, transcript_text
+from .transcript import (
+    current_reviewed_segments,
+    load_current_reviewed_transcript,
+    plan_transcript_ranges,
+    reviewed_transcript_proof,
+    transcript_text,
+)
+
+
+def _active_transcript_path(contracts: ProjectContracts) -> Path:
+    relative = str(
+        contracts.project.get("transcript", {}).get("path")
+        or "transcripts/active.json"
+    )
+    return inside_project(contracts.directory, relative, label="project.transcript.path")
 
 
 def _linkedin_enabled(contracts: ProjectContracts) -> bool:
@@ -24,17 +38,14 @@ def _linkedin_enabled(contracts: ProjectContracts) -> bool:
 
 
 def _load_active_transcript(contracts: ProjectContracts) -> tuple[dict[str, Any], Path]:
-    transcript_path = inside_project(
-        contracts.directory,
-        contracts.project["transcript"]["path"],
-        label="project.transcript.path",
-    )
-    if not transcript_path.exists():
-        raise ACSUserError(
-            f"Transcript is missing: {display_path(contracts.directory, transcript_path)}. "
-            "Run `acs ingest-transcript <workspace> <transcript-file>`."
-        )
-    return load_and_normalize(transcript_path), transcript_path
+    reviewed, reviewed_path = load_current_reviewed_transcript(contracts)
+    ranges = plan_transcript_ranges(contracts)
+    segments = current_reviewed_segments(contracts, ranges if ranges else None)
+    if not segments:
+        raise ACSUserError("Reviewed transcript has no text in the selected edit ranges.")
+    selected = dict(reviewed)
+    selected["segments"] = segments
+    return selected, reviewed_path
 
 
 def _draft_linkedin(contracts: ProjectContracts, source_text: str) -> str:
@@ -173,13 +184,22 @@ def derive_project(contracts: ProjectContracts) -> list[Path]:
     registered_status = status
     if existing and existing.get("content_sha256") == content_hash:
         registered_status = existing.get("status", status)
+    active_path = _active_transcript_path(contracts)
+    active_hash = sha256_file(active_path) if active_path.exists() else sha256_file(transcript_path)
+    reviewed_proof = reviewed_transcript_proof(contracts)
     entry = {
         "route": "linkedin",
         "kind": "text",
         "path": display_path(contracts.directory, output_path),
         "status": registered_status,
         "content_sha256": content_hash,
-        "transcript_sha256": sha256_file(transcript_path),
+        # Keep the long-standing field bound to the active transcript view so
+        # older workspaces still fail closed when that compatibility input is
+        # edited. The reviewed record is the publish-ready source of truth.
+        "transcript_sha256": active_hash,
+        "active_transcript_sha256": active_hash,
+        "reviewed_transcript_revision": reviewed_proof["revision"],
+        "reviewed_transcript_sha256": reviewed_proof["sha256"],
     }
     record = {
         "schema_version": "1.0",
@@ -207,18 +227,20 @@ def require_current_linkedin_derivative(contracts: ProjectContracts) -> Path:
     if record.get("approval_revision") != contracts.edit_plan["approval"]["approval_revision"]:
         raise ACSUserError("LinkedIn derivative revision is stale; review and run `acs derive`.")
     entry = _record_entry(record, output_path, contracts)
-    transcript_path = inside_project(
-        contracts.directory,
-        contracts.project["transcript"]["path"],
-        label="project.transcript.path",
-    )
-    if not transcript_path.exists():
-        raise ACSUserError("LinkedIn derivative transcript is missing; run `acs ingest-transcript` and `acs derive`.")
-    if not entry or entry.get("transcript_sha256") != sha256_file(transcript_path):
+    reviewed, reviewed_path = load_current_reviewed_transcript(contracts)
+    active_path = _active_transcript_path(contracts)
+    if active_path.exists() and entry and entry.get("transcript_sha256") != sha256_file(active_path):
         raise ACSUserError(
-            "LinkedIn derivative transcript is stale; review the current transcript and run `acs derive` to "
+            "LinkedIn derivative active transcript is stale; review the current transcript and run `acs derive` to "
             "regenerate or re-register the post."
         )
+    if not entry or entry.get("reviewed_transcript_sha256") != sha256_file(reviewed_path):
+        raise ACSUserError(
+            "LinkedIn derivative reviewed transcript is stale; review the current transcript and run `acs derive` to "
+            "regenerate or re-register the post."
+        )
+    if entry.get("reviewed_transcript_revision") != reviewed.get("revision"):
+        raise ACSUserError("LinkedIn derivative reviewed revision is stale; run `acs derive` again.")
     if not entry or entry.get("content_sha256") != sha256_file(output_path):
         raise ACSUserError("LinkedIn derivative changed after registration; run `acs derive` to register the reviewed text.")
     return output_path

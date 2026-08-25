@@ -1,11 +1,12 @@
 # Editor and Engine Decision Record
 
-**Decision:** keep the Agentic Content System (ACS) v0.1 core narrow: versioned
+**Current v0.3 decision:** keep the Agentic Content System (ACS) v0.3 core
+narrow: versioned
 declarative contracts, a Python cross-platform CLI, and FFmpeg/ffprobe as the
 deterministic media boundary. Treat full editors and motion systems as
 supervised, optional adapters.
 
-**Research snapshot:** 2026-08-21
+**Research snapshot:** 2026-08-24
 
 This is a dated technical repository comparison. License, star count, README
 status, and feature statements below are GitHub snapshots, not permanent truth
@@ -16,15 +17,21 @@ separate from the creator research in
 own distinction between creator claims, transcript observations, and ACS
 design decisions.
 
+The candidate table and the explicitly labelled v0.1 passages below are
+historical language from the earlier decision record. The current release
+identity and product boundary are v0.3; later work added reviewed transcript
+truth, captions, explicit crop/audio seams, supervised adapter imports, and
+actionable creative/LUT proof without changing the local-first ownership rule.
+
 ## Constraint and decision
 
 ACS has to support authentic, useful solo-founder or small-business content
 across macOS, Windows, and Linux. The system must be headless and
 agent-readable, deterministic from transparent inputs, low setup and
 maintenance, and modular enough to add supervised adapters. It must not become
-a phone-first editor, a mini-Premiere, or a full studio. v0.1 must have no
-hidden cloud/API dependency and no external posting; a later publisher needs a
-separate authorization. FFmpeg/ffprobe provide the explicit media boundary,
+a phone-first editor, a mini-Premiere, or a full studio. The v0.3 release has
+no hidden cloud/API dependency and no external posting; a later publisher
+needs a separate authorization. FFmpeg/ffprobe provide the explicit media boundary,
 while contracts, approval, provenance, rights, transcripts, hashes, and static
 review files remain inspectable workspace truth.
 
@@ -35,21 +42,21 @@ context, including an AIOS task, is copied into those local contracts by the
 judgment layer and is not a runtime dependency.
 Local Whisper remains optional. An editor or motion engine may translate the
 contract or supply an asset, but it may not silently own workspace truth. This
-keeps the v0.1 execution path cloneable without requiring a desktop shell,
+keeps the v0.3 execution path cloneable without requiring a desktop shell,
 database, queue, cloud key, or full-editor operating model.
 
 ## Evaluation criteria
 
-| Criterion | v0.1 bar | Why it matters |
+| Criterion | v0.3 bar | Why it matters |
 | --- | --- | --- |
 | Agent-readable/headless | File contracts and a stable CLI; no required GUI or hidden state | Agents and humans must inspect, diff, approve, and recover a run |
 | Determinism | Pinned intent plus source hashes produce reproducible FFmpeg outputs and verification | A proof handoff must be trustworthy and rerunnable |
 | Cross-platform/setup | Python 3 plus FFmpeg/ffprobe on macOS, Windows, and Linux | A clone should not inherit a Tauri/Node/Rust or hosted service operations burden |
 | Scope and authenticity | Useful footage, proof, and buyer relevance; no mini-Premiere or animation-led default | The product serves content decisions and capture variety, not editor feature breadth |
 | Modularity | Explicit import/export seams with one local owner for each truth | Future editors, local transcription, motion, and publishers can be supervised adapters |
-| Trust/autonomy | No hidden cloud/API requirement, arbitrary shell execution, or v0.1 posting | Approval and separate authorization must remain visible and bounded |
+| Trust/autonomy | No hidden cloud/API requirement, arbitrary shell execution, or v0.3 posting | Approval and separate authorization must remain visible and bounded |
 
-## Dated candidate comparison
+## Dated candidate comparison (historical v0.1 record)
 
 | Candidate | Snapshot evidence on 2026-08-21 | Fit against the criteria | v0.1 decision |
 | --- | --- | --- | --- |
@@ -65,7 +72,7 @@ candidate is or is not an appropriate owner of ACS v0.1 truth under the stated
 constraints. In particular, a large star count is not evidence that a project
 is safe to embed, and a small count is not evidence that it lacks promise.
 
-## Rejection rationale and ownership
+## Historical v0.1 rejection rationale and ownership
 
 Building a full editor ourselves would expand v0.1 into timeline UX, media
 state, persistence, undo/redo, packaging, and platform-specific maintenance.
@@ -99,9 +106,17 @@ failures without becoming a hidden source of truth.
 - **Local Whisper and transcript/EDL workflows:** optional input adapters that
   produce agent-readable transcript/cut intent; they do not require cloud
   credentials or own final approval.
+- **`computerlovetech/video-edit-cli`:** a relevant supervised reference for
+  explicit edit plans, immutable source/provenance sidecars, per-segment crop
+  and separate video-source concepts, output manifests, JSON result envelopes,
+  and transcript-to-output caption mapping. The 2026-08-24 snapshot is MIT,
+  alpha v0.1.2, Python 3.11+, and FFmpeg, with 69 tests passing and one
+  integration test deselected. It is macOS/Linux-first and documents Windows
+  as untested via WSL, so it is not an ACS dependency or proof of native
+  Windows support; use the supervised `import-adapter` seam instead.
 - **Supervised publisher:** consumes only the current
 `publish/publisher-handoff.json`, honors enabled routes and manual/scheduled
-  intent, and requires authorization outside ACS. v0.1 keeps
+  intent, and requires authorization outside ACS. v0.3 keeps
   `external_posting: false`.
 
 ## Revisit triggers
@@ -125,7 +140,7 @@ A trigger starts a new evidence review; it does not authorize automatic
 ``vendor now`` behavior. Until then, ACS remains a local-first execution
 contract with FFmpeg at the media boundary.
 
-## Conclusion
+## Historical v0.1 conclusion
 
 For v0.1, **build a full editor ourselves** and **vendor a full editor now**
 are both rejected. ACS owns the narrow declarative contract and FFmpeg

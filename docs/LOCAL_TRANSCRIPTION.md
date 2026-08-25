@@ -21,7 +21,7 @@ This creates:
 
 ```text
 .venv/
-.cache/whisper/
+workspace/engine/.cache/whisper/
 ```
 
 Both directories live inside the repo clone and are ignored by git. Deleting the
@@ -68,12 +68,19 @@ workspace/productions/<content-slug>/local-whisper/takes_packed.md
 
 `takes_packed.md` is the primary transcript view for edit decisions.
 
-The first run with `--model large` downloads the model to `.cache/whisper/`.
-Override that only when you intentionally want a different cache location:
+The first run with `--model large` downloads the model to
+`workspace/engine/.cache/whisper/`. Use the single cross-platform
+`ACS_WHISPER_CACHE_DIR` override when a user-level cache is preferred, or use
+`--model-cache-dir` for one invocation:
 
 ```bash
-.venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<content-slug>/sources --recursive --edit-dir workspace/productions/<content-slug>/local-whisper --model large --model-cache-dir .cache/whisper --pack
+ACS_WHISPER_CACHE_DIR=/path/to/user-cache .venv/bin/python workspace/engine/scripts/transcribe-local-whisper.py workspace/productions/<content-slug>/sources --recursive --edit-dir workspace/productions/<content-slug>/local-whisper --model large --pack
 ```
+
+In Windows PowerShell, set `$env:ACS_WHISPER_CACHE_DIR` to a local path before
+the same Python command. An old repository-root `.cache/whisper/` is not
+deleted automatically: check whether another local tool uses it, then migrate
+or remove it manually with the operating system's normal file tools.
 
 ## Notes
 

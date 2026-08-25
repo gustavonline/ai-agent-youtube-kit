@@ -54,7 +54,7 @@ commands. `acs` is the equivalent installed command.
 
 - clone defaults: `workspace/channel/PROFILE.md`, `workspace/channel/brand.json`, and the reusable `workspace/channel/STYLE_GUIDE.md`;
 - workspace execution truth: `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and `edit-plan.json`;
-- local proof: inspected sources, transcript, approved FFmpeg renders, selected derivatives, and a static review report;
+- local proof: inspected sources, immutable raw ASR, reviewed transcript truth, approved FFmpeg renders, optional caption sidecars, selected derivatives, and a static review report;
 - supervised handoff: `publish/manifest.json`, `publish/publisher-handoff.json`, and `results/run-result.json`.
 
 ## Setup and ownership
@@ -69,11 +69,13 @@ Use `.agents/skills/setup-content-system/SKILL.md` for setup and
 
 AIOS is optional. It may own durable business or audience defaults and pass
 resolved context in prose or files. ACS does not maintain an AIOS↔ACS JSON
-handoff contract, caller IDs, database, API, or runtime dependency.
+handoff contract, caller IDs, database, API, or AIOS runtime dependency. The
+package's only optional runtime helper beyond Python and FFmpeg is Pillow for
+the portable burned-caption fallback.
 
 ## Tested boundary and current limitation
 
-The v0.2 boundary is the cross-platform Python CLI, versioned JSON contracts,
+The v0.3 boundary is the cross-platform Python CLI, versioned JSON contracts,
 FFmpeg/ffprobe, local transcript adapters, static reports, and explicit human
 approval. `external_posting` remains `false`; the publisher handoff is
 `not_posted: true` and awaits separate authorization. Full local tests and the
@@ -99,6 +101,7 @@ acs validate-profile <brand-profile>
 acs inspect <workspace>
 acs validate <workspace> [--contracts-only]
 acs ingest-transcript <workspace> <transcript>
+acs review-transcript <workspace> <reviewed-transcript> --by <reviewer>
 acs plan <workspace> --approve --by <reviewer>
 acs render <workspace> --kind all
 acs derive <workspace>
@@ -108,9 +111,22 @@ acs review-report <workspace>
 acs export-result <workspace>
 ```
 
+Optional editor results enter through `acs import-adapter`; the output and its
+JSON plan/manifest are copied into the production `adapters/` boundary,
+hash-bound, and included in the ordinary package and result proof. They never
+remain unproved side files.
+
 Rendering and packaging are approval-gated. Re-run inspection after declared
 source changes; re-approve after policy, project, delivery, or edit-plan
 changes. Packaging includes enabled routes only and never posts.
+
+`transcripts/raw.json` is immutable ASR/input evidence. `transcripts/reviewed.json`
+is explicit reviewer-owned truth; captions and publish-ready text fail closed
+when selected ranges are not covered or source bytes are stale. Configure
+optional per-output captions in `edit-plan.json` under `captions.long` and
+`captions.short`. A successful run writes `results/index.md` as the smallest
+human-facing file index. `examples/` contains only deliberately promoted
+demonstrations; production truth stays under `workspace/productions/`.
 
 See `docs/REAL_VIDEO_ACCEPTANCE.md` for the generic owner-recorded protocol,
 `docs/CLI.md` for command details, and `docs/ADAPTERS.md` for optional seams.

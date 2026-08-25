@@ -179,8 +179,12 @@ def check_identity_and_package(failures: list[str]) -> None:
         _record_failure(failures, "historical repository paths must be clearly marked as redirects")
     if 'where = ["workspace/engine"]' not in metadata_text:
         _record_failure(failures, "package discovery must target workspace/engine")
-    if 'dependencies = []' not in metadata_text:
-        _record_failure(failures, "the standalone package must declare no runtime dependency")
+    allowed_dependency_declarations = (
+        'dependencies = []',
+        'dependencies = [\n  "Pillow>=10.0",\n]',
+    )
+    if not any(declaration in metadata_text for declaration in allowed_dependency_declarations):
+        _record_failure(failures, "the standalone package may declare only the justified Pillow caption fallback dependency")
     for script in ("acs = \"agentic_content_system.cli:main\"", "agentic-content-system = \"agentic_content_system.cli:main\""):
         if script not in metadata_text:
             _record_failure(failures, f"missing public console script: {script}")

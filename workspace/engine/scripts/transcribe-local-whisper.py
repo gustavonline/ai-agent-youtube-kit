@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -38,6 +39,14 @@ MEDIA_EXTENSIONS = {
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_WHISPER_CACHE_DIR = REPO_ROOT / "workspace" / "engine" / ".cache" / "whisper"
+
+
+def default_model_cache_dir() -> Path:
+    """Return the local Whisper cache, with one explicit portable override."""
+
+    override = os.environ.get("ACS_WHISPER_CACHE_DIR", "").strip()
+    return Path(override).expanduser() if override else DEFAULT_WHISPER_CACHE_DIR
 
 
 def run(cmd: list[str]) -> None:
@@ -206,8 +215,11 @@ def main() -> None:
     parser.add_argument(
         "--model-cache-dir",
         type=Path,
-        default=REPO_ROOT / ".cache/whisper",
-        help="Where Whisper models are stored. Default: repo-local .cache/whisper.",
+        default=default_model_cache_dir(),
+        help=(
+            "Where Whisper models are stored. Default: workspace/engine/.cache/whisper; "
+            "override with ACS_WHISPER_CACHE_DIR or this flag."
+        ),
     )
     parser.add_argument(
         "--language",

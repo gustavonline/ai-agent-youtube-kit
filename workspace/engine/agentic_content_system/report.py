@@ -22,7 +22,61 @@ ACTIVE_GENERATED_HANDOFF_FILES = (
     "reports/review.html",
     "reports/review.json",
     "results/run-result.json",
+    "results/index.md",
 )
+
+QA_PROOF_FILES = (
+    "qa/visual-review.json",
+    "qa/visual-review.md",
+)
+
+
+def qa_review_proof(contracts: ProjectContracts) -> list[dict[str, str]]:
+    """Return optional human/machine visual-QA files as hash-bound proof."""
+
+    proof: list[dict[str, str]] = []
+    for relative in QA_PROOF_FILES:
+        path = contracts.directory / relative
+        if path.is_file():
+            proof.append({"path": relative, "sha256": sha256_file(path)})
+    return proof
+
+
+def render_review_proof(contracts: ProjectContracts, record: dict[str, Any]) -> list[dict[str, Any]]:
+    """Summarize current output/caption bindings for the static review record."""
+
+    proof: list[dict[str, Any]] = []
+    for kind in ("long", "short"):
+        if not contracts.edit_plan.get(f"{kind}_form", {}).get("enabled"):
+            continue
+        item = record.get("renders", {}).get(kind)
+        if not isinstance(item, dict):
+            continue
+        metadata = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
+        captions = item.get("captions") if isinstance(item.get("captions"), dict) else {}
+        proof.append(
+            {
+                "kind": kind,
+                "output": item.get("output", ""),
+                "output_sha256": item.get("output_sha256", ""),
+                "framing": metadata.get("framing", {}),
+                "captions": {
+                    "enabled": bool(captions.get("enabled", False)),
+                    "intent": captions.get("intent", {}),
+                    "intent_hash": captions.get("caption_intent_hash", ""),
+                    "reviewed_revision": captions.get("reviewed_transcript_revision", 0),
+                    "reviewed_sha256": captions.get("reviewed_transcript_sha256", ""),
+                    "cue_count": captions.get("cue_count", 0),
+                    "sidecar_path": captions.get("sidecar_path", ""),
+                    "sidecar_sha256": captions.get("sidecar_sha256", ""),
+                    "renderer": captions.get("renderer", "none"),
+                    "text_filter": bool(captions.get("text_filter", False)),
+                    "font_proof": captions.get("font_proof", {}),
+                    "render_fingerprint": item.get("caption_fingerprint", {}),
+                },
+            }
+        )
+    return proof
 
 
 def invalidate_active_handoff(contracts: ProjectContracts) -> None:
@@ -93,12 +147,23 @@ def create_review_report(contracts: ProjectContracts) -> Path:
     record_path = contracts.directory / "renders" / "render-record.json"
     record: dict[str, Any] = read_json(record_path) if record_path.exists() else {}
     inspection: dict[str, Any] = read_json(inspection_path)
+    render_proof = render_review_proof(contracts, record)
+    qa_proof = qa_review_proof(contracts)
 
     videos = []
     for kind, item in record.get("renders", {}).items():
         if not contracts.edit_plan.get(f"{kind}_form", {}).get("enabled"):
             continue
-        videos.append(_video_card(f"{kind.title()} render", item.get("output", "")))
+        caption_note = ""
+        captions = item.get("captions") or {}
+        if captions.get("sidecar_path"):
+            caption_note = (
+                f"<p>Captions: <a href=\"../{html.escape(captions['sidecar_path'], quote=True)}\">"
+                f"{html.escape(captions['sidecar_path'])}</a>; revision "
+                f"{html.escape(str(captions.get('reviewed_transcript_revision', 'unknown')))}; "
+                f"renderer {html.escape(str(captions.get('renderer', 'none')))}.</p>"
+            )
+        videos.append(_video_card(f"{kind.title()} render", item.get("output", "")) + caption_note)
     handoff_routes = {route.get("channel"): route for route in publisher_handoff.get("routes", [])}
     route_items: list[str] = []
     for route in manifest.get("routes", []):
@@ -134,6 +199,16 @@ def create_review_report(contracts: ProjectContracts) -> Path:
             f"<td>{html.escape(str(item.get('media', {}).get('duration_seconds', '')))}s</td></tr>"
         )
     source_rows = "".join(source_rows_parts) or "<tr><td colspan=6>Run acs inspect to populate source metadata.</td></tr>"
+    adapter_items = "".join(
+        f"<li>{html.escape(asset.get('kind', 'adapter'))}: <code>{html.escape(asset.get('path', ''))}</code></li>"
+        for asset in manifest.get("assets", [])
+        if asset.get("kind") in {"adapter", "adapter-manifest"}
+    ) or "<li>No adapter import.</li>"
+    qa_items = "".join(
+        f"<li><a href=\"../{html.escape(item['path'], quote=True)}\">"
+        f"{html.escape(item['path'])}</a> ({html.escape(item['sha256'])})</li>"
+        for item in qa_proof
+    ) or "<li>No visual-QA artifact registered.</li>"
     title = html.escape(contracts.project["title"])
     approval = contracts.edit_plan["approval"]
     manifest_status = manifest.get("verification", {}).get("status", "not_packaged")
@@ -160,7 +235,7 @@ def create_review_report(contracts: ProjectContracts) -> Path:
 </head>
 <body>
   <h1>{title}</h1>
-  <p>Static local review report generated by Agentic Content System. No external posting is performed by v0.2.</p>
+  <p>Static local review report generated by Agentic Content System v0.3. No external posting is performed.</p>
   <section>
     <p>Plan approval: <span class="status">{html.escape(approval.get('status', 'unknown'))}</span> by {html.escape(approval.get('approved_by', '—'))}</p>
     <p>Publish verification: <span class="status">{html.escape(manifest_status)}</span></p>
@@ -175,6 +250,10 @@ def create_review_report(contracts: ProjectContracts) -> Path:
   <section><ul>{disabled}</ul></section>
   <h2>Source provenance</h2>
   <section><table><thead><tr><th>Path</th><th>Rights</th><th>Owner</th><th>License</th><th>Source</th><th>Duration</th></tr></thead><tbody>{source_rows}</tbody></table></section>
+  <h2>Supervised adapter imports</h2>
+  <section><ul>{adapter_items}</ul></section>
+  <h2>Visual QA proof</h2>
+  <section><ul>{qa_items}</ul></section>
 </body>
 </html>
 """
@@ -204,6 +283,8 @@ def create_review_report(contracts: ProjectContracts) -> Path:
             "publisher_handoff_sha256": sha256_file(publisher_handoff_path) if publisher_handoff_path.exists() else "",
             "verification_status": manifest_status,
             "verification_sha256": sha256_file(verification_path) if verification_path.exists() else "",
+            "render_proof": render_proof,
+            "qa_proof": qa_proof,
         },
     )
     review_record = read_json(report_dir / "review.json")

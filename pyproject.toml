@@ -4,14 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentic-content-system"
-version = "0.2.0"
+version = "0.3.0"
 description = "Local-first agentic system for reviewed videos, posts, and publish-ready handoff"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
   { name = "Gustav Online" }
 ]
-dependencies = []
+dependencies = [
+  "Pillow>=10.0",
+]
 
 [project.urls]
 Repository = "https://github.com/onlinesourdough/Agentic-Content-System"

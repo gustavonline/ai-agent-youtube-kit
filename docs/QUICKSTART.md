@@ -84,12 +84,26 @@ or VTT:
 .venv/bin/python -m agentic_content_system ingest-transcript workspace/productions/my-content transcript.json
 ```
 
+When the input is local ASR, keep its wording in `transcripts/raw.json` and
+register corrected truth explicitly:
+
+```text
+.venv/bin/python -m agentic_content_system review-transcript workspace/productions/my-content reviewed-excerpt.json --by <reviewer> --status partially_reviewed
+```
+
 The complete route is:
 
 ```text
 inspect -> validate -> ingest transcript -> review/edit plan -> approve
   -> render -> derive -> package -> verify -> static review report -> export result
 ```
+
+The optional `creative-direction.md` is the human place for references, rights
+notes, grade/LUT ideas, callouts, thumbnails, and motion. Resolve chosen values
+into `edit-plan.json` before approval. If a LUT is supplied, include a
+representative preview and explicit reviewer approval; ACS rejects render until
+both are current. A successful run leaves `results/index.md` with direct links
+to videos, caption files, posts, review, result, and publisher handoff.
 
 Use `.venv/bin/python -m agentic_content_system plan workspace/productions/my-content --approve --by <name>`
 only after the plan is reviewed. Delivery intent is owned by
@@ -130,7 +144,7 @@ HyperFrames workspaces under
 `workspace/engine/motion-adapters/video-projects/` remain available for a
 motion asset when motion clarifies a point. They are optional adapter material,
 not the ACS product identity. Timeline Studio, OpenReelio, and supervised
-publishers are documented seams only; v0.2 does not vendor or depend on them.
+publishers are documented seams only; v0.3 does not vendor or depend on them.
 
 ## Cleanup
 

@@ -18,6 +18,13 @@ humanize/relate. A project chooses one capture format and one practical group;
 the choice should follow the buyer question and proof available, not the
 platform of the day.
 
+Use the format library inside a small operating flow: core idea + intended
+sales job (attention, nurture/proof, or conversion/next step) -> chosen capture
+format -> core video -> only enabled, channel-native harvests -> contextual
+CTA/handoff. A core video may support a YouTube/library or email trust layer
+and selected short-form/feed/LinkedIn relationship harvests, but no channel is
+mandatory and one video file should not be blindly duplicated everywhere.
+
 The default editorial shape is promise + proof + plan, usually in three points,
 with a contextual CTA and an outro to the next useful video. A core video can
 be harvested into selected short and text derivatives. The default planning

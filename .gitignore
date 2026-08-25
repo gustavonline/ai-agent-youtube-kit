@@ -2,6 +2,7 @@
 .env
 .venv/
 .cache/
+workspace/engine/.cache/
 workspace/productions/*/sources/*
 workspace/productions/*/transcripts/*
 workspace/productions/*/renders/*
@@ -13,6 +14,7 @@ workspace/productions/*/recovery/*
 workspace/productions/*/inspection.json
 workspace/productions/*/edit-plan.previous.json
 workspace/productions/*/edit/
+workspace/productions/*/adapters/*
 workspace/productions/*/local-whisper/
 examples/*/download/
 examples/*/frames/

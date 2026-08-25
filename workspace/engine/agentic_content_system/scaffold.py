@@ -190,7 +190,7 @@ def scaffold_project(
     write_json(project_dir / "brand.json", selected_brand)
     write_json(project_dir / "project.json", project)
     write_json(project_dir / "edit-plan.json", edit_plan)
-    for name in ("sources", "transcripts", "context", *GENERATED_DIRS):
+    for name in ("sources", "transcripts", "context", "adapters", *GENERATED_DIRS):
         directory = project_dir / name
         directory.mkdir(parents=True, exist_ok=True)
         keep = directory / ".gitkeep"
@@ -211,9 +211,28 @@ def scaffold_project(
         "resolved values needed for this run into the ACS-owned project contracts.\n",
         encoding="utf-8",
     )
+    (project_dir / "adapters" / "README.md").write_text(
+        "# Supervised adapter imports\n\n"
+        "Use `acs import-adapter <workspace> <rendered-output> --manifest <plan.json> --adapter <name> --by <reviewer>` "
+        "to bring an independently rendered output into ordinary ACS package and proof.\n",
+        encoding="utf-8",
+    )
     for name, content in (
         ("content-brief.md", default_content_brief(project, edit_plan)),
         ("recording-plan.md", default_recording_plan(project, edit_plan)),
+        (
+            "creative-direction.md",
+            "# Optional creative direction\n\n"
+            "Human-readable references, rights notes, grade/LUT ideas, callout, thumbnail, and motion options live here.\n"
+            "Copy only resolved choices into `edit-plan.json`; ACS does not parse this note as runtime truth.\n\n"
+            "- References/rights notes:\n"
+            "- Caption choice:\n"
+            "- Framing choice:\n"
+            "- Grade/LUT choice:\n"
+            "- Callout choice:\n"
+            "- Thumbnail choice:\n"
+            "- Optional motion choice:\n",
+        ),
     ):
         path = project_dir / name
         if force or not path.exists():
