@@ -55,7 +55,7 @@ commands. `acs` is the equivalent installed command.
 - clone defaults: `workspace/channel/PROFILE.md`, `workspace/channel/brand.json`, and the reusable `workspace/channel/STYLE_GUIDE.md`;
 - workspace execution truth: `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and `edit-plan.json`;
 - local proof: inspected sources, immutable raw ASR, reviewed transcript truth, approved FFmpeg renders, optional caption sidecars, selected derivatives, and a static review report;
-- supervised handoff: `publish/manifest.json`, `publish/publisher-handoff.json`, and `results/run-result.json`.
+- supervised handoff: `publish/manifest.json`, `publish/publisher-handoff.json`, `results/run-result.json`, and a separate reviewer-owned semantic evaluation.
 
 ## Setup and ownership
 
@@ -89,7 +89,7 @@ Each deliberate full production-route attempt must append exactly one
 structured record to `workspace/history/runs.jsonl` and write evidence under
 `workspace/runs/<run-id>/`. Ordinary repeats link with `predecessor`; explicit
 recovery consumes one unresolved failed run once. The ledger references
-production proof and bounded failure/recovery facts; it never stores raw
+production proof, bounded semantic evaluation, and failure/recovery facts; it never stores raw
 requests and is not an AIOS service. Curated examples are promoted separately
 with the local tracer and never become operational state.
 
@@ -109,6 +109,7 @@ acs package <workspace>
 acs verify <workspace>
 acs review-report <workspace>
 acs export-result <workspace>
+acs semantic-eval <workspace> <assessment.json> --by <reviewer>
 ```
 
 Optional editor results enter through `acs import-adapter`; the output and its
@@ -127,6 +128,12 @@ optional per-output captions in `edit-plan.json` under `captions.long` and
 `captions.short`. A successful run writes `results/index.md` as the smallest
 human-facing file index. `examples/` contains only deliberately promoted
 demonstrations; production truth stays under `workspace/productions/`.
+
+After export, a designated reviewer records a bounded semantic judgment of the
+candidate against its approved promise, proof, and audience. It is separate
+from schema validation, deterministic verification, static review, and the
+read-only audit. A failed result is retained unchanged and replayed only from
+a new explicit recovery run; see `docs/SEMANTIC_EVALUATION.md`.
 
 See `docs/REAL_VIDEO_ACCEPTANCE.md` for the generic owner-recorded protocol,
 `docs/CLI.md` for command details, and `docs/ADAPTERS.md` for optional seams.

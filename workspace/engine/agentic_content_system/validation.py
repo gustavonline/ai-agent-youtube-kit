@@ -50,6 +50,8 @@ def validate_json(value: Any, schema: dict[str, Any], path: str = "$") -> list[V
     if isinstance(value, list):
         if "minItems" in schema and len(value) < schema["minItems"]:
             issues.append(ValidationIssue(path, f"must contain at least {schema['minItems']} items"))
+        if "maxItems" in schema and len(value) > schema["maxItems"]:
+            issues.append(ValidationIssue(path, f"must contain at most {schema['maxItems']} items"))
         item_schema = schema.get("items")
         if isinstance(item_schema, dict):
             for index, item in enumerate(value):

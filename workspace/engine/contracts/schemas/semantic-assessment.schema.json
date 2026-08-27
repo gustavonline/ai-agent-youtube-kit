@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "acs/semantic-assessment/1.0",
+  "title": "Agentic Content System reviewer observations for one candidate result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "promise_delivery", "proof_delivery", "audience_relevance", "failure_action"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["1.0"]},
+    "promise_delivery": {"type": "object", "additionalProperties": false, "required": ["passed", "observation"], "properties": {"passed": {"type": "boolean"}, "observation": {"type": "string", "minLength": 1}}},
+    "proof_delivery": {"type": "object", "additionalProperties": false, "required": ["passed", "observation"], "properties": {"passed": {"type": "boolean"}, "observation": {"type": "string", "minLength": 1}}},
+    "audience_relevance": {"type": "object", "additionalProperties": false, "required": ["passed", "observation"], "properties": {"passed": {"type": "boolean"}, "observation": {"type": "string", "minLength": 1}}},
+    "failure_action": {"type": "string", "minLength": 1}
+  }
+}

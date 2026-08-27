@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import shutil
 import subprocess
@@ -12,10 +13,16 @@ import agentic_content_system.package as package_module
 from agentic_content_system.io import read_json, sha256_file, write_json
 from agentic_content_system.package import package_project
 from agentic_content_system.project import load_contracts
+from agentic_content_system.semantic import current_semantic_evaluation
+from agentic_content_system.schemas import load_schema
+from agentic_content_system.validation import validate_json
+from agentic_content_system.errors import ACSUserError
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 FIXTURE_TRANSCRIPT = REPO_ROOT / "workspace" / "engine" / "tests" / "fixtures" / "transcript.json"
+SEMANTIC_PASS = REPO_ROOT / "workspace" / "engine" / "tests" / "fixtures" / "semantic-assessment-passed.json"
+SEMANTIC_FAIL = REPO_ROOT / "workspace" / "engine" / "tests" / "fixtures" / "semantic-assessment-failed.json"
 
 
 class CLITests(unittest.TestCase):
@@ -198,6 +205,78 @@ class CLITests(unittest.TestCase):
         result = self.run_cli("validate", str(self.project))
         self.assertEqual(result.returncode, 2)
         self.assertIn("reason", result.stderr.lower())
+
+    def test_semantic_eval_rejects_valid_but_irrelevant_candidate_without_changing_result(self) -> None:
+        self.prepare_exported_project()
+        result_path = self.project / "results" / "run-result.json"
+        result_before = result_path.read_bytes()
+        valid = self.run_cli("validate", str(self.project))
+        self.assertEqual(valid.returncode, 0, valid.stderr)
+
+        failed = self.run_cli("semantic-eval", str(self.project), str(SEMANTIC_FAIL), "--by", "content-reviewer")
+        self.assertEqual(failed.returncode, 2)
+        self.assertIn("semantic evaluation failed", failed.stderr.lower())
+        self.assertEqual(result_before, result_path.read_bytes())
+        evaluations = list((self.project / "evaluations").glob("semantic-evaluation-*.json"))
+        self.assertEqual(1, len(evaluations))
+        evaluation = read_json(evaluations[0])
+        self.assertEqual("failed", evaluation["outcome"])
+        self.assertTrue(evaluation["result"]["path"].startswith("evaluations/candidate-result-"))
+        self.assertTrue(all(not item["passed"] for item in evaluation["observable_checks"]))
+
+    def test_current_semantic_evaluation_rejects_duplicate_check_rows(self) -> None:
+        self.prepare_exported_project()
+        passed = self.run_cli("semantic-eval", str(self.project), str(SEMANTIC_PASS), "--by", "content-reviewer")
+        self.assertEqual(passed.returncode, 0, passed.stderr)
+        evaluation_path = next((self.project / "evaluations").glob("semantic-evaluation-*.json"))
+        evaluation = read_json(evaluation_path)
+        evaluation["observable_checks"].append(
+            {"id": "promise_delivery", "subject": "duplicate", "passed": True, "observation": "Duplicate row."}
+        )
+        write_json(evaluation_path, evaluation)
+        with self.assertRaises(ACSUserError):
+            current_semantic_evaluation(load_contracts(self.project))
+
+    def test_semantic_evaluation_schema_uses_uniform_full_rows_without_prefix_items(self) -> None:
+        self.prepare_exported_project()
+        passed = self.run_cli("semantic-eval", str(self.project), str(SEMANTIC_PASS), "--by", "content-reviewer")
+        self.assertEqual(passed.returncode, 0, passed.stderr)
+        evaluation = read_json(next((self.project / "evaluations").glob("semantic-evaluation-*.json")))
+        schema = load_schema("semantic-evaluation")
+        checks_schema = schema["properties"]["observable_checks"]
+        self.assertNotIn("prefixItems", checks_schema)
+        self.assertEqual(3, checks_schema["minItems"])
+        self.assertEqual(3, checks_schema["maxItems"])
+        self.assertEqual(
+            {"id", "subject", "passed", "observation"},
+            set(checks_schema["items"]["required"]),
+        )
+        self.assertFalse(checks_schema["items"]["additionalProperties"])
+
+        missing_passed = copy.deepcopy(evaluation)
+        del missing_passed["observable_checks"][0]["passed"]
+        self.assertTrue(validate_json(missing_passed, schema))
+        unexpected_check_field = copy.deepcopy(evaluation)
+        unexpected_check_field["observable_checks"][0]["unexpected"] = True
+        self.assertTrue(validate_json(unexpected_check_field, schema))
+        fourth_check = copy.deepcopy(evaluation)
+        fourth_check["observable_checks"].append(copy.deepcopy(fourth_check["observable_checks"][0]))
+        self.assertTrue(validate_json(fourth_check, schema))
+
+    def test_validator_does_not_apply_nonstandard_prefix_items_to_uniform_items(self) -> None:
+        issues = validate_json(
+            [{"id": "not-positional", "passed": True}],
+            {
+                "type": "array",
+                "prefixItems": [{"type": "object", "properties": {"id": {"const": "first"}}}],
+                "items": {
+                    "type": "object",
+                    "required": ["id", "passed"],
+                    "properties": {"id": {"type": "string"}, "passed": {"type": "boolean"}},
+                },
+            },
+        )
+        self.assertEqual([], issues)
 
     def test_approval_drift_blocks_every_gated_command_until_reapproval(self) -> None:
         self.prepare_approved_project()

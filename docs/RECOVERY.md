@@ -50,6 +50,12 @@ again. The tracer evidence references production-owned proof and does not copy
 raw prompts or request text. Do not rewrite or delete the ledger during
 cleanup.
 
+After `export-result`, the reviewer-owned semantic checkpoint is also part of
+the complete attempt. Preserve a failed `evaluations/semantic-evaluation-*.json`
+file and record it with `semantic_eval_failed`; do not change its candidate
+result. A recovery must create a new result and passing evaluation, then use
+the failed run once with `--recover`. See `SEMANTIC_EVALUATION.md`.
+
 Ignored local runtime artifacts from the existing Whisper workflow remain
 available through `workspace/engine/scripts/clean-local-artifacts.sh`; that script is separate
 from project-output cleanup.

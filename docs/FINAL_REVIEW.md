@@ -5,8 +5,9 @@ review step before separate publishing authorization, not a hosted dashboard.
 
 ## When To Run
 
-Run final review after a candidate export exists and before marking the project
-finished.
+Run final review after a candidate export exists. Record the semantic
+evaluation after final review and before marking the deliberate attempt
+successful.
 
 ```text
 <workspace>/renders/long.mp4
@@ -26,6 +27,7 @@ Read:
 8. `<workspace>/learning.json` and any local session notes
 9. `<workspace>/edit-plan.json`
 10. `<workspace>/packaging-review.md`, when supplied
+11. `<workspace>/results/run-result.json`
 
 ## Output
 
@@ -62,6 +64,8 @@ Score each category from 1-10:
 5. Compare packaging to the actual final edit.
 6. Write timestamped findings with required fixes.
 7. Mark publish readiness.
+8. Write the separate semantic assessment and run `acs semantic-eval`; a
+   passing static review alone does not accept the content result.
 
 ## Learning
 

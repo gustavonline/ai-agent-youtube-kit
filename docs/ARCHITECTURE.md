@@ -18,7 +18,7 @@ capture/ingest -> inspect -> transcript -> explicit approval
 FFmpeg render -> selected derivatives -> enabled-route package
           |
           v
-verify -> static HTML review -> local proof/result -> caller reads learning
+verify -> static HTML review -> local proof/result -> semantic content checkpoint -> caller reads learning
 ```
 
 ## Contract ownership
@@ -47,6 +47,10 @@ verify -> static HTML review -> local proof/result -> caller reads learning
   for the HTML review and outbound proof/result. A package replacement stages
   manifest and publisher handoff together, then invalidates old generated
   review/result claims only after the replacement succeeds.
+- `evaluations/semantic-evaluation-*.json` owns an immutable reviewer judgment
+  of one exported result against its ACS-owned promise, proof, and audience.
+  It is evaluated after deterministic review/result evidence and before a
+  deliberate success is accepted in the append-only ledger.
 - `workspace/engine/contracts/schemas/` versions the shapes. The CLI validates them without a
   runtime database or network call.
 - `run-result.schema.json` owns the caller-agnostic proof/learning result. It
@@ -64,7 +68,9 @@ references the production `project.json`, `results/run-result.json`, and
 `reports/review.json` rather than copying raw requests or prompts.
 
 The local `workspace/engine/tracer.py` records predecessor repeats and explicit
-single-use recovery relations. `examples/` is a deliberate curation boundary:
+single-use recovery relations. It binds semantic-evaluation evidence to
+successful and semantic-failed attempts without changing the evaluated result.
+`examples/` is a deliberate curation boundary:
 promotion writes only a small README and proof pointer, while operational
 production state remains under `workspace/productions/`. Neither the tracer nor
 the ACS CLI is an AIOS service, daemon, database, or automatic publisher.

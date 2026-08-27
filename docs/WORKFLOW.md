@@ -26,9 +26,9 @@ the system is not a phone-first editor.
    truth before captions or publish-ready text.
 7. Record explicit approval with `acs plan --approve --by <reviewer>`.
 8. Run `acs render`, `acs derive`, `acs package`, `acs verify`,
-   `acs review-report`, and `acs export-result`.
+   `acs review-report`, `acs export-result`, and reviewer-owned `acs semantic-eval`.
 9. Let the caller read the local proof, `publish/publisher-handoff.json`, and
-   `results/run-result.json` through its normal task flow. The publisher handoff
+   `results/run-result.json` and its semantic-evaluation outcome through its normal task flow. The publisher handoff
    is awaiting separate authorization; v0.3 never posts externally.
 10. For a repeat or explicit recovery, inspect relevant entries in
     `workspace/history/runs.jsonl` and their `workspace/runs/<run-id>/run.json`

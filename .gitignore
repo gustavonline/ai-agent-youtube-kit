@@ -10,6 +10,7 @@ workspace/productions/*/derived/*
 workspace/productions/*/publish/*
 workspace/productions/*/reports/*
 workspace/productions/*/results/*
+workspace/productions/*/evaluations/*
 workspace/productions/*/recovery/*
 workspace/productions/*/inspection.json
 workspace/productions/*/edit-plan.previous.json

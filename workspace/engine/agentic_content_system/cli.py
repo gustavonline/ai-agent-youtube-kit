@@ -23,6 +23,7 @@ from .project import ProjectContracts, current_approval_hash, load_contracts, re
 from .render import render_project
 from .report import create_review_report
 from .result import export_result
+from .semantic import evaluate_content_result
 from .scaffold import load_brand_profile, scaffold_project
 from .schemas import load_schema
 from .transcript import (
@@ -125,6 +126,11 @@ def _parser() -> argparse.ArgumentParser:
 
     result = sub.add_parser("export-result", help="Export hashed proof, route results, review status, and learning.")
     result.add_argument("project", metavar="workspace")
+
+    semantic = sub.add_parser("semantic-eval", help="Write reviewer-owned semantic evidence for an exported candidate result.")
+    semantic.add_argument("project", metavar="workspace")
+    semantic.add_argument("assessment", help="Local JSON observations for promise, proof, and audience fit.")
+    semantic.add_argument("--by", required=True, help="Reviewer responsible for the semantic judgment.")
 
     clean = sub.add_parser("clean", help="Remove generated outputs while preserving contracts, sources, and transcripts.")
     clean.add_argument("project", metavar="workspace")
@@ -385,6 +391,17 @@ def command_export_result(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_semantic_eval(args: argparse.Namespace) -> int:
+    contracts, _ = _load(args.project)
+    path, evaluation = evaluate_content_result(contracts, args.assessment, reviewer=args.by)
+    print(f"Semantic evaluation: {path}")
+    if evaluation["outcome"] != "passed":
+        raise ACSUserError(
+            "Semantic evaluation failed; retain this candidate result and record the failed deliberate attempt before an explicit recovery."
+        )
+    return 0
+
+
 def command_clean(args: argparse.Namespace) -> int:
     if not args.outputs:
         raise ACSUserError("Cleaning is intentionally explicit. Re-run with `clean <workspace> --outputs`.")
@@ -418,6 +435,7 @@ COMMANDS = {
     "verify": command_verify,
     "review-report": command_report,
     "export-result": command_export_result,
+    "semantic-eval": command_semantic_eval,
     "clean": command_clean,
 }
 

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -21,6 +22,16 @@ SLUG_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 FACT_PATTERN = re.compile(r"^[A-Za-z0-9_.:-]{1,80}$")
 FORBIDDEN_FIELDS = {"prompt", "request", "raw_request", "raw_prompt", "context", "transcript", "credentials"}
 STATUSES = {"succeeded", "failed"}
+SEMANTIC_FAILURE_CODE = "semantic_eval_failed"
+SEMANTIC_CHECK_IDS = ("promise_delivery", "proof_delivery", "audience_relevance")
+LEGACY_RECORD_FIELDS = frozenset(
+    {
+        "run_id", "started_at", "finished_at", "status", "input_ref",
+        "output_ref", "proof_ref", "previous_run_id",
+        "previous_run_relation", "failure", "recovery",
+    }
+)
+EVALUATED_RECORD_FIELDS = LEGACY_RECORD_FIELDS | {"evaluation"}
 
 
 class TraceError(ValueError):
@@ -129,6 +140,86 @@ def _json_has_forbidden_field(value: Any) -> str | None:
     return None
 
 
+def _owned_production_file(production_dir: Path, relative: str, *, label: str) -> Path:
+    path = _safe_relative(relative, label=label)
+    candidate = production_dir / path
+    try:
+        candidate.resolve().relative_to(production_dir.resolve())
+    except ValueError as exc:
+        raise TraceError(f"{label} escapes production") from exc
+    if not candidate.is_file() or candidate.is_symlink():
+        raise TraceError(f"{label} must be a regular local file")
+    return candidate
+
+
+def _validate_semantic_evaluation(
+    evaluation: dict[str, Any],
+    production_dir: Path,
+    *,
+    expected_result_sha256: str | None = None,
+    expected_outcome: str | None = None,
+) -> None:
+    result = evaluation.get("result")
+    if not isinstance(result, dict) or set(result) != {"path", "sha256"}:
+        raise TraceError("semantic evaluation has invalid result snapshot facts")
+    result_ref = result.get("path")
+    result_sha256 = result.get("sha256")
+    if not isinstance(result_ref, str) or not result_ref.startswith("evaluations/candidate-result-"):
+        raise TraceError("semantic evaluation result reference is invalid")
+    if not isinstance(result_sha256, str) or not re.fullmatch(r"[a-f0-9]{64}", result_sha256):
+        raise TraceError("semantic evaluation result hash is invalid")
+    if expected_result_sha256 is not None and result_sha256 != expected_result_sha256:
+        raise TraceError("semantic evaluation is not bound to the current result")
+    snapshot = _owned_production_file(production_dir, result_ref, label="semantic result snapshot")
+    if sha256_file(snapshot) != result_sha256:
+        raise TraceError("semantic evaluation result snapshot is stale or unreadable")
+
+    checks = evaluation.get("observable_checks")
+    if not isinstance(checks, list) or [item.get("id") if isinstance(item, dict) else None for item in checks] != list(SEMANTIC_CHECK_IDS):
+        raise TraceError("semantic evaluation must retain exactly one promise, proof, and audience check")
+    if any(
+        not isinstance(item.get("passed"), bool)
+        or not isinstance(item.get("observation"), str)
+        or not item["observation"].strip()
+        for item in checks
+    ):
+        raise TraceError("semantic evaluation checks must have observed boolean outcomes")
+    derived_outcome = "passed" if all(item["passed"] for item in checks) else "failed"
+    if evaluation.get("outcome") != derived_outcome:
+        raise TraceError("semantic evaluation outcome contradicts its checks")
+    if expected_outcome is not None and derived_outcome != expected_outcome:
+        raise TraceError(f"current semantic evaluation must be {expected_outcome}")
+
+    evidence_items = evaluation.get("required_evidence")
+    if not isinstance(evidence_items, list) or not evidence_items:
+        raise TraceError("semantic evaluation requires retained local evidence")
+    for item in evidence_items:
+        if not isinstance(item, dict) or set(item) != {"path", "sha256"}:
+            raise TraceError("semantic evaluation has invalid required evidence")
+        evidence_ref = item.get("path")
+        evidence_sha256 = item.get("sha256")
+        if not isinstance(evidence_ref, str) or not isinstance(evidence_sha256, str):
+            raise TraceError("semantic evaluation has invalid required evidence")
+        evidence = _owned_production_file(production_dir, evidence_ref, label="semantic evidence path")
+        if sha256_file(evidence) != evidence_sha256:
+            raise TraceError("semantic evaluation evidence is stale or unreadable")
+
+
+def _require_current_semantic_decision(evaluation: dict[str, Any], project: dict[str, Any], edit_plan: dict[str, Any]) -> None:
+    approval = edit_plan.get("approval")
+    if not isinstance(approval, dict):
+        raise TraceError("production edit-plan.json must contain approval facts")
+    expected = {
+        "promise": project.get("promise"),
+        "audience": project.get("audience"),
+        "required_proof": edit_plan.get("proof"),
+        "approval_hash": approval.get("approval_hash"),
+        "approval_revision": approval.get("approval_revision"),
+    }
+    if evaluation.get("decision") != expected:
+        raise TraceError("semantic evaluation is bound to an older ACS content decision")
+
+
 def _validate_record_shape(records: Iterable[dict[str, Any]], root: Path) -> list[str]:
     failures: list[str] = []
     seen: set[str] = set()
@@ -137,14 +228,17 @@ def _validate_record_shape(records: Iterable[dict[str, Any]], root: Path) -> lis
 
     for index, record in enumerate(records, start=1):
         prefix = f"history record {index}"
-        required = {
-            "run_id", "started_at", "finished_at", "status", "input_ref",
-            "output_ref", "proof_ref", "previous_run_id",
-            "previous_run_relation", "failure", "recovery",
-        }
-        missing = required - set(record)
-        if missing:
-            failures.append(f"{prefix} missing fields: {sorted(missing)}")
+        fields = set(record)
+        legacy = fields == LEGACY_RECORD_FIELDS
+        if fields not in {LEGACY_RECORD_FIELDS, EVALUATED_RECORD_FIELDS}:
+            missing = LEGACY_RECORD_FIELDS - fields
+            unsupported = fields - EVALUATED_RECORD_FIELDS
+            if missing:
+                failures.append(f"{prefix} missing fields: {sorted(missing)}")
+            elif unsupported:
+                failures.append(f"{prefix} has unsupported fields: {sorted(unsupported)}")
+            else:
+                failures.append(f"{prefix} must include evaluation or use the exact legacy record shape")
             continue
         run_id = record["run_id"]
         if not isinstance(run_id, str) or not RUN_ID_PATTERN.fullmatch(run_id):
@@ -196,6 +290,35 @@ def _validate_record_shape(records: Iterable[dict[str, Any]], root: Path) -> lis
                 _failure_fact(record["failure"])
             except TraceError as exc:
                 failures.append(f"{prefix}: {exc}")
+        evaluation = None if legacy else record["evaluation"]
+        failure_code = record.get("failure", {}).get("code") if isinstance(record.get("failure"), dict) else None
+        if not legacy and status == "succeeded" and evaluation is None:
+            failures.append(f"{prefix} succeeded without passed semantic evaluation")
+        if not legacy and failure_code == SEMANTIC_FAILURE_CODE and evaluation is None:
+            failures.append(f"{prefix} semantic failure lacks semantic evaluation")
+        if evaluation is not None:
+            if not isinstance(evaluation, dict) or set(evaluation) != {"path", "sha256", "outcome"}:
+                failures.append(f"{prefix} has invalid semantic evaluation facts")
+            else:
+                try:
+                    evaluation_path = _safe_relative(evaluation["path"], label=f"{prefix}.evaluation.path")
+                    production_root = _safe_relative(record["input_ref"], label=f"{prefix}.input_ref").parent
+                    evaluation_path.relative_to(production_root / "evaluations")
+                    absolute_evaluation = (root / evaluation_path).resolve()
+                    absolute_evaluation.relative_to((root / production_root).resolve())
+                    if not absolute_evaluation.is_file() or sha256_file(absolute_evaluation) != evaluation["sha256"]:
+                        raise TraceError("evaluation evidence is stale or missing")
+                    value = json.loads(absolute_evaluation.read_text(encoding="utf-8"))
+                    if not isinstance(value, dict) or value.get("outcome") != evaluation["outcome"]:
+                        raise TraceError("evaluation evidence contradicts ledger facts")
+                    _validate_semantic_evaluation(value, (root / production_root).resolve())
+                except (OSError, ValueError, json.JSONDecodeError, TraceError, KeyError):
+                    failures.append(f"{prefix} has escaping, unreadable, or inconsistent semantic evaluation evidence")
+            if isinstance(evaluation, dict):
+                if status == "succeeded" and evaluation.get("outcome") != "passed":
+                    failures.append(f"{prefix} succeeded without a passed semantic evaluation")
+                if failure_code == SEMANTIC_FAILURE_CODE and evaluation.get("outcome") != "failed":
+                    failures.append(f"{prefix} semantic failure lacks failed semantic evaluation")
         recovery = record["recovery"]
         if relation == "recovery":
             if not isinstance(recovery, dict) or recovery.get("recovered_run_id") != previous_id:
@@ -212,6 +335,12 @@ def _validate_record_shape(records: Iterable[dict[str, Any]], root: Path) -> lis
         evidence = root / RUNS_RELATIVE / str(run_id) / "run.json"
         if not evidence.is_file():
             failures.append(f"{prefix} is missing evidence file {evidence.relative_to(root)}")
+        else:
+            try:
+                if json.loads(evidence.read_text(encoding="utf-8")) != record:
+                    failures.append(f"{prefix} evidence does not match the append-only ledger record")
+            except (OSError, json.JSONDecodeError):
+                failures.append(f"{prefix} evidence is unreadable")
         prior_ids.add(run_id)
 
     return failures
@@ -257,6 +386,46 @@ def _write_evidence(path: Path, record: dict[str, Any]) -> None:
         handle.write("\n")
 
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _semantic_evaluation(production_dir: Path, project_id: str, *, outcome: str) -> tuple[Path, dict[str, Any]]:
+    result_path = production_dir / "results" / "run-result.json"
+    if not result_path.is_file():
+        raise TraceError("semantic evaluation requires results/run-result.json")
+    result_sha256 = sha256_file(result_path)
+    directory = production_dir / "evaluations"
+    candidates: list[tuple[Path, dict[str, Any]]] = []
+    if directory.exists() and not directory.is_dir():
+        raise TraceError("evaluations path must be a directory")
+    for path in sorted(directory.glob("semantic-evaluation-*.json")) if directory.exists() else []:
+        if not path.is_file() or path.is_symlink():
+            raise TraceError("semantic evaluation evidence must be a regular file")
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise TraceError(f"cannot read semantic evaluation evidence: {exc}") from exc
+        if not isinstance(value, dict):
+            raise TraceError("semantic evaluation evidence must be an object")
+        if value.get("project_id") == project_id and value.get("result", {}).get("sha256") == result_sha256:
+            candidates.append((path, value))
+    if len(candidates) != 1:
+        raise TraceError("exactly one semantic evaluation must bind the current result")
+    path, evaluation = candidates[0]
+    _validate_semantic_evaluation(
+        evaluation,
+        production_dir,
+        expected_result_sha256=result_sha256,
+        expected_outcome=outcome,
+    )
+    return path, evaluation
+
+
 def _append_record(history_path: Path, record: dict[str, Any]) -> None:
     history_path.parent.mkdir(parents=True, exist_ok=True)
     with history_path.open("a", encoding="utf-8") as handle:
@@ -292,6 +461,16 @@ def record_run(
     project_path = production_dir / "project.json"
     if not project_path.is_file():
         raise TraceError(f"production is missing project.json: {project_path}")
+    try:
+        project = json.loads(project_path.read_text(encoding="utf-8"))
+        if not isinstance(project, dict):
+            raise TypeError("project must be an object")
+        project_id = project["project_id"]
+        edit_plan = json.loads((production_dir / "edit-plan.json").read_text(encoding="utf-8"))
+        if not isinstance(edit_plan, dict):
+            raise TypeError("edit plan must be an object")
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        raise TraceError("production project.json and edit-plan.json must name the current content decision") from exc
 
     records = load_ledger(repo_root)
     existing_ids = {record["run_id"] for record in records}
@@ -310,6 +489,15 @@ def record_run(
         raise TraceError("failed routes require bounded failure facts")
     if status == "succeeded" and failure_fact is not None:
         raise TraceError("succeeded routes cannot include failure facts")
+
+    evaluation_path: Path | None = None
+    evaluation: dict[str, Any] | None = None
+    if status == "succeeded":
+        evaluation_path, evaluation = _semantic_evaluation(production_dir, project_id, outcome="passed")
+    elif failure_fact and failure_fact["code"] == SEMANTIC_FAILURE_CODE:
+        evaluation_path, evaluation = _semantic_evaluation(production_dir, project_id, outcome="failed")
+    if evaluation is not None:
+        _require_current_semantic_decision(evaluation, project, edit_plan)
 
     previous_id: str | None = None
     relation: str | None = None
@@ -346,6 +534,15 @@ def record_run(
         "previous_run_relation": relation,
         "failure": failure_fact,
         "recovery": recovery,
+        "evaluation": (
+            {
+                "path": f"{production_text}/{evaluation_path.relative_to(production_dir).as_posix()}",
+                "sha256": sha256_file(evaluation_path),
+                "outcome": evaluation["outcome"],
+            }
+            if evaluation_path is not None and evaluation is not None
+            else None
+        ),
     }
     forbidden = _json_has_forbidden_field(record)
     if forbidden:
@@ -387,6 +584,8 @@ def promote_example(
     record = _find_record(repo_root, run_id)
     if record["status"] != "succeeded":
         raise TraceError("only a succeeded run can be promoted")
+    if not isinstance(record.get("evaluation"), dict) or record["evaluation"].get("outcome") != "passed":
+        raise TraceError("only a semantically passed run can be promoted")
     if not SLUG_PATTERN.fullmatch(slug):
         raise TraceError("example slug must be lowercase kebab-case")
     destination = repo_root / "examples" / slug
@@ -402,6 +601,7 @@ def promote_example(
         "input_ref": record["input_ref"],
         "output_ref": record["output_ref"],
         "proof_ref": record["proof_ref"],
+        "semantic_evaluation": record["evaluation"],
     }
     with (destination / "proof.json").open("x", encoding="utf-8") as handle:
         json.dump(proof, handle, indent=2, sort_keys=True)

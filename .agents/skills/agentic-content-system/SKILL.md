@@ -65,15 +65,20 @@ based on that evidence.
    <name>`; the approval hash covers current policy, provenance,
    delivery intent, edit intent, and source bytes.
 7. Run `render`, `derive`, `package`, `verify`, `review-report`, and
-   `export-result`.
-8. Return proof paths/hashes, enabled/disabled route results, and the
+   `export-result`. Then have the designated reviewer run `semantic-eval`
+   against the exported candidate result. This is a local content-intent
+   judgment, separate from deterministic verification; it does not edit the
+   result.
+8. Return proof paths/hashes, semantic-evaluation outcome, enabled/disabled route results, and the
    `publish/publisher-handoff.json` path/hash/status to the calling context. Do
    not post externally.
 9. After the complete route succeeds or fails, record exactly one deliberate
    attempt with `python workspace/engine/tracer.py record
    workspace/productions/<slug> --status succeeded|failed`. Low-level ACS CLI
-   subcommands do not create ledger records. Use `--recover <run-id>` only for
-   one explicit recovery of an unresolved failed attempt.
+   subcommands do not create ledger records. A successful record requires the
+   current passing semantic evaluation; a semantic failure requires its failed
+   evidence. Use `--recover <run-id>` only for one explicit recovery of an
+   unresolved failed attempt.
    The append-only relation is `workspace/history/runs.jsonl`, and evidence
    directories are kept under `workspace/runs/`.
 

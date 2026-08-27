@@ -29,6 +29,7 @@ acs package <workspace>
 acs verify <workspace>
 acs review-report <workspace>
 acs export-result <workspace>
+acs semantic-eval <workspace> <assessment.json> --by <reviewer>
 ```
 
 Local ASR is first written to `transcripts/raw.json` and is never overwritten
@@ -111,6 +112,17 @@ re-register the reviewed post. If an edit output is later disabled, `acs
 render`, `package`, or `review-report` removes it from the active render record
 and archives the bytes under `recovery/disabled-renders/`.
 
+## Semantic content checkpoint
+
+After `export-result`, use `semantic-eval` to record one reviewer-owned
+judgment of the candidate result against the workspace's approved promise,
+required proof, and audience. Its immutable evidence stays under
+`evaluations/`; it is not a schema check, deterministic verifier, static
+review report, per-change review, or the read-only system audit. The command
+does not edit the candidate result. A failed evaluation exits nonzero after
+preserving the failure evidence. See `SEMANTIC_EVALUATION.md` for the local
+assessment contract and replay sequence.
+
 Useful supporting commands:
 
 - `acs doctor [--json]` checks Python and FFmpeg/ffprobe. Whisper is optional.
@@ -126,17 +138,19 @@ an explicit deterministic rerender.
 
 ## Full-route history proof
 
-After the complete inspect-through-export route, record exactly one deliberate
+After the complete inspect-through-export-and-semantic-eval route, record exactly one deliberate
 attempt with the local stdlib-only tracer:
 
 ```text
 python workspace/engine/tracer.py record workspace/productions/<slug> --status succeeded
-python workspace/engine/tracer.py record workspace/productions/<slug> --status failed --failure-code render_failed --failure-step render
+python workspace/engine/tracer.py record workspace/productions/<slug> --status failed --failure-code semantic_eval_failed --failure-step semantic-eval --retriable
 python workspace/engine/tracer.py record workspace/productions/<slug> --status succeeded --recover run-0002
 python workspace/engine/tracer.py check
 ```
 
-The tracer is not invoked by individual ACS subcommands. A normal repeat uses
+The tracer is not invoked by individual ACS subcommands. A successful attempt
+requires a current passing semantic evaluation; a semantic failure retains its
+failed evaluation. A normal repeat uses
 `predecessor`; `--recover` consumes one unresolved failed run at most once.
 The ledger keeps only production references and small machine-readable
 failure/recovery facts. Use `promote-example --run-id <id> --slug <slug>` only
