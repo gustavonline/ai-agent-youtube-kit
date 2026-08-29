@@ -4,8 +4,9 @@
 Python 3.10–3.13. It installs FFmpeg through each runner's bounded package
 manager, installs the package in a venv-backed job environment, runs help and
 the relocated deterministic test suite, the ACS shell/stale-path/no-runtime
-guard, and checks whitespace. The pre-existing 41 tests and new structural /
-history proof tests are reported separately in local Build evidence.
+guard, and checks whitespace. The deterministic suite includes structural and
+history proof tests; local Build evidence reports the result from the
+environment where it ran rather than a fixed test count.
 
 The checkout and Python setup actions are pinned to immutable commit revisions.
 No third-party FFmpeg action is required. The matrix is configuration proof in

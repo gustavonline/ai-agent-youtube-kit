@@ -59,6 +59,10 @@ commands. `acs` is the equivalent installed command.
 
 ## Setup and ownership
 
+ACS owns its repository-local skills at the direct paths indexed in
+`.agents/skills/README.md`. Cross-project skills remain plugin- or
+harness-installed outside this repository.
+
 The setup skill is the primary route for configuring a clone before its first
 real video. `workspace/channel/brand.json` is the small ACS-owned source of durable
 channel policy, cadence, and delivery defaults. `acs init --brand` validates it

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -37,6 +38,7 @@ IGNORED_ROOT_ARTIFACTS = {
 REQUIRED = (
     "AGENTS.md",
     "README.md",
+    ".agents/skills/README.md",
     ".agents/skills/agentic-content-system/SKILL.md",
     ".agents/skills/setup-content-system/SKILL.md",
     ".agents/skills/setup-content-system/agents/openai.yaml",
@@ -126,6 +128,88 @@ def _record_failure(failures: list[str], message: str) -> None:
     failures.append(message)
 
 
+def _skill_frontmatter_name(path: Path) -> str | None:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return None
+    sections = text.split("---\n", 2)
+    if len(sections) != 3:
+        return None
+    names = re.findall(r"(?m)^name:\s*([a-z0-9][a-z0-9-]*)\s*$", sections[1])
+    return names[0] if len(names) == 1 else None
+
+
+def check_skill_shelf(failures: list[str], root: Path = ROOT) -> None:
+    skills_root = root / ".agents/skills"
+    if skills_root.is_symlink():
+        _record_failure(failures, "repository-local skill shelf must not be a symlink")
+        return
+    if not skills_root.is_dir():
+        _record_failure(failures, "missing repository-local skill shelf: .agents/skills")
+        return
+
+    for current, directory_names, file_names in os.walk(skills_root, followlinks=False):
+        current_path = Path(current)
+        for name in [*directory_names, *file_names]:
+            path = current_path / name
+            if path.is_symlink():
+                relative = path.relative_to(root).as_posix()
+                _record_failure(failures, f"skill-tree symlink is not allowed: {relative}")
+        for name in file_names:
+            if name != "SKILL.md":
+                continue
+            relative = (current_path / name).relative_to(skills_root)
+            if len(relative.parts) != 2:
+                _record_failure(
+                    failures,
+                    f"nested SKILL.md is not allowed: {(skills_root / relative).relative_to(root).as_posix()}",
+                )
+
+    skill_names: list[str] = []
+    for entry in sorted(skills_root.iterdir(), key=lambda path: path.name):
+        if entry.name == "README.md":
+            continue
+        if entry.is_symlink():
+            continue
+        if not entry.is_dir():
+            _record_failure(failures, f"unexpected file in repository-local skill shelf: {entry.name}")
+            continue
+        skill_path = entry / "SKILL.md"
+        if skill_path.is_symlink() or not skill_path.is_file():
+            _record_failure(failures, f"skill folder lacks a direct regular SKILL.md: {entry.name}")
+            continue
+        skill_names.append(entry.name)
+        frontmatter_name = _skill_frontmatter_name(skill_path)
+        if frontmatter_name is None:
+            _record_failure(failures, f"{entry.name} skill has invalid name frontmatter")
+        elif frontmatter_name != entry.name:
+            _record_failure(
+                failures,
+                f"skill folder/frontmatter name mismatch: {entry.name} != {frontmatter_name}",
+            )
+
+    index_path = skills_root / "README.md"
+    if index_path.is_symlink() or not index_path.is_file():
+        _record_failure(failures, "missing regular repository-local skill index: .agents/skills/README.md")
+        return
+    index_text = index_path.read_text(encoding="utf-8")
+    documented_names: list[str] = []
+    for target in re.findall(r"\]\(([^)]+)\)", index_text):
+        target = target.split("#", 1)[0]
+        if target.startswith(".agents/skills/"):
+            target = target.removeprefix(".agents/skills/")
+        parts = target.split("/")
+        if len(parts) == 2 and parts[1] == "SKILL.md":
+            documented_names.append(parts[0])
+
+    for name in skill_names:
+        count = documented_names.count(name)
+        if count != 1:
+            _record_failure(failures, f"skill index must document {name}/SKILL.md exactly once")
+    for name in sorted(set(documented_names) - set(skill_names)):
+        _record_failure(failures, f"skill index documents unknown direct skill: {name}/SKILL.md")
+
+
 def check_shell(failures: list[str]) -> None:
     for entry in sorted(set(ALLOWED_ROOT_ENTRIES) - {path.name for path in ROOT.iterdir()}):
         _record_failure(failures, f"missing canonical root entry: {entry}")
@@ -191,16 +275,15 @@ def check_identity_and_package(failures: list[str]) -> None:
 
 
 def check_skills(failures: list[str]) -> None:
+    check_skill_shelf(failures)
     checks = (
-        ("agentic-content-system", "name: agentic-content-system", "init <workspace>"),
-        ("setup-content-system", "name: setup-content-system", "validate-profile"),
-        ("audit-content-system", "name: audit-content-system", "strictly read-only"),
+        ("agentic-content-system", "init <workspace>"),
+        ("setup-content-system", "validate-profile"),
+        ("audit-content-system", "strictly read-only"),
     )
-    for name, marker, required_text in checks:
+    for name, required_text in checks:
         path = ROOT / ".agents/skills" / name / "SKILL.md"
         text = path.read_text(encoding="utf-8") if path.exists() else ""
-        if not text.startswith("---\n") or f"\n{marker}\n" not in text:
-            _record_failure(failures, f"{name} skill has invalid frontmatter")
         if required_text not in text:
             _record_failure(failures, f"{name} skill lacks required contract text")
     primary = (ROOT / ".agents/skills/agentic-content-system/SKILL.md").read_text(encoding="utf-8")

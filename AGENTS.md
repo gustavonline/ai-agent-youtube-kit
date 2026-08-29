@@ -27,6 +27,9 @@ analysis library.
 
 ## Workflow Router
 
+The repository-local skill index at `.agents/skills/README.md` defines ACS
+ownership and routes each direct skill without introducing a plugin dependency.
+
 - New ACS production workspace: read `docs/QUICKSTART.md`, `docs/ARCHITECTURE.md`,
   `docs/INPUT_OWNERSHIP.md`, `docs/CONTENT_FORMATS.md`, and the repository-local
   `.agents/skills/agentic-content-system/SKILL.md`; use the CLI flow in

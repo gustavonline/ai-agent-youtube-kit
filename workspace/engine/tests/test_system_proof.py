@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from checks import check_skill_shelf
 from tracer import TraceError, load_ledger, promote_example, record_run, validate_ledger
 
 
@@ -75,6 +76,57 @@ class SystemProofTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_canonical_skill_shelf_is_direct_and_documented(self) -> None:
+        failures: list[str] = []
+        check_skill_shelf(failures)
+        self.assertEqual([], failures)
+
+    def test_skill_shelf_rejects_nested_and_name_mismatched_skills(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shelf = root / ".agents/skills"
+            (shelf / "direct/nested").mkdir(parents=True)
+            (shelf / "mismatch").mkdir()
+            (shelf / "README.md").write_text(
+                "[Direct](direct/SKILL.md)\n[Mismatch](mismatch/SKILL.md)\n",
+                encoding="utf-8",
+            )
+            (shelf / "direct/SKILL.md").write_text(
+                "---\nname: direct\ndescription: test\n---\n",
+                encoding="utf-8",
+            )
+            (shelf / "direct/nested/SKILL.md").write_text(
+                "---\nname: nested\ndescription: test\n---\n",
+                encoding="utf-8",
+            )
+            (shelf / "mismatch/SKILL.md").write_text(
+                "---\nname: another-name\ndescription: test\n---\n",
+                encoding="utf-8",
+            )
+
+            failures: list[str] = []
+            check_skill_shelf(failures, root)
+            evidence = "\n".join(failures)
+            self.assertIn("nested SKILL.md is not allowed", evidence)
+            self.assertIn("skill folder/frontmatter name mismatch", evidence)
+
+    def test_skill_shelf_rejects_skill_tree_symlinks(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shelf = root / ".agents/skills"
+            shelf.mkdir(parents=True)
+            (shelf / "README.md").write_text("# Test shelf\n", encoding="utf-8")
+            target = root / "external-skill"
+            target.mkdir()
+            try:
+                (shelf / "linked-skill").symlink_to(target, target_is_directory=True)
+            except (NotImplementedError, OSError) as exc:
+                self.skipTest(f"symlink creation unavailable: {exc}")
+
+            failures: list[str] = []
+            check_skill_shelf(failures, root)
+            self.assertIn("skill-tree symlink is not allowed", "\n".join(failures))
 
     def test_success_record_has_production_proof_and_evidence(self) -> None:
         temporary, root, production = make_root()
