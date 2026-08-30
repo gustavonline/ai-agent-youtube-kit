@@ -110,6 +110,59 @@ EXCLUDED_TEXT_PATHS = {
     Path("workspace/engine/checks.py"),
 }
 BINARY_SUFFIXES = {".aac", ".gif", ".jpeg", ".jpg", ".m4a", ".mkv", ".mov", ".mp3", ".mp4", ".png", ".pyc", ".wav", ".webm"}
+ACTIVE_VIDEO_ROUTE_SURFACES = (
+    Path("docs/WORKFLOW.md"),
+    Path("docs/PROMPTS.md"),
+    Path("docs/CODEX_PLUGIN_SETUP.md"),
+    Path("docs/ADAPTERS.md"),
+    Path("docs/BRANDING.md"),
+    Path("docs/LEARNING.md"),
+    Path("docs/CLI.md"),
+    Path("docs/ARCHITECTURE.md"),
+    Path("docs/EDITOR_ENGINE_DECISION.md"),
+    Path("workspace/engine/README.md"),
+    Path("workspace/engine/motion-adapters/README.md"),
+    Path("workspace/learning/MOTION_PHILOSOPHY.md"),
+    Path("workspace/content-formats/formats.json"),
+    Path("workspace/engine/templates/video-brief.md"),
+    Path("workspace/channel/assets/README.md"),
+)
+ACTIVE_VIDEO_ROUTE_MARKERS = ("FreeCut", "one normal", "migration/recovery")
+FREECUT_RETURN_SURFACES = (
+    Path(".agents/skills/agentic-content-system/SKILL.md"),
+    Path(".agents/skills/freecut-studio/SKILL.md"),
+    Path("README.md"),
+    Path("docs/WORKFLOW.md"),
+    Path("docs/QUICKSTART.md"),
+    Path("docs/CLI.md"),
+    Path("docs/ADAPTERS.md"),
+)
+FREECUT_RETURN_MARKERS = (
+    "sources/",
+    "project.json",
+    "edit-plan.json",
+    "acs inspect",
+    "acs render",
+    "acs derive",
+    "acs package",
+    "acs verify",
+    "acs review-report",
+    "acs export-result",
+    "acs semantic-eval",
+    "acs import-adapter",
+    "must never use",
+    "a FreeCut manifest, reference JSON, schema, bridge",
+)
+FORBIDDEN_ACTIVE_VIDEO_ROUTE_PATTERNS = (
+    re.compile(r"##\s+Optional motion adapter", re.IGNORECASE),
+    re.compile(r"HyperFrames can supply", re.IGNORECASE),
+    re.compile(r"HyperFrames is an optional motion adapter", re.IGNORECASE),
+    re.compile(r"existing HyperFrames projects remain useful", re.IGNORECASE),
+    re.compile(r"Full editors,\s*HyperFrames.*optional\s+adapters", re.IGNORECASE | re.DOTALL),
+    re.compile(r"^\s*-\s*HyperFrames:\s*$", re.IGNORECASE | re.MULTILINE),
+    re.compile(r"Timeline Studio,\s*OpenReelio.*documented seams", re.IGNORECASE | re.DOTALL),
+    re.compile(r"fonts for deterministic HyperFrames renders", re.IGNORECASE),
+)
 
 
 def iter_text_files():
@@ -305,6 +358,28 @@ def check_skills(failures: list[str]) -> None:
     if "one success or failure" not in workflow or "promote-example" not in workflow:
         _record_failure(failures, "workflow must describe the local run relation and deliberate example promotion")
 
+    freecut = (ROOT / ".agents/skills/freecut-studio/SKILL.md").read_text(encoding="utf-8")
+    normalized_freecut = " ".join(freecut.split())
+    freecut_truth_markers = (
+        "current owner-facing agent session",
+        "AIOS may be that session when present",
+        "independently invocable",
+        "Physical Linux/amd64",
+        "remain unverified",
+        "current eight public findings",
+        "claim of zero vulnerabilities",
+    )
+    missing = [marker for marker in freecut_truth_markers if marker not in normalized_freecut]
+    if missing:
+        _record_failure(failures, f"FreeCut skill lacks caller/evidence truth: {', '.join(missing)}")
+    for stale_claim in (
+        "AIOS remains the owner-facing session",
+        "Node 22.23.2 on Linux/amd64",
+        "Both safe installs",
+    ):
+        if stale_claim in normalized_freecut:
+            _record_failure(failures, f"FreeCut skill retains stale caller/Linux claim: {stale_claim}")
+
 
 def check_text(failures: list[str]) -> None:
     for path, relative in iter_text_files():
@@ -321,6 +396,50 @@ def check_text(failures: list[str]) -> None:
             for pattern in FORBIDDEN_PRODUCT_LANGUAGE:
                 if pattern.search(text):
                     _record_failure(failures, f"stale product language {pattern.pattern!r} in {relative}")
+
+
+def check_active_video_route(failures: list[str]) -> None:
+    for relative in ACTIVE_VIDEO_ROUTE_SURFACES:
+        path = ROOT / relative
+        if not path.is_file():
+            _record_failure(failures, f"missing active video-route surface: {relative}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in ACTIVE_VIDEO_ROUTE_MARKERS:
+            if marker not in text:
+                _record_failure(failures, f"active video-route surface lacks {marker!r}: {relative}")
+        if relative == Path("docs/EDITOR_ENGINE_DECISION.md"):
+            for marker in (
+                "## Historical adapter seams (not active routing)",
+                "## Historical revisit triggers (not active routing)",
+            ):
+                if marker not in text:
+                    _record_failure(failures, f"editor decision lacks historical routing label: {marker}")
+            continue
+        for pattern in FORBIDDEN_ACTIVE_VIDEO_ROUTE_PATTERNS:
+            if pattern.search(text):
+                _record_failure(failures, f"parallel video-route language {pattern.pattern!r} in {relative}")
+
+    for relative in FREECUT_RETURN_SURFACES:
+        path = ROOT / relative
+        if not path.is_file():
+            _record_failure(failures, f"missing normal FreeCut-return surface: {relative}")
+            continue
+        text = " ".join(path.read_text(encoding="utf-8").split())
+        for marker in FREECUT_RETURN_MARKERS:
+            if marker not in text:
+                _record_failure(failures, f"FreeCut-return surface lacks {marker!r}: {relative}")
+
+    scaffold = (ROOT / "workspace/engine/agentic_content_system/scaffold.py").read_text(encoding="utf-8")
+    for marker in (
+        "Legacy migration/recovery adapter imports",
+        "must never be used for a ",
+        "normal FreeCut export",
+        "`sources/`",
+        "`project.json`",
+    ):
+        if marker not in scaffold:
+            _record_failure(failures, f"scaffold adapter note lacks FreeCut-return boundary: {marker!r}")
 
 
 def check_runtime_dependency(failures: list[str]) -> None:
@@ -346,6 +465,7 @@ def main() -> int:
     check_identity_and_package(failures)
     check_skills(failures)
     check_text(failures)
+    check_active_video_route(failures)
     check_runtime_dependency(failures)
     check_ledger(failures)
     if failures:

@@ -48,7 +48,9 @@ segments are chunked by both `max_words` and
 `max_chars` with deterministic proportional timing. The fallback records the
 resolved font path/identity and SHA-256; explicit custom fonts must be files
 inside the production workspace. Dense hundreds-of-cue overlays can be slow;
-use a supervised adapter, which may use FFmpeg text filters, for that workload.
+use FreeCut, the one normal supervised video Studio route, for that
+workload. Retained editor output may enter `import-adapter` only for explicit
+migration/recovery of an already rendered result.
 
 An edit segment with `audio: "primary"` may set `audio_start`; it defaults to
 the visual `start` for compatibility. The visual source/start/duration remains
@@ -58,10 +60,11 @@ cannot emit captions.
 
 An approved creative LUT is applied per segment with FFmpeg `lut3d` before
 ordered concat and before the final caption overlay. If the local FFmpeg lacks
-`lut3d`, rendering fails closed with the supervised adapter route; it is never
-recorded as applied without the filter.
+`lut3d`, rendering fails closed for supervised completion in the normal FreeCut
+Studio; it is never recorded as applied without the filter.
 
-An independently rendered editor result can be imported under supervision:
+For explicit migration/recovery only, an already rendered legacy editor result
+and its existing plan/manifest can be imported under supervision:
 
 ```text
 acs import-adapter <workspace> <rendered-output> --manifest <plan-or-manifest.json> --adapter <name> --by <reviewer>
@@ -69,7 +72,15 @@ acs import-adapter <workspace> <rendered-output> --manifest <plan-or-manifest.js
 
 The copied output and manifest are hash-bound in `adapters/import.json`, then
 included in `publish/manifest.json`, verification, review, result, and
-`results/index.md`.
+`results/index.md`. A human-approved FreeCut export instead enters as an
+ordinary file under `sources/`: declare it with normal rights/provenance in
+`project.json.sources`, bind `edit-plan.json.source` and every intended segment
+source to it, re-run `acs inspect`, use the transcript review and plan approval
+gates as applicable, and continue with `acs render`, `acs derive`, `acs
+package`, `acs verify`, `acs review-report`, `acs export-result`, and `acs
+semantic-eval`. The normal FreeCut return path must never use `acs
+import-adapter`, a FreeCut manifest, reference JSON, schema, bridge, or any
+other integration layer.
 
 `render`, `derive`, and `package` stop with an understandable error until the
 edit plan is explicitly approved. `package` includes only enabled channels;

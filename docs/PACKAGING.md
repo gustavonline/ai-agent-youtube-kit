@@ -85,6 +85,25 @@ Avoid:
 - logos or faces copied from references without rights
 - designs that work only at desktop size
 
+### Bounded thumbnail ownership example
+
+ACS chooses the content promise, headline/copy, CTA, subject or proof object,
+target format, and delivery constraints. When accepted direction already
+supports the concept, ACS records the reviewed choice in `packaging-review.md`
+and `edit-plan.json.creative_direction.thumbnail_choice` and proceeds without
+ADS. When the concept instead needs new composition, hierarchy, typography,
+color, or imagery treatment, AIOS may suggest only that bounded work to ADS.
+ADS returns ordinary accepted `DESIGN.md` direction and the selected reviewed
+asset; editable OpenPencil source and design proof stay with its design owner.
+ACS then records the reviewed choice and packages the content through its
+existing approval and proof flow.
+
+This suggestion never runs ADS automatically or makes it a predecessor. If
+OpenPencil is unavailable or unselected, ADS or another explicit design owner
+may return equivalent portable direction and an ordinary asset; unrelated ACS
+content continues. Do not add a cross-System schema, asset adapter, or posting
+automation for this handoff.
+
 ## Packaging Review Procedure
 
 1. Summarize the actual promise of the edit.

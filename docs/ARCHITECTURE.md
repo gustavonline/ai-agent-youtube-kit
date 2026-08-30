@@ -21,6 +21,13 @@ FFmpeg render -> selected derivatives -> enabled-route package
 verify -> static HTML review -> local proof/result -> semantic content checkpoint -> caller reads learning
 ```
 
+ACS owns the content decision, deliverable production, packaging, and proof.
+Portable visual direction may arrive as an already accepted `DESIGN.md` plus
+selected assets from ADS or another explicit design owner. ADS owns new visual
+judgment and reusable visual assets. Either System may be entered first; AIOS
+may suggest the bounded sibling when ownership crosses, but it never executes
+that sibling automatically or imposes a deterministic chain.
+
 ## Contract ownership
 
 - `brand.json` owns channel policy, enabled/disabled reasons, and cadence.
@@ -76,13 +83,21 @@ production state remains under `workspace/productions/`. Neither the tracer nor
 the ACS CLI is an AIOS service, daemon, database, or automatic publisher.
 
 FFmpeg/ffprobe are the deterministic media boundary. Local Whisper remains an
-optional transcript adapter through the existing repo script. The browser
-surface is a static report, not an editing studio.
+optional transcript adapter through the existing repo script. ACS's own browser
+surface is a static report; the one normal video Studio is the external FreeCut
+browser app, whose native workspace remains canonical outside ACS.
+
+Remotion or another code-based motion technique may produce a bounded ACS asset
+only when a concrete deliverable needs it; it is not another editor or
+prerequisite. Retained HyperFrames and other editor material is
+migration/recovery input only.
 
 The dated editor/engine comparison and the rationale for keeping this narrow
 contract + FFmpeg boundary are recorded in
-[`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md); full editors remain
-supervised adapters rather than v0.3 core dependencies.
+[`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md). Its candidate seams
+and revisit triggers are historical evidence, not an active parallel editor
+router. The existing `import-adapter` seam is reserved for explicit
+migration/recovery of an already rendered result.
 
 The edit plan may bind `audio_start` for a primary-audio B-roll segment. The
 visual source still determines the output window and duration; the primary
@@ -90,7 +105,7 @@ source at `audio_start` determines audio and reviewed transcript/caption
 coverage. Captions map ordered segments to output time, skip muted segments,
 and are burned last. A supplied approved LUT is applied with FFmpeg `lut3d`
 inside each segment render before concat; a build without that filter fails
-closed to a supervised adapter.
+closed for supervised completion in the normal FreeCut Studio.
 
 The persistent AIOS Space may remain the owner of durable business defaults and
 learning. A task-level caller or judgment layer copies resolved values into a

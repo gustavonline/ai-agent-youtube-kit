@@ -28,11 +28,22 @@ docs/REFERENCE_ANALYSIS.md, inspect the generated artifacts, and promote only
 evidence-backed lessons to workspace/channel/STYLE_GUIDE.md. Do not copy identity.
 ```
 
-## Optional motion adapter
+## Supervised video Studio
 
 ```text
-Read workspace/learning/MOTION_PHILOSOPHY.md and the active project workspace/channel/DESIGN.md. Use HyperFrames only
-for a specific visual beat that explains or emphasizes the approved plan. Keep
-the source and output paths transparent and do not treat HyperFrames as the
-product boundary.
+Use the repository-local freecut-studio skill for this video. FreeCut is the
+one normal supervised video Studio route. Keep its native workspace canonical,
+use the human save/handoff -> expectedRevision agent edit -> human review flow,
+and return the reviewed export to the existing ACS proof flow. Do not select a
+parallel editor or create an ACS bridge contract.
+```
+
+## Optional code-based motion technique
+
+```text
+Only when the approved plan names a concrete visual beat that needs code-based
+motion, use Remotion or an equivalent bounded ACS technique to produce that
+asset. It is not another editor, Studio, or prerequisite; the video still uses
+the normal FreeCut route. Retained HyperFrames/editor material is available only
+for an explicitly requested migration/recovery task.
 ```

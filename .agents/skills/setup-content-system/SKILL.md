@@ -42,6 +42,17 @@ credentials, or posting authority.
    python -m agentic_content_system validate-profile workspace/channel/brand.json
    ```
 
+Treat `workspace/channel/DESIGN.md` and selected visual assets as accepted
+production inputs. If setup exposes a material gap in portable visual
+direction, AIOS may suggest the sibling ADS route; do not run it automatically,
+make ADS a predecessor, or block otherwise complete ACS setup. A standalone
+design owner may supply equivalent accepted direction.
+
+For a clone that will produce video, route FreeCut setup/readiness to the
+`freecut-studio` skill. It owns the external checkout method; do not duplicate
+its mechanics here and do not create a FreeCut or ACS content workspace during
+clone setup. Skip FreeCut for non-video outcomes.
+
 Do not create the first content workspace during setup. Setup is complete when
 the clone defaults validate and the owner can state the next real content
 outcome.

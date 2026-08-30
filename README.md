@@ -70,6 +70,17 @@ before writing a copy into the new production workspace. That workspace `brand.j
 execution truth; `project.json` owns run-specific content and delivery intent.
 Use `.agents/skills/setup-content-system/SKILL.md` for setup and
 `.agents/skills/audit-content-system/SKILL.md` for a strictly read-only audit.
+For video outcomes, `.agents/skills/freecut-studio/SKILL.md` owns the one
+external FreeCut Studio method; non-video outcomes do not need FreeCut.
+
+ACS owns the content decision, deliverable production, packaging, and proof.
+ADS owns portable visual direction, reusable visual assets, and new OpenPencil
+work. Either System may be entered first: ACS proceeds when accepted direction
+already exists, while AIOS may suggest a bounded sibling route when unresolved
+ownership crosses into ADS. A suggestion never executes the sibling
+automatically or creates a deterministic ADS-to-ACS chain. Direct standalone
+callers may provide equivalent accepted `DESIGN.md` direction and selected
+assets without either System depending on the other.
 
 AIOS is optional. It may own durable business or audience defaults and pass
 resolved context in prose or files. ACS does not maintain an AIOS↔ACS JSON
@@ -80,8 +91,9 @@ the portable burned-caption fallback.
 ## Tested boundary and current limitation
 
 The v0.3 boundary is the cross-platform Python CLI, versioned JSON contracts,
-FFmpeg/ffprobe, local transcript adapters, static reports, and explicit human
-approval. `external_posting` remains `false`; the publisher handoff is
+FFmpeg/ffprobe, local transcript adapters, the external FreeCut browser Studio
+for video, static reports, and explicit human approval. `external_posting`
+remains `false`; the publisher handoff is
 `not_posted: true` and awaits separate authorization. Full local tests and the
 system shell check exercise this boundary without a server or cloud dependency.
 
@@ -116,10 +128,18 @@ acs export-result <workspace>
 acs semantic-eval <workspace> <assessment.json> --by <reviewer>
 ```
 
-Optional editor results enter through `acs import-adapter`; the output and its
-JSON plan/manifest are copied into the production `adapters/` boundary,
-hash-bound, and included in the ordinary package and result proof. They never
-remain unproved side files.
+`acs import-adapter` is only a legacy migration/recovery seam for an already
+rendered result and its existing JSON plan/manifest; it is never the normal
+FreeCut return path. After human review, copy the reviewed FreeCut export as an
+ordinary file under the active production's `sources/`, declare that path and
+its normal rights/provenance in `project.json.sources`, and point
+`edit-plan.json.source` plus every intended long- and short-form segment source
+at it. Re-run `acs inspect`, use the normal transcript review and plan approval
+gates as applicable, then continue through `acs render`, `acs derive`, `acs
+package`, `acs verify`, `acs review-report`, `acs export-result`, and `acs
+semantic-eval`. The normal FreeCut return path must never use `acs
+import-adapter`, a FreeCut manifest, reference JSON, schema, bridge, or any
+other integration layer.
 
 Rendering and packaging are approval-gated. Re-run inspection after declared
 source changes; re-approve after policy, project, delivery, or edit-plan
@@ -140,9 +160,10 @@ read-only audit. A failed result is retained unchanged and replayed only from
 a new explicit recovery run; see `docs/SEMANTIC_EVALUATION.md`.
 
 See `docs/REAL_VIDEO_ACCEPTANCE.md` for the generic owner-recorded protocol,
-`docs/CLI.md` for command details, and `docs/ADAPTERS.md` for optional seams.
-HyperFrames and legacy adapters remain below the ACS contract/FFmpeg boundary;
-they are not the product identity.
+`docs/CLI.md` for command details, and `docs/ADAPTERS.md` for production and
+recovery boundaries.
+FreeCut is the normal video Studio; HyperFrames and other legacy editor
+material remain only for explicit migration/recovery.
 
 The proposed GitHub repository description is recorded in
 `docs/GITHUB_DESCRIPTION.md`; remote metadata is intentionally unchanged.

@@ -79,5 +79,6 @@ Promote only durable lessons:
 
 - `workspace/learning/PROJECT_MEMORY.md` for reusable production/editing patterns.
 - `workspace/channel/STYLE_GUIDE.md` for channel-level content style.
-- `workspace/channel/DESIGN.md` only for stable brand decisions.
+- `workspace/channel/DESIGN.md` only when the visual-design owner accepted a
+  stable brand change.
 - `workspace/learning/MOTION_PHILOSOPHY.md` only for general motion principles.

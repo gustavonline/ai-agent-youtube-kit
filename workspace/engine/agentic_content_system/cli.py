@@ -97,7 +97,7 @@ def _parser() -> argparse.ArgumentParser:
 
     adapter = sub.add_parser(
         "import-adapter",
-        help="Supervisedly import a rendered adapter output plus its JSON plan/manifest into normal ACS proof.",
+        help="Import an already-rendered legacy migration/recovery result and existing JSON plan/manifest into ACS proof.",
     )
     adapter.add_argument("project", metavar="workspace")
     adapter.add_argument("output", metavar="rendered-output")

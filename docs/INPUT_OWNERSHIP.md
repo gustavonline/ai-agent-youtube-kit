@@ -2,9 +2,10 @@
 
 Agentic Content System accepts useful context from any practical source: an
 AIOS Space task, a conversation, a Markdown brief, a client note, or an
-existing workspace. The source may be rough or already resolved. The judgment
-layer chooses what this run actually needs, then copies only those resolved
-values into an ACS workspace with `acs init`.
+existing workspace, including accepted visual direction from ADS or another
+design owner. The source may be rough or already resolved. The judgment layer
+chooses what this run actually needs, then copies only those resolved values
+into an ACS workspace with `acs init`.
 
 ## Canonical boundary
 
@@ -42,6 +43,17 @@ learning. A task or judgment layer may select one content decision and route it
 to ACS. ACS owns media/edit/package execution and returns inspectable proof.
 The result is caller-agnostic; AIOS may read it and bring concise learning back
 to the Space without ACS validating an AIOS return shape.
+
+## Sibling visual-direction routing
+
+ACS owns content production and proof; ADS owns new portable visual direction
+and reusable visual assets. Neither is a mandatory predecessor. ACS starts
+directly from accepted direction, and ADS may start independently before a
+content outcome exists. If ownership crosses during an AIOS session, AIOS may
+suggest only the bounded sibling route and resume after the ordinary
+human-readable `DESIGN.md` and selected-asset handoff is accepted. It never
+executes the sibling automatically or creates a deterministic chain. New
+OpenPencil work stays with ADS; FreeCut video work stays with ACS.
 
 For a proposed AIOS issue or integration task, document this routing and
 ownership only. Do not ask AIOS and ACS to maintain a shared inbound schema, do

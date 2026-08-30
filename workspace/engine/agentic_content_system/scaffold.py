@@ -212,9 +212,10 @@ def scaffold_project(
         encoding="utf-8",
     )
     (project_dir / "adapters" / "README.md").write_text(
-        "# Supervised adapter imports\n\n"
+        "# Legacy migration/recovery adapter imports\n\n"
         "Use `acs import-adapter <workspace> <rendered-output> --manifest <plan.json> --adapter <name> --by <reviewer>` "
-        "to bring an independently rendered output into ordinary ACS package and proof.\n",
+        "only to recover an already rendered legacy result into ACS package and proof. It must never be used for a "
+        "normal FreeCut export; copy the human-reviewed export to `sources/` and declare it in `project.json` instead.\n",
         encoding="utf-8",
     )
     for name, content in (

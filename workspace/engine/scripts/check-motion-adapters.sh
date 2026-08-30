@@ -11,6 +11,6 @@ fi
 for adapter in "$ROOT"/workspace/engine/motion-adapters/video-projects/*; do
   [ -d "$adapter" ] || continue
   [ -f "$adapter/package.json" ] || continue
-  echo "Checking optional motion adapter $(basename "$adapter")"
+  echo "Checking retained motion-adapter migration/recovery input $(basename "$adapter")"
   (cd "$adapter" && npm run check)
 done

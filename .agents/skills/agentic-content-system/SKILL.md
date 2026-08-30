@@ -38,6 +38,28 @@ Read `docs/ARCHITECTURE.md`, `docs/INPUT_OWNERSHIP.md`,
 `docs/CONTENT_FORMATS.md`, and `docs/CLI.md` before planning a new content
 workspace.
 
+## Sibling visual-direction boundary
+
+ACS owns the content decision, deliverable production, packaging, and proof.
+Agentic Design System (ADS) owns new portable visual direction, reusable visual
+assets, and OpenPencil work. Its ordinary handoff is a human-readable
+`DESIGN.md` plus only the selected assets the outcome needs. ACS may retain an
+accepted direction snapshot and those selected assets without taking ownership
+of a reusable design system or editable design sources.
+
+Either System may be entered first. Proceed directly in ACS when usable visual
+direction already exists. If content work exposes a material visual-design gap,
+AIOS may suggest only that bounded sibling ADS route and resume ACS after the
+direction or asset is reviewed. Never execute ADS automatically or impose a
+deterministic ADS-to-ACS chain. A standalone caller may supply equivalent
+accepted direction without AIOS or ADS. Do not add a cross-System schema,
+adapter, runtime dependency, or persistent binding.
+
+For a video outcome, route supervised browser editing to the repository-local
+`freecut-studio` skill. FreeCut is the one normal Studio and owns its external
+workspace truth; keep its paths/revision in active task context only. Skip
+FreeCut for non-video outcomes and do not create an ACS bridge contract.
+
 Before planning an ordinary repeat or explicit recovery, inspect the relevant
 prior records in `workspace/history/runs.jsonl` and the referenced
 `workspace/runs/<run-id>/run.json` evidence. Choose `predecessor` for an
@@ -60,12 +82,22 @@ based on that evidence.
    (no date) or `scheduled` with an explicit date/time and timezone. Disabled
    channels can never become publisher routes.
 5. Run `inspect`, ingest an open transcript JSON, local Whisper JSON, Markdown,
-   SRT, or VTT, and select ordered edit segments.
+   SRT, or VTT, and select ordered edit segments. For video work, use the
+   `freecut-studio` human/agent handoff. After human review, copy the reviewed
+   FreeCut export as an ordinary file under the active production's `sources/`
+   folder; declare it in `project.json.sources` with normal rights/provenance;
+   and point `edit-plan.json.source` plus every intended long- and short-form
+   segment source at it. Run `acs inspect` again, ingest or regenerate its
+   transcript, use `acs review-transcript` when applicable, and obtain a fresh
+   `acs plan --approve` decision. The normal FreeCut return path must never use
+   `acs import-adapter`, a FreeCut manifest, reference JSON, schema, bridge, or
+   any other integration layer.
 6. Have a human or explicitly designated reviewer run `plan --approve --by
    <name>`; the approval hash covers current policy, provenance,
    delivery intent, edit intent, and source bytes.
-7. Run `render`, `derive`, `package`, `verify`, `review-report`, and
-   `export-result`. Then have the designated reviewer run `semantic-eval`
+7. Run `acs render`, `acs derive`, `acs package`, `acs verify`, `acs
+   review-report`, and `acs export-result`. Then have the designated reviewer
+   run `acs semantic-eval`
    against the exported candidate result. This is a local content-intent
    judgment, separate from deterministic verification; it does not edit the
    result.

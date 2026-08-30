@@ -17,8 +17,12 @@ engine discoverable without introducing a second runtime package.
 
 The map is intentional: ACS owns this Python/FFmpeg engine and its local
 contracts. Agentic Design System is not a runtime, package, or schema
-dependency. Full editors, HyperFrames, and supervised publishers are optional
-adapters documented in `docs/ADAPTERS.md`.
+dependency. FreeCut is the one normal supervised video Studio route and
+remains external to this engine. Remotion or generic code-based motion may
+produce a bounded asset only for a concrete deliverable need; it is not another
+editor or prerequisite. Retained HyperFrames/editor material is
+migration/recovery input only. The existing recovery-import and supervised
+publisher boundaries are documented in `docs/ADAPTERS.md`.
 
 Use `acs init` for a content workspace. Do not create an upstream Project
 record for each video or post by default.

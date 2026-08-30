@@ -44,6 +44,11 @@ validate it without creating a content workspace:
 ```
 
 Do not create a content workspace until a real content outcome is requested.
+Treat `workspace/channel/DESIGN.md` and selected visual assets as accepted
+production inputs. ACS may start directly when they are usable. If material
+visual judgment is missing, AIOS may suggest the sibling ADS route, but it must
+not run it automatically or make ADS a mandatory predecessor; a standalone
+design owner may supply equivalent direction.
 
 ## First standalone ACS workspace
 
@@ -138,13 +143,21 @@ On Windows, the repo-local interpreter is `.venv\Scripts\python.exe`; on
 macOS/Linux it is `.venv/bin/python`. Do not use system `pip install` on a
 Homebrew-managed Python; create the venv first.
 
-## Optional motion and editor adapters
+## Video Studio
 
-HyperFrames workspaces under
-`workspace/engine/motion-adapters/video-projects/` remain available for a
-motion asset when motion clarifies a point. They are optional adapter material,
-not the ACS product identity. Timeline Studio, OpenReelio, and supervised
-publishers are documented seams only; v0.3 does not vendor or depend on them.
+For a video outcome, use the repository-local `freecut-studio` skill. FreeCut
+is the one normal external browser Studio; its own workspace remains canonical
+until the human approves its export. Copy that reviewed FreeCut export as an
+ordinary file under the active production's `sources/`, declare it with normal
+rights/provenance in `project.json.sources`, point `edit-plan.json.source` and
+every intended long- and short-form segment source at it, and re-run `acs
+inspect`. Use the normal transcript review and `acs plan --approve` gates as
+applicable, then run `acs render`, `acs derive`, `acs package`, `acs verify`,
+`acs review-report`, `acs export-result`, and `acs semantic-eval`. The normal
+FreeCut return path must never use `acs import-adapter`, a FreeCut manifest,
+reference JSON, schema, bridge, or any other integration layer. Legacy
+HyperFrames and other editor material is retained only for explicit
+migration/recovery.
 
 ## Cleanup
 

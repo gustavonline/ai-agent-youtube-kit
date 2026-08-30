@@ -23,7 +23,10 @@ the system is not a phone-first editor.
 6. Draft/refine `content-brief.md`, `recording-plan.md`, and the optional
    `creative-direction.md`, then run `acs inspect` and ingest a transcript.
    Keep raw ASR separate; use `acs review-transcript` for corrected or bounded
-   truth before captions or publish-ready text.
+   truth before captions or publish-ready text. For a video outcome, use the
+   repository-local `freecut-studio` skill for the one normal supervised Studio
+   edit and return the reviewed export to the existing ACS proof flow. The ACS
+   render command remains a deterministic engine boundary, not another Studio.
 7. Record explicit approval with `acs plan --approve --by <reviewer>`.
 8. Run `acs render`, `acs derive`, `acs package`, `acs verify`,
    `acs review-report`, `acs export-result`, and reviewer-owned `acs semantic-eval`.
@@ -44,6 +47,41 @@ the system is not a phone-first editor.
     <id> --slug <slug>`; never promote automatically. The tracer is a local
     proof tool, not a daemon or an AIOS service.
 
+### Normal FreeCut return
+
+After the human reviews and approves the FreeCut export, copy it as an ordinary
+file into the active ACS production before continuing:
+
+```text
+cp /path/to/reviewed-export.mp4 workspace/productions/<slug>/sources/freecut-reviewed.mp4
+```
+
+Add `sources/freecut-reviewed.mp4` to `project.json.sources` using the existing
+source shape and truthful `status`, `owner`, `license`, `source_url`, and
+`attribution` values. Set `edit-plan.json.source` and every intended
+`long_form.segments[].source` and `short_form.segments[].source` to that same
+relative path. Then run the ordinary gates and proof route:
+
+```text
+acs inspect workspace/productions/<slug>
+acs ingest-transcript workspace/productions/<slug> <transcript-for-reviewed-export>
+acs review-transcript workspace/productions/<slug> <reviewed-transcript> --by <reviewer>
+acs plan workspace/productions/<slug> --approve --by <reviewer>
+acs render workspace/productions/<slug> --kind all
+acs derive workspace/productions/<slug>
+acs package workspace/productions/<slug>
+acs verify workspace/productions/<slug>
+acs review-report workspace/productions/<slug>
+acs export-result workspace/productions/<slug>
+acs semantic-eval workspace/productions/<slug> <assessment.json> --by <reviewer>
+```
+
+Use `review-transcript` when reviewed transcript truth is applicable; do not
+invent a review when it is not. The normal FreeCut return path must never use
+`acs import-adapter`, a FreeCut manifest, reference JSON, schema, bridge, or any
+other integration layer. That command and its manifest remain legacy
+migration/recovery only.
+
 ## Editorial defaults
 
 Use promise + proof + plan, usually in three points, with a contextual CTA and
@@ -58,14 +96,19 @@ selected channel rather than blindly duplicating one video file.
 The planning reference is three core videos per week for 26 weeks (78 core
 videos) plus 22 useful shorts (100 assets). Vlogs are usually a 5–20% minority.
 
-## Optional adapters
+## Production tools and recovery inputs
 
 - Local Whisper is the default optional transcription engine through
   `workspace/engine/scripts/transcribe-local-whisper.py`.
 - FFmpeg/ffprobe own deterministic inspection and render boundaries.
-- HyperFrames can supply a motion asset when it clarifies a point.
-- Timeline Studio, OpenReelio, and supervised publishers are documented seams,
-  not v0.3 dependencies.
+- FreeCut is the one normal supervised video Studio route.
+- Remotion or another code-based motion technique may produce one bounded ACS
+  asset only when a concrete deliverable needs it; it is not an editor route or
+  prerequisite.
+- Retained HyperFrames and other editor material is migration/recovery input
+  only. It is not an ordinary parallel choice.
+- A supervised publisher consumes the existing handoff only after separate
+  authorization; it is not an editor.
 
 See `docs/ADAPTERS.md` for boundary rules and `docs/RECOVERY.md` for safe
 cleanup.

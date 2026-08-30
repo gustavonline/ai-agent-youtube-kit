@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Historical compatibility name. ACS productions are the canonical content
-# boundary; curated examples and HyperFrames workspaces are checked separately.
+# boundary; curated examples and retained HyperFrames migration/recovery inputs
+# are checked separately.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 PYTHON="${ACS_PYTHON:-$ROOT/.venv/bin/python}"
 if [ ! -x "$PYTHON" ]; then
@@ -29,5 +30,5 @@ fi
 if command -v node >/dev/null 2>&1 && command -v npx >/dev/null 2>&1; then
   "$ROOT/workspace/engine/scripts/check-motion-adapters.sh"
 else
-  echo "Skipping optional HyperFrames checks (node/npx not installed)."
+  echo "Skipping retained HyperFrames migration/recovery checks (node/npx not installed)."
 fi

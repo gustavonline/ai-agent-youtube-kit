@@ -1,14 +1,29 @@
 # Editor and Engine Decision Record
 
-**Current v0.3 decision:** keep the Agentic Content System (ACS) v0.3 core
-narrow: versioned
-declarative contracts, a Python cross-platform CLI, and FFmpeg/ffprobe as the
-deterministic media boundary. Treat full editors and motion systems as
-supervised, optional adapters.
+**Current decision (2026-08-30):** keep the Agentic Content System (ACS) core
+narrow—versioned declarative contracts, a Python cross-platform CLI, and
+FFmpeg/ffprobe as the deterministic media boundary—while using the external
+FreeCut browser app as the one normal Studio for video outcomes. The
+repository-local `freecut-studio` skill owns that lightweight method; FreeCut
+workspace truth stays in FreeCut and ACS gains no bridge contract or runtime
+dependency.
+
+FreeCut is the one normal supervised video Studio route. Remotion or
+generic code-based motion may remain an optional ACS production technique only
+when a concrete deliverable needs a bounded asset; it is not another editor or
+prerequisite. Retained HyperFrames and other editor material is
+migration/recovery input only.
+
+ACS owns content production and proof; ADS owns portable visual direction and
+reusable visual assets. Either System may be entered first. When ownership
+crosses, AIOS may suggest only the bounded sibling route and never executes it
+automatically or creates a deterministic ADS-to-ACS chain. OpenPencil remains
+on the ADS route, while FreeCut remains the external Studio for ACS video work.
 
 **Research snapshot:** 2026-08-24
 
-This is a dated technical repository comparison. License, star count, README
+The remaining sections are a dated historical comparison, not the current
+editor router. License, star count, README
 status, and feature statements below are GitHub snapshots, not permanent truth
 or quality proof. Stars are included only to make the snapshot auditable; they
 do not establish reliability, safety, maturity, or product fit. The record is
@@ -23,7 +38,7 @@ identity and product boundary are v0.3; later work added reviewed transcript
 truth, captions, explicit crop/audio seams, supervised adapter imports, and
 actionable creative/LUT proof without changing the local-first ownership rule.
 
-## Constraint and decision
+## Historical constraint and decision
 
 ACS has to support authentic, useful solo-founder or small-business content
 across macOS, Windows, and Linux. The system must be headless and
@@ -90,7 +105,11 @@ owns consequential approval and any later publishing authorization. Adapters
 may read or write explicitly named contract files and must return hashes and
 failures without becoming a hidden source of truth.
 
-## Adapter seams
+## Historical adapter seams (not active routing)
+
+The following v0.1 seam inventory is retained as research history. It does not
+offer active editor choices, change the current FreeCut decision, or make legacy
+material an ordinary production route.
 
 - **FFmpeg/ffprobe:** required core boundary for inspection and deterministic
   long-form/vertical output.
@@ -119,9 +138,12 @@ failures without becoming a hidden source of truth.
   intent, and requires authorization outside ACS. v0.3 keeps
   `external_posting: false`.
 
-## Revisit triggers
+## Historical revisit triggers (not active routing)
 
-Reconsider the boundary only when evidence changes the constraint decision:
+These v0.1 triggers are preserved for decision provenance. They do not expose a
+parallel editor router. Replacing the current FreeCut decision would require a
+new deliberate review of the complete Studio profile and this current decision
+record.
 
 1. OpenCut ships a stable, documented headless/MCP/API release with reproducible
    cross-platform installation, contract import/export, tests, and a clear
@@ -146,3 +168,8 @@ For v0.1, **build a full editor ourselves** and **vendor a full editor now**
 are both rejected. ACS owns the narrow declarative contract and FFmpeg
 boundary, with future editors and motion systems behind explicit, supervised
 adapter seams.
+
+That historical conclusion is not current routing guidance. The current route
+is FreeCut as the one normal Studio, bounded code-based motion only for a
+concrete asset need, and retained editor/motion material only for explicit
+migration/recovery.

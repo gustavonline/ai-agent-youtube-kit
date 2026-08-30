@@ -1,0 +1,4 @@
+interface:
+  display_name: "FreeCut Studio"
+  short_description: "Operate the one external FreeCut Studio"
+  default_prompt: "Use $freecut-studio for the appropriate setup, check, work, or recovery mode for this ACS video task."

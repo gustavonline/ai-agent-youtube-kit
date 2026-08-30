@@ -1,14 +1,15 @@
 # Optional Codex Tooling
 
-Agentic Content System v0.3 does not require a Codex plugin or an external
-editor,
-HyperFrames to run its contract/CLI/render/package workflow. Install FFmpeg and
-use the Python CLI first.
+Agentic Content System v0.3 does not require a Codex plugin. Install FFmpeg and
+use the Python CLI for the local contract/render/package boundary. For video,
+FreeCut is the one normal supervised Studio route; the repository-local
+`freecut-studio` skill owns its fixed external checkout model.
 
-The existing HyperFrames projects remain useful for optional motion assets. If
-an external editor or transcription plugin is deliberately added, keep it as an
-adapter: it must consume local contracts, return inspectable files, and never
-become a hidden database or required service.
+Remotion or generic code-based motion may remain a bounded ACS production
+technique when a concrete deliverable needs one asset; it is not another editor
+or prerequisite. Existing HyperFrames and other editor material is retained
+only for explicit migration/recovery. Do not install a parallel editor plugin,
+create a bridge contract, or turn legacy material into an active route.
 
 ## Local Whisper
 

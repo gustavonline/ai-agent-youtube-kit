@@ -1,9 +1,12 @@
-# Design System
+# Accepted Design Direction Snapshot
 
-This is the default brand direction for new agentic workflow videos. Replace it with your own brand once you know the channel identity.
+This is the default brand direction for new agentic workflow videos. Replace it
+only with portable direction accepted by ADS or another explicit visual-design
+owner once the channel identity is known.
 
-Use `workspace/learning/PROJECT_MEMORY.md` for lessons from finished projects. Promote a lesson
-into this design system only when it becomes a stable brand decision.
+Use `workspace/learning/PROJECT_MEMORY.md` for lessons from finished projects.
+Propose a durable visual lesson to the design owner; replace this snapshot only
+after the resulting stable brand decision is accepted.
 
 ## Style Prompt
 

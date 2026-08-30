@@ -121,6 +121,7 @@ class CLITests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("Agentic Content System", result.stdout)
         self.assertIn("review-report", result.stdout)
+        self.assertIn("legacy migration/recovery", result.stdout)
         self.assertNotIn("init-from-handoff", result.stdout)
         self.assertFalse((REPO_ROOT / "workspace" / "engine" / "agentic_content_system" / "handoff.py").exists())
         self.assertFalse((REPO_ROOT / "workspace" / "engine" / "contracts" / "schemas" / "aios-handoff.schema.json").exists())
@@ -799,6 +800,9 @@ class CLITests(unittest.TestCase):
         self.assertIn("buyer problem", (self.project / "content-brief.md").read_text(encoding="utf-8").lower())
         self.assertTrue((self.project / "recording-plan.md").exists())
         self.assertTrue((self.project / "context" / "README.md").exists())
+        adapter_note = (self.project / "adapters" / "README.md").read_text(encoding="utf-8")
+        self.assertIn("Legacy migration/recovery adapter imports", adapter_note)
+        self.assertIn("must never be used for a normal FreeCut export", adapter_note)
         (self.project / "context" / "source-notes.json").write_text(
             json.dumps(
                 {

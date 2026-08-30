@@ -2,7 +2,8 @@
 
 `workspace/` is the persistent operational truth for Agentic Content System.
 
-- `workspace/channel/` holds clone-owned channel policy, style, and brand assets.
+- `workspace/channel/` holds clone-owned channel policy and content style plus
+  accepted visual-direction snapshots and the selected assets ACS needs.
 - `workspace/content-formats/` and `workspace/content-pipeline/` hold inspectable ACS planning state.
 - `workspace/productions/` holds one local ACS content workspace per production.
 - `workspace/references/` holds durable reference-analysis metadata and lessons.

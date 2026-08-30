@@ -54,6 +54,13 @@ evidence; configuration alone is not an OS result. Run optional networked or
 slow motion-adapter checks only when relevant to the stated scope, and record
 when they were skipped.
 
+When FreeCut readiness is in the repository or named-video-workspace scope,
+use the `freecut-studio` skill's check mode and keep it strictly read-only.
+Report its complete public npm-audit evidence separately from the pinned
+browser-reachability adjudication. Missing safe install provenance requires a
+deliberate authorized Setup rerun, not an invented marker. Do not set up,
+update, repair, or create a persistent binding during the audit.
+
 For a named workspace, inspect its current `brand.json`, `project.json`,
 `edit-plan.json`, transcript, inspection, render record, derivatives,
 `publish/manifest.json`, `publish/publisher-handoff.json`, reports, and

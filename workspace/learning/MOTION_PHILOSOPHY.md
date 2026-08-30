@@ -1,7 +1,11 @@
 # Motion Philosophy
 
-Use this only when an approved content plan calls for a HyperFrames motion
-adapter. Motion clarifies a point; it is not the Agentic Content System itself.
+Use this only when an approved content plan identifies a concrete beat where a
+bounded code-based motion asset clarifies the deliverable. Remotion or an
+equivalent technique may produce that asset, but it is not another editor,
+Studio, or prerequisite. FreeCut remains the one normal supervised video Studio
+route. Retained HyperFrames/editor material is available only for
+an explicit migration/recovery task.
 
 ## Principles
 
@@ -16,8 +20,10 @@ adapter. Motion clarifies a point; it is not the Agentic Content System itself.
 
 - Does this project have a `workspace/channel/DESIGN.md`?
 - Have `workspace/learning/PROJECT_MEMORY.md` and the active project notes been checked for reusable patterns?
+- Does the approved plan name the concrete beat that justifies code-based motion?
 - Is the target format clear: 9:16 short, 16:9 long-form, or overlay with alpha?
 - Are captions above UI-safe zones and not covering the face?
 - Do transitions land on beat or word boundaries?
-- Did `npm run check` pass?
+- Did the technique-specific validation pass? For explicit legacy
+  migration/recovery, this includes the retained project's `npm run check`.
 - Were hero frames visually inspected?
