@@ -1,118 +1,60 @@
-# Agentic Content System Architecture
+# Architecture
 
-Agentic Content System is a local-first, cloneable execution system. It runs
-without AIOS and keeps the durable truth in inspectable files. There is no
-hosted backend, auth, database, queue, Electron/Tauri shell, cloud AI, or real
-publisher in v0.3.
+ACS is a file-based orchestration and proof layer around human judgment and the
+external FreeCut browser Studio.
 
 ```text
-Conversation, brief, AIOS task, or standalone context
+bounded context + source material
           |
           v
-workspace/channel/PROFILE.md + workspace/channel/brand.json -> acs init --brand -> local brief/recording plan -> ACS workspace contracts
+content brief / cut plan / optional transcript
           |
           v
-capture/ingest -> inspect -> transcript -> explicit approval
+FreeCut supervised browser edit (ordinary video)
           |
           v
-FFmpeg render -> selected derivatives -> enabled-route package
+content-graph.json: artifacts + hashes + provenance + independent reviews
           |
           v
-verify -> static HTML review -> local proof/result -> semantic content checkpoint -> caller reads learning
+publisher-handoff.json: approved nodes only, supervised, not posted
 ```
 
-ACS owns the content decision, deliverable production, packaging, and proof.
-Portable visual direction may arrive as an already accepted `DESIGN.md` plus
-selected assets from ADS or another explicit design owner. ADS owns new visual
-judgment and reusable visual assets. Either System may be entered first; AIOS
-may suggest the bounded sibling when ownership crosses, but it never executes
-that sibling automatically or imposes a deterministic chain.
+## Owned surfaces
 
-## Contract ownership
+ACS owns repository-local skills, Markdown context/templates, the content-graph
+and publisher-handoff contracts, and focused validation. It does not own a
+media editor, renderer, derivative generator, package builder, recovery ledger,
+database, web service, or publisher.
 
-- `brand.json` owns channel policy, enabled/disabled reasons, and cadence.
-- The clone-owned `workspace/channel/brand.json` is a small source of defaults; `acs
-  init --brand` validates it and copies it into the workspace before the first
-  run. The workspace copy is execution truth.
-- `project.json` owns the content promise, audience, capture format, source
-  provenance, rights, transcript reference, and run-specific delivery intent.
-- `edit-plan.json` owns the deterministic render intent and explicit approval
-  state. It is the gate before render, derivative generation, and packaging.
-- `publish/manifest.json` owns the generated publish-ready handoff, hashes,
-  enabled routes, disabled routes, and the v0.3 no-external-posting assertion.
-- `context/` is optional human/source-note space. It is not a contract and is
-  never read by runtime validation, approval, rendering, packaging, or result
-  export.
-- `publish/publisher-handoff.json` owns the versioned supervised-publisher
-  delivery handoff. It binds to the current manifest identity, references the
-  current asset/post hashes, includes enabled routes only, and records
-  `awaiting-separate-authorization`, `not_posted: true`, and
-  `external_posting: false`. Its manifest binding hash covers the immutable
-  package fields and deliberately excludes only verify-time
-  `manifest.verification` status bytes.
-- `reports/review.json` and `results/run-result.json` own currentness bindings
-  for the HTML review and outbound proof/result. A package replacement stages
-  manifest and publisher handoff together, then invalidates old generated
-  review/result claims only after the replacement succeeds.
-- `evaluations/semantic-evaluation-*.json` owns an immutable reviewer judgment
-  of one exported result against its ACS-owned promise, proof, and audience.
-  It is evaluated after deterministic review/result evidence and before a
-  deliberate success is accepted in the append-only ledger.
-- `workspace/engine/contracts/schemas/` versions the shapes. The CLI validates them without a
-  runtime database or network call.
-- `run-result.schema.json` owns the caller-agnostic proof/learning result. It
-  contains no upstream-system fields and does not validate a caller return
-  shape.
+The validator is a zero-dependency Node script. It reads local files, checks
+their hashes and relationships, and never edits them. It does not require a
+fixed graph shape, fixture count, or platform name.
 
-## Persistent System Template-aligned shell
+## Studio boundary
 
-`workspace/` is persistent operational truth. The channel, planning library,
-production workspaces, reference library, learning, and run evidence remain
-local files; `workspace/engine/` is only the technical implementation. The
-append-only `workspace/history/runs.jsonl` relation contains one record per
-deliberate full production-route attempt, whether it succeeds or fails. It
-references the production `project.json`, `results/run-result.json`, and
-`reports/review.json` rather than copying raw requests or prompts.
+FreeCut is the only normal Studio for owner-recorded video. The checkout and
+native workspace stay outside ACS. Codex can validate and start its built Vite
+app on strict loopback, open it in the in-app browser, and participate in a
+revision-guarded human/agent/human workflow. The reviewed export returns as an
+ordinary graph node; ACS does not render it again.
 
-The local `workspace/engine/tracer.py` records predecessor repeats and explicit
-single-use recovery relations. It binds semantic-evaluation evidence to
-successful and semantic-failed attempts without changing the evaluated result.
-`examples/` is a deliberate curation boundary:
-promotion writes only a small README and proof pointer, while operational
-production state remains under `workspace/productions/`. Neither the tracer nor
-the ACS CLI is an AIOS service, daemon, database, or automatic publisher.
+## Optional helpers
 
-FFmpeg/ffprobe are the deterministic media boundary. Local Whisper remains an
-optional transcript adapter through the existing repo script. ACS's own browser
-surface is a static report; the one normal video Studio is the external FreeCut
-browser app, whose native workspace remains canonical outside ACS.
+Local Whisper and reference analysis may use Python and FFmpeg. They are
+optional preprocessing/research helpers, not an ACS runtime or fallback media
+pipeline.
 
-Remotion or another code-based motion technique may produce a bounded ACS asset
-only when a concrete deliverable needs it; it is not another editor or
-prerequisite. Retained HyperFrames and other editor material is
-migration/recovery input only.
+ADS is also optional. An accepted immutable `DESIGN.md` snapshot and selected
+assets can be recorded in `design_handoff`; no ADS application, schema, or
+editable source is required.
 
-The dated editor/engine comparison and the rationale for keeping this narrow
-contract + FFmpeg boundary are recorded in
-[`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md). Its candidate seams
-and revisit triggers are historical evidence, not an active parallel editor
-router. The existing `import-adapter` seam is reserved for explicit
-migration/recovery of an already rendered result.
+HeyGen HyperFrames is the single specialist code-motion route for an entire
+code-animated explainer/motion-graphics video or one bounded overlay asset. Its
+upstream skills own that production method. It is not an alternate timeline
+editor.
 
-The edit plan may bind `audio_start` for a primary-audio B-roll segment. The
-visual source still determines the output window and duration; the primary
-source at `audio_start` determines audio and reviewed transcript/caption
-coverage. Captions map ordered segments to output time, skip muted segments,
-and are burned last. A supplied approved LUT is applied with FFmpeg `lut3d`
-inside each segment render before concat; a build without that filter fails
-closed for supervised completion in the normal FreeCut Studio.
+## No posting
 
-The persistent AIOS Space may remain the owner of durable business defaults and
-learning. A task-level caller or judgment layer copies resolved values into a
-new ACS workspace; independent ACS then executes locally, and the caller reads
-proof and learning back through its normal task flow. No shared maintained
-schema is required. The setup skill configures the clone; the run skill owns
-production execution.
-
-See [`INPUT_OWNERSHIP.md`](INPUT_OWNERSHIP.md) for the source-agnostic routing
-and the explicit prohibition on upstream runtime coupling.
+The graph proves what exists and what was reviewed. The handoff selects only
+independently approved nodes and explicitly records that external posting is
+false. A human or separately authorized publisher performs any later delivery.

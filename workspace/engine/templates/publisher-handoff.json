@@ -1,0 +1,11 @@
+{
+  "contract_version": "acs-publisher-handoff/1.0",
+  "family_id": "family-replace-me",
+  "graph_version": 1,
+  "graph_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "status": "awaiting-separate-authorization",
+  "supervised": true,
+  "not_posted": true,
+  "external_posting": false,
+  "selected_nodes": []
+}

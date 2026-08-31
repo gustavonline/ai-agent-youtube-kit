@@ -1,6 +1,6 @@
 # Project Memory
 
-Living memory for a branded clone of this editor.
+Living memory for a branded Agentic Content System clone.
 
 Keep this file concise. Add lessons only after a finished project proves they
 are useful, repeatable, or important to avoid.

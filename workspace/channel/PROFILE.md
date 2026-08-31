@@ -1,21 +1,15 @@
-# Channel Profile
+# Channel profile
 
-Fill this in for each branded clone before producing real videos. The setup
-skill uses available business context and asks only for missing decisions.
-After this profile is resolved, copy its durable channel policy into
-`workspace/channel/brand.json` and run `acs validate-profile workspace/channel/brand.json`.
-
-`workspace/channel/brand.json` is the clone default. A workspace copy made by
-`acs init --brand workspace/channel/brand.json` is the execution truth for that run.
+Fill this in for each branded clone. Production graph validation does not
+require a named platform or fixed channel list.
 
 ## Identity
 
 - Channel/client:
 - Channel promise:
 - Audience:
-- Primary platforms:
 - Primary formats:
-- Publishing cadence:
+- Sustainable cadence:
 
 ## Voice
 
@@ -25,29 +19,23 @@ After this profile is resolved, copy its durable channel policy into
 - Words/phrases to use:
 - Words/phrases to avoid:
 
-## Content Lanes
+## Content lanes
 
-| Lane | Viewer Problem | Typical Format | Proof Needed |
+| Lane | Viewer problem | Typical format | Proof needed |
 | --- | --- | --- | --- |
 | | | | |
 
-## Offers And CTAs
+## Offers and CTAs
 
 - Primary CTA:
 - Secondary CTA:
-- Lead magnet:
-- Community/product:
+- Lead magnet/community/product:
 
-## Constraints
+## Optional delivery targets
 
-- Must include:
-- Must avoid:
-- Legal/client constraints:
+Record only targets the owner actually uses. A production node may declare any
+stable target ID; no target grants posting authority.
 
-## Delivery Defaults
-
-Record one default for every enabled channel in `workspace/channel/brand.json`:
-
-- Delivery mode: `manual` or `scheduled`
-- Scheduled date/time and timezone, when applicable:
-- Human approval owner:
+| Target ID | Purpose | Default manual/scheduled intent | Human approval owner |
+| --- | --- | --- | --- |
+| | | | |

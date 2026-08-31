@@ -1,83 +1,43 @@
 # Real-video acceptance protocol
 
-Use this protocol for a later owner usability check. It is generic and does
-not create a personal acceptance workspace during repository setup.
+Use this protocol for issue #12's later owner usability tracer. This repository
+Build does not create or simulate the owner recording.
 
-## Source guidance
+## Source and Studio
 
-Use owner-recorded footage for the usability run: camera, screen capture,
-podcast, demo, or another format that matches the content decision. Keep the
-source in the local workspace `sources/` directory, record rights and
-provenance in `project.json`, and do not commit large or private media.
-Generated fixtures and rights-cleared public footage are suitable for testing
-the engine. They are technical evidence, not owner usability evidence.
+Use real owner-recorded camera, screen, podcast, demo, or other appropriate
+footage. Keep private/large media local and record truthful rights/provenance.
+Use the pinned external FreeCut browser Studio for the ordinary edit. Exercise
+the features the outcome actually needs: cuts/trims, audio/music,
+captions/subtitles, overlays/assets, and supervised export.
 
-## Exact end-to-end checks
+## Trace
 
-From the repository root, with the clone defaults configured:
+Record concise timestamps or observations for:
 
-```text
-python -m agentic_content_system doctor
-python -m agentic_content_system validate-profile workspace/channel/brand.json
-python -m agentic_content_system init <workspace> --brand workspace/channel/brand.json
-```
+1. context-to-brief preparation;
+2. local source/transcript preparation;
+3. FreeCut checkout check, loopback launch, and in-app browser opening;
+4. owner workspace selection and editing;
+5. human export review;
+6. graph registration, hashes, provenance, edges, and per-node approval;
+7. final review and supervised handoff validation; and
+8. friction, confusion, failure, and manual recovery.
 
-Resolve the real promise, audience, format, source rights, edit plan, and
-delivery intent in the workspace. Then run exactly:
+## Acceptance checks
 
-```text
-python -m agentic_content_system inspect <workspace>
-python -m agentic_content_system validate <workspace>
-python -m agentic_content_system ingest-transcript <workspace> <transcript>
-python -m agentic_content_system plan <workspace> --approve --by <reviewer>
-python -m agentic_content_system render <workspace> --kind all
-python -m agentic_content_system derive <workspace>
-python -m agentic_content_system package <workspace>
-python -m agentic_content_system verify <workspace>
-python -m agentic_content_system review-report <workspace>
-python -m agentic_content_system export-result <workspace>
-```
+- FreeCut is the only ordinary Studio used.
+- The owner can complete a real edit and review the export.
+- The graph represents the actual source/transcript/thesis/master/derivatives
+  needed, without placeholder-count requirements.
+- Changing artifact bytes invalidates the recorded hash.
+- Approving family/source/master does not approve a derivative.
+- The handoff rejects an unapproved derivative.
+- Optional channel targets do not require a predefined platform.
+- ACS/FreeCut work without ADS; if a design handoff is used, its revision,
+  hashes, provenance, and review reference validate.
+- The handoff remains supervised, awaiting separate authorization, and not
+  posted.
 
-Inspect the actual rendered video and static review report. Confirm that the
-content promise is clear, source rights are correct, captions are readable,
-the output matches the approved edit plan, and the handoff is useful to a
-human publisher.
-
-## Rerun and currentness checks
-
-- Run `inspect` again after changing declared source bytes, order, kind, role,
-  rights, or provenance.
-- Re-approve after changing `brand.json`, `project.json`, delivery intent, or
-  `edit-plan.json`.
-- Re-run `render`, `derive`, and `package` after their inputs change. A fresh
-  package invalidates older review and result claims until the final three
-  checks run again.
-- Confirm repeated unchanged runs are deterministic or report an explicit
-  current/cached result; stale approvals and hashes must fail closed.
-
-## Enabled and disabled channels
-
-Check `brand.json`, `project.json`, `publish/manifest.json`, and
-`publish/publisher-handoff.json` together:
-
-- every enabled channel has exactly one delivery intent and a valid route;
-- disabled channels have a human-readable policy reason;
-- disabled channels appear only in `disabled_channels`, never in active routes;
-- adding a disabled channel to `project.json.delivery_intent` does not make it
-  a delivery route; packaging and verification must still exclude it.
-
-## No external posting
-
-The acceptance run must not log in, call a publisher, upload, schedule, or
-post externally. Confirm `external_posting: false`, `not_posted: true`, and
-`status: awaiting-separate-authorization` in the publisher handoff. Any later
-posting requires separate human authorization outside ACS.
-
-## Honest PASS boundary
-
-Generated fixture media and the retained public-source run can prove the
-contract engine, FFmpeg boundary, enabled-route filtering, deterministic
-reruns, review records, and supervised handoff. A real usability PASS is
-honest only after the owner completes the same checks with owner-recorded
-footage and confirms the resulting video and posts are usable for the stated
-business, audience, offer, and channel policy.
+Generated/text fixtures prove contract behavior only. A real PASS requires the
+owner-recorded run above and honest capture of usability friction.

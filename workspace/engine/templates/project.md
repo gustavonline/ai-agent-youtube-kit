@@ -1,25 +1,27 @@
-# ACS Workspace Notes
+# ACS production notes
 
-**Workspace slug:** <fill>
+**Production slug:** <fill>
 **Started:** <fill>
 **Capture format:** <fill>
 
-## Session Log
+## Session log
 
-| Date | Work | Output |
+| Date | Work | Artifact/review reference |
 | --- | --- | --- |
+| | | |
 
 ## Decisions
 
 - Decision:
   - Reason:
 
-## Render History
+## Graph revisions
 
-| File | Date | Notes |
+| Family version | Changed node/version | Reason |
 | --- | --- | --- |
+| | | |
 
-## Durable Lessons
+## Durable lessons
 
 - Lesson:
   - Promote to:

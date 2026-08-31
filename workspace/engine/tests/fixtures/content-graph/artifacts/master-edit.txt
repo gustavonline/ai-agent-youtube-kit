@@ -1,0 +1,1 @@
+Contract-only stand-in for a human-reviewed FreeCut master export.

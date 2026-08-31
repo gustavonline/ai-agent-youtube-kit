@@ -1,26 +1,22 @@
-# ACS Content Brief
+# ACS content brief
 
-**Workspace slug:** <fill>
+**Production slug:** <fill>
 **Working title:** <fill>
-**Enabled route(s):** <fill>
+**Optional target(s):** <fill>
 **Target duration:** <fill>
-**Source context/reference:** <fill>
+**Source context:** <fill>
 
-## Audience
+## Audience and promise
 
 - Viewer:
 - Current belief:
 - Desired shift:
-
-## Promise
-
 - One-sentence promise:
 - Proof required:
-- Risk if unclear:
 
 ## Structure
 
-| Beat | Purpose | Source Material | Visual Need |
+| Beat | Purpose | Source material | Visual need |
 | --- | --- | --- | --- |
 | Hook | | | |
 | Problem | | | |
@@ -29,23 +25,12 @@
 | Takeaway | | | |
 | CTA | | | |
 
-## Packaging Direction
+## Production
 
-- Title candidates:
-- Thumbnail concepts:
-- Hook frame:
+- Owner-recorded source:
+- FreeCut cuts/audio/captions/overlays:
+- Specialist full code-motion video or bounded overlay, if truly needed:
+- Human export reviewer:
 
-## Production Notes
-
-- A-roll:
-- Screen capture:
-- B-roll:
-- FreeCut Studio edit/handoff:
-- Optional code-based motion beat and concrete need:
-- Audio/music:
-
-FreeCut is the one normal supervised video Studio route. Remotion or a
-generic code-based motion technique is optional only for the concrete beat
-named above; it is not another editor or prerequisite. Retained
-HyperFrames/editor material may enter this brief only for an explicit
-migration/recovery task.
+FreeCut is the only normal Studio. HyperFrames is used only for the explicitly
+specialist output named above.

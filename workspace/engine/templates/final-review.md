@@ -1,21 +1,20 @@
-# Final Review
+# Final review
 
-**Content workspace:** <fill>
-**Final file:** <fill>
-**Reviewed:** <fill>
+**Production:** <fill>
+**Graph node ID/version:** <fill>
+**Artifact path/hash:** <fill>
+**Reviewer:** <fill>
 
-## Inputs Checked
+## Inputs checked
 
-- `workspace/channel/DESIGN.md`:
-- `workspace/learning/PROJECT_MEMORY.md`:
-- `workspace/learning/MOTION_PHILOSOPHY.md`:
-- `workspace/channel/STYLE_GUIDE.md`:
-- Transcript/cut plan:
+- Brief and cut plan:
+- Transcript/provenance:
+- Channel style/design:
+- Candidate artifact:
 - Packaging:
 
 ## Score
 
-- Overall: /10
 - Hook: /10
 - Pacing: /10
 - Clarity: /10
@@ -25,17 +24,13 @@
 
 ## Findings
 
-| Severity | Timestamp | Issue | Fix |
+| Severity | Timestamp/location | Issue | Required fix |
 | --- | --- | --- | --- |
+| | | | |
 
-## Publish Readiness
+## Decision
 
-- Ready to publish:
+- Node status: `approved` | `rejected` | `in_review`
+- Review reference:
 - Required fixes:
-- Optional improvements:
-
-## Lessons
-
-- Add factual notes to `<workspace>/learning.json` or its local notes:
-- Add to `workspace/learning/PROJECT_MEMORY.md` only if reusable:
-- Add to `workspace/channel/STYLE_GUIDE.md` only if channel-level:
+- Publishing authorization: not granted by this review

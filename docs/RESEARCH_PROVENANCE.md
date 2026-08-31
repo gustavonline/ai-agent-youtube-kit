@@ -6,7 +6,7 @@ a claim that the cited creators' business, revenue, or performance statements
 have been independently verified.
 
 Technical editor/engine research is kept separately in the dated
-[`EDITOR_ENGINE_DECISION.md`](EDITOR_ENGINE_DECISION.md). It uses the same
+[`ARCHITECTURE.md`](ARCHITECTURE.md). It uses the same
 constraint-first discipline but does not turn GitHub metadata or star counts
 into quality claims.
 
@@ -93,7 +93,7 @@ product choices:
 - keep the default cadence guidance at three core videos per week for 26 weeks
   (78 core videos) plus 22 useful shorts (100 assets), while keeping vlog a
   minority guideline of about 5–20%; and
-- keep all channel, approval, rights, and render decisions in inspectable local
+- keep all channel, approval, rights, artifact, and review decisions in inspectable local
   contracts rather than presenting research observations as universal truth.
 
 See `workspace/content-formats/formats.json` for the machine-readable library and

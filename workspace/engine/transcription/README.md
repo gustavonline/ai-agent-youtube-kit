@@ -1,6 +1,5 @@
 # Transcript boundary
 
-The core accepts agent-readable transcript files through `acs
-ingest-transcript`. Local Whisper remains an optional adapter through
-`workspace/engine/scripts/transcribe-local-whisper.py`; no cloud transcription service is
-required.
+Local Whisper is an optional helper. Its output can become a graph transcript
+node with exact byte hash, provenance, and independent review. ACS validation
+does not require transcription or a Python runtime.

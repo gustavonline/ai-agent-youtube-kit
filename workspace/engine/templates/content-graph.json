@@ -1,0 +1,14 @@
+{
+  "contract_version": "acs-content-graph/1.0",
+  "family": {
+    "id": "family-replace-me",
+    "version": 1,
+    "review": {
+      "status": "not_reviewed",
+      "reviewer": null,
+      "reference": null
+    }
+  },
+  "nodes": [],
+  "edges": []
+}

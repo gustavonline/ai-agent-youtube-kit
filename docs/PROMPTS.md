@@ -1,49 +1,36 @@
 # Prompts
 
-## Plan a content workspace
+## Plan a production
 
 ```text
-Read docs/ARCHITECTURE.md, docs/INPUT_OWNERSHIP.md, docs/CONTENT_FORMATS.md,
-workspace/channel/PROFILE.md, workspace/channel/STYLE_GUIDE.md, workspace/channel/DESIGN.md, and workspace/learning/PROJECT_MEMORY.md.
-Use whatever useful resolved context is available to choose a buyer problem, capture format,
-promise, proof, three-point plan, contextual CTA, and enabled distribution
-routes. Edit the JSON contracts, but do not approve or render until I review.
+Read AGENTS.md and the local agentic-content-system skill. Use the available
+context to draft the brief, proof, structure, capture plan, and truthful
+provenance. Do not create approval or a publisher handoff until a human reviews
+the actual artifact.
 ```
 
-## Run the local proof flow
+## Ordinary video
 
 ```text
-Use the actual Agentic Content System CLI on this workspace: inspect the source,
-validate contracts, ingest the transcript, show the plan diff, wait for explicit
-approval, then render long and vertical short, derive LinkedIn text, package only
-enabled channels, verify hashes and no external posting, and write the static
-review report. Return exact artifact paths and failures.
+Use the repository-local freecut-studio skill. Validate and start the pinned
+external FreeCut checkout on strict loopback, open it in the Codex in-app
+browser, preserve the human/agent/human revision-guarded workflow, and register
+the reviewed export as a content-graph node. Do not use a parallel editor.
 ```
 
-## Reference analysis
+## Contract proof
 
 ```text
-Analyze this selected reference video for reusable mechanics only. Follow
-docs/REFERENCE_ANALYSIS.md, inspect the generated artifacts, and promote only
-evidence-backed lessons to workspace/channel/STYLE_GUIDE.md. Do not copy identity.
+Validate this production's content graph and supervised publisher handoff.
+Recompute file hashes, check explicit edges and per-node approval, and confirm
+the handoff selects only approved nodes and remains not posted. Do not mutate.
 ```
 
-## Supervised video Studio
+## Specialist motion
 
 ```text
-Use the repository-local freecut-studio skill for this video. FreeCut is the
-one normal supervised video Studio route. Keep its native workspace canonical,
-use the human save/handoff -> expectedRevision agent edit -> human review flow,
-and return the reviewed export to the existing ACS proof flow. Do not select a
-parallel editor or create an ACS bridge contract.
-```
-
-## Optional code-based motion technique
-
-```text
-Only when the approved plan names a concrete visual beat that needs code-based
-motion, use Remotion or an equivalent bounded ACS technique to produce that
-asset. It is not another editor, Studio, or prerequisite; the video still uses
-the normal FreeCut route. Retained HyperFrames/editor material is available only
-for an explicitly requested migration/recovery task.
+This outcome is explicitly a full code-animated video or bounded overlay.
+Follow the upstream HeyGen HyperFrames /hyperframes router and selected
+workflow, then return only the reviewed output as a separately approved graph
+node. Do not treat HyperFrames as the routine long-form editor.
 ```

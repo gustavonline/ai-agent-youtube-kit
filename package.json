@@ -1,0 +1,16 @@
+{
+  "name": "agentic-content-system-contracts",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Zero-dependency contract proof for Agentic Content System",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test workspace/engine/tests/*.test.mjs",
+    "check:graph": "node workspace/engine/scripts/check-content-graph.mjs workspace/engine/tests/fixtures/content-graph/content-graph.json workspace/engine/tests/fixtures/content-graph/publisher-handoff.json",
+    "check:repository": "node workspace/engine/scripts/check-repository.mjs",
+    "check": "npm run test && npm run check:graph && npm run check:repository"
+  }
+}

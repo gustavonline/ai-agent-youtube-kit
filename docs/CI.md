@@ -1,15 +1,10 @@
-# CI Evidence
+# CI evidence
 
-`.github/workflows/ci.yml` is configured for Ubuntu, macOS, and Windows across
-Python 3.10–3.13. It installs FFmpeg through each runner's bounded package
-manager, installs the package in a venv-backed job environment, runs help and
-the relocated deterministic test suite, the ACS shell/stale-path/no-runtime
-guard, and checks whitespace. The deterministic suite includes structural and
-history proof tests; local Build evidence reports the result from the
-environment where it ran rather than a fixed test count.
+`.github/workflows/ci.yml` configures Node 22 checks on Ubuntu, macOS, and
+Windows. It runs the zero-dependency tests, neutral graph/handoff proof,
+repository link/stale-reference checks, and whitespace validation.
 
-The checkout and Python setup actions are pinned to immutable commit revisions.
-No third-party FFmpeg action is required. The matrix is configuration proof in
-the Build checkout; live OS execution remains pending until the branch is
-pushed by the separately authorized Ship step. Local macOS results must not be
-reported as Windows/Linux results.
+The matrix is configuration evidence until an authorized push runs it. Local
+macOS results are not Windows/Linux execution results. The FreeCut launcher
+tests prove command/path construction for each OS; physical FreeCut install,
+Chromium, and export evidence must be reported per OS.

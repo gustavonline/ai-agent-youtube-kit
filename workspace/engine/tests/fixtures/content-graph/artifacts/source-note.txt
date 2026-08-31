@@ -1,0 +1,1 @@
+Contract-only stand-in for an owner-recorded source. No media bytes are committed.

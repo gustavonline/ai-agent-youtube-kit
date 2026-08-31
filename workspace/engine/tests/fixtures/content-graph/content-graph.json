@@ -1,0 +1,111 @@
+{
+  "contract_version": "acs-content-graph/1.0",
+  "family": {
+    "id": "family-neutral-proof",
+    "version": 1,
+    "review": {
+      "status": "approved",
+      "reviewer": "fixture-reviewer",
+      "reference": "review/family-approval.md"
+    }
+  },
+  "nodes": [
+    {
+      "id": "node-source",
+      "version": 1,
+      "kind": "source",
+      "path": "artifacts/source-note.txt",
+      "format": "text/plain",
+      "sha256": "sha256:832a1d17ac9cc96f3305e824b70a1add4074e10714fad0534e2248c0782aff92",
+      "provenance": {
+        "type": "owner-recorded",
+        "statement": "A contract-only textual stand-in for owner-recorded source media.",
+        "references": []
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "fixture-reviewer",
+        "reference": "review/source-approval.md"
+      }
+    },
+    {
+      "id": "node-transcript",
+      "version": 1,
+      "kind": "transcript",
+      "path": "artifacts/transcript.vtt",
+      "format": "text/vtt",
+      "sha256": "sha256:fa16b6734004b0a8f5b22008d79e828081dd898e453b5c0f5e29c832ec57624c",
+      "provenance": {
+        "type": "local-transcription",
+        "statement": "A fixture transcript derived from the fixture source.",
+        "references": ["node-source"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "fixture-reviewer",
+        "reference": "review/transcript-approval.md"
+      }
+    },
+    {
+      "id": "node-thesis",
+      "version": 1,
+      "kind": "thesis",
+      "path": "artifacts/thesis.md",
+      "format": "text/markdown",
+      "sha256": "sha256:f3babe8c49fc1087047193a6ed740fec32df9db28ca709d0d17d7a22770e0c40",
+      "provenance": {
+        "type": "editorial-judgment",
+        "statement": "A thesis written from the reviewed transcript.",
+        "references": ["node-transcript"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "fixture-reviewer",
+        "reference": "review/thesis-approval.md"
+      }
+    },
+    {
+      "id": "node-master",
+      "version": 1,
+      "kind": "master",
+      "path": "artifacts/master-edit.txt",
+      "format": "text/plain",
+      "sha256": "sha256:f2e2af00da5a1f22636efb8e8121345cf712ef99915f3cd2d314eb5da0095ad3",
+      "provenance": {
+        "type": "freecut-export",
+        "statement": "A contract-only stand-in for a supervised and reviewed FreeCut export.",
+        "references": ["node-source", "node-thesis"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "fixture-reviewer",
+        "reference": "review/master-approval.md"
+      }
+    },
+    {
+      "id": "node-derivative",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/derivative.txt",
+      "format": "text/plain",
+      "sha256": "sha256:ef2516d815dddf06ffb0763be5f9fdb56d413a2764e9112a3430442be86527ec",
+      "provenance": {
+        "type": "editorial-excerpt",
+        "statement": "An excerpt candidate that has not received its own approval.",
+        "references": ["node-master"]
+      },
+      "review": {
+        "status": "in_review",
+        "reviewer": null,
+        "reference": null
+      }
+    }
+  ],
+  "edges": [
+    {"type": "derived_from", "from": "node-transcript", "to": "node-source"},
+    {"type": "derived_from", "from": "node-thesis", "to": "node-transcript"},
+    {"type": "adaptation_of", "from": "node-master", "to": "node-thesis"},
+    {"type": "derived_from", "from": "node-master", "to": "node-source"},
+    {"type": "excerpt_of", "from": "node-derivative", "to": "node-master"}
+  ]
+}

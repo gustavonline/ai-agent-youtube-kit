@@ -5,39 +5,23 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+  contracts:
+    name: ${{ matrix.os }} / Node 22
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install FFmpeg (Ubuntu)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y ffmpeg
-      - name: Install FFmpeg (macOS)
-        if: runner.os == 'macOS'
-        run: brew install ffmpeg
-      - name: Install FFmpeg (Windows)
-        if: runner.os == 'Windows'
-        run: choco install ffmpeg -y --no-progress
-      - name: Install package
-        run: python -m pip install -e .
-      - name: Check help and package version
-        run: python -m agentic_content_system --help
-      - name: Run deterministic tests
-        run: python -m unittest discover -s workspace/engine/tests -v
-        env:
-          PYTHONPATH: workspace/engine
-      - name: Check ACS System shell and proof contracts
-        run: python workspace/engine/checks.py
+          node-version: "22"
+      - name: Run zero-dependency contract and platform tests
+        run: npm test
+      - name: Validate neutral content graph and supervised handoff
+        run: npm run check:graph
+      - name: Check repository links and stale architecture references
+        run: npm run check:repository
       - name: Check tracked whitespace
         run: git diff --check

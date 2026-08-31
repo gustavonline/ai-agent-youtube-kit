@@ -1,169 +1,56 @@
 # Agentic Content System
 
-Agentic Content System turns business context and raw footage into reviewed videos, posts, and a publish-ready handoff locally.
+Agentic Content System is a local-first, cloneable workspace for turning a
+content decision and source material into reviewed content plus a supervised
+publisher handoff.
+
+ACS is deliberately small. It consists of skills, Markdown context and
+templates, a versioned content graph, a supervised handoff, and focused
+zero-dependency Node checks. It is not a media editor, render engine, Python
+application, dashboard, database, or automatic publisher.
+
+For ordinary video work, [FreeCut](https://github.com/walterlow/freecut) is the
+only normal browser Studio. It handles owner-recorded long-form and shorts,
+cuts, trims, audio/music, captions, overlays/assets, and supervised export. ACS
+records the reviewed outputs and their lineage; it does not render them again.
+
+## Start
+
+Requirements: Node.js 22 or newer and Git. FreeCut has its own pinned external
+checkout and setup contract.
 
 ```text
-business context -> brief -> capture -> approved edit -> video + posts -> review -> handoff
+npm test
+npm run check:graph
+npm run check:repository
 ```
 
-The public shell is intentionally small: `AGENTS.md`, this `README.md`,
-`.agents/skills/`, `docs/`, `workspace/`, and curated `examples/`. Persistent
-operational truth lives under `workspace/`; technical implementation, local
-contracts, scripts, tests, templates, and optional adapters live under
-`workspace/engine/`. Root `pyproject.toml` and hidden CI are toolchain
-exceptions.
+For a real outcome:
 
-## Use it when
+1. Read `AGENTS.md` and the repository-local production skill.
+2. Create `workspace/productions/<slug>/` only when a real content outcome
+   exists.
+3. Copy the content-graph and review templates, then replace fixture values with
+   truthful production paths, hashes, provenance, relationships, and review
+   state.
+4. Use FreeCut for video editing and supervised export.
+5. Validate the graph and optional handoff with the Node checker.
+6. Hand off only independently approved nodes. Nothing posts automatically.
 
-- an agent needs a transparent, repeatable content workflow for a business;
-- a human needs local contracts, FFmpeg media proof, review files, and a supervised delivery handoff;
-- AIOS or another caller can provide context, but the execution must remain standalone.
+The normative contracts are in [Content graph](docs/CONTENT_GRAPH.md), the
+workflow is in [Workflow](docs/WORKFLOW.md), and Studio setup/runtime is in
+[FreeCut Studio](docs/FREECUT_STUDIO.md).
 
-## Skip it when
+## Boundaries
 
-- the job needs a hosted editor, dashboard, cloud processing, or automatic posting;
-- there is no real content outcome yet; configure the clone first and create a workspace only when the outcome is known;
-- the source rights, approval owner, or channel policy cannot be resolved.
+- Optional local Whisper and reference-analysis helpers may use Python and
+  FFmpeg, but they are preprocessing/research tools, not an ACS media pipeline.
+- ADS is optional. An accepted immutable `DESIGN.md` plus selected assets may
+  be hash-bound in a production, but ACS works without ADS.
+- Upstream HeyGen HyperFrames is a specialist route only for a full
+  code-animated video or bounded overlay asset. It is not another editor.
+- There is no desktop app requirement. The same Node/Vite/Chromium FreeCut path
+  runs on macOS, Linux, and Windows.
 
-## Agent-first start
-
-Ask an agent:
-
-```text
-Set up this ACS clone for my business. Use any business, audience, offer,
-content-promise, channel, cadence, and delivery context already available.
-Ask only for missing decisions, update workspace/channel/PROFILE.md and workspace/channel/brand.json,
-run doctor and profile validation, and stop before creating a content workspace.
-When I give you a real content outcome, create it with the configured brand defaults.
-```
-
-The manual equivalent starts with:
-
-```text
-python3 -m venv .venv
-.venv/bin/python -m pip install -e .
-.venv/bin/python -m agentic_content_system doctor
-.venv/bin/python -m agentic_content_system validate-profile workspace/channel/brand.json
-.venv/bin/python -m agentic_content_system init workspace/productions/my-content --brand workspace/channel/brand.json
-```
-
-Windows PowerShell uses `.venv\Scripts\python.exe` for the same module
-commands. `acs` is the equivalent installed command.
-
-## Concrete outputs
-
-- clone defaults: `workspace/channel/PROFILE.md`, `workspace/channel/brand.json`, and the reusable `workspace/channel/STYLE_GUIDE.md`;
-- workspace execution truth: `brand.json`, `project.json`, `content-brief.md`, `recording-plan.md`, and `edit-plan.json`;
-- local proof: inspected sources, immutable raw ASR, reviewed transcript truth, approved FFmpeg renders, optional caption sidecars, selected derivatives, and a static review report;
-- supervised handoff: `publish/manifest.json`, `publish/publisher-handoff.json`, `results/run-result.json`, and a separate reviewer-owned semantic evaluation.
-
-## Setup and ownership
-
-ACS owns its repository-local skills at the direct paths indexed in
-`.agents/skills/README.md`. Cross-project skills remain plugin- or
-harness-installed outside this repository.
-
-The setup skill is the primary route for configuring a clone before its first
-real video. `workspace/channel/brand.json` is the small ACS-owned source of durable
-channel policy, cadence, and delivery defaults. `acs init --brand` validates it
-before writing a copy into the new production workspace. That workspace `brand.json` is
-execution truth; `project.json` owns run-specific content and delivery intent.
-Use `.agents/skills/setup-content-system/SKILL.md` for setup and
-`.agents/skills/audit-content-system/SKILL.md` for a strictly read-only audit.
-For video outcomes, `.agents/skills/freecut-studio/SKILL.md` owns the one
-external FreeCut Studio method; non-video outcomes do not need FreeCut.
-
-ACS owns the content decision, deliverable production, packaging, and proof.
-ADS owns portable visual direction, reusable visual assets, and new OpenPencil
-work. Either System may be entered first: ACS proceeds when accepted direction
-already exists, while AIOS may suggest a bounded sibling route when unresolved
-ownership crosses into ADS. A suggestion never executes the sibling
-automatically or creates a deterministic ADS-to-ACS chain. Direct standalone
-callers may provide equivalent accepted `DESIGN.md` direction and selected
-assets without either System depending on the other.
-
-AIOS is optional. It may own durable business or audience defaults and pass
-resolved context in prose or files. ACS does not maintain an AIOS↔ACS JSON
-handoff contract, caller IDs, database, API, or AIOS runtime dependency. The
-package's only optional runtime helper beyond Python and FFmpeg is Pillow for
-the portable burned-caption fallback.
-
-## Tested boundary and current limitation
-
-The v0.3 boundary is the cross-platform Python CLI, versioned JSON contracts,
-FFmpeg/ffprobe, local transcript adapters, the external FreeCut browser Studio
-for video, static reports, and explicit human approval. `external_posting`
-remains `false`; the publisher handoff is
-`not_posted: true` and awaits separate authorization. Full local tests and the
-system shell check exercise this boundary without a server or cloud dependency.
-
-Generated fixtures and the retained public-source run prove engine and
-contract behavior. They do not prove owner usability: a real usability PASS
-still requires the owner to run the protocol with owner-recorded footage.
-
-Each deliberate full production-route attempt must append exactly one
-structured record to `workspace/history/runs.jsonl` and write evidence under
-`workspace/runs/<run-id>/`. Ordinary repeats link with `predecessor`; explicit
-recovery consumes one unresolved failed run once. The ledger references
-production proof, bounded semantic evaluation, and failure/recovery facts; it never stores raw
-requests and is not an AIOS service. Curated examples are promoted separately
-with the local tracer and never become operational state.
-
-## Lower-level CLI
-
-```text
-acs init <workspace> [--brand workspace/channel/brand.json]
-acs validate-profile <brand-profile>
-acs inspect <workspace>
-acs validate <workspace> [--contracts-only]
-acs ingest-transcript <workspace> <transcript>
-acs review-transcript <workspace> <reviewed-transcript> --by <reviewer>
-acs plan <workspace> --approve --by <reviewer>
-acs render <workspace> --kind all
-acs derive <workspace>
-acs package <workspace>
-acs verify <workspace>
-acs review-report <workspace>
-acs export-result <workspace>
-acs semantic-eval <workspace> <assessment.json> --by <reviewer>
-```
-
-`acs import-adapter` is only a legacy migration/recovery seam for an already
-rendered result and its existing JSON plan/manifest; it is never the normal
-FreeCut return path. After human review, copy the reviewed FreeCut export as an
-ordinary file under the active production's `sources/`, declare that path and
-its normal rights/provenance in `project.json.sources`, and point
-`edit-plan.json.source` plus every intended long- and short-form segment source
-at it. Re-run `acs inspect`, use the normal transcript review and plan approval
-gates as applicable, then continue through `acs render`, `acs derive`, `acs
-package`, `acs verify`, `acs review-report`, `acs export-result`, and `acs
-semantic-eval`. The normal FreeCut return path must never use `acs
-import-adapter`, a FreeCut manifest, reference JSON, schema, bridge, or any
-other integration layer.
-
-Rendering and packaging are approval-gated. Re-run inspection after declared
-source changes; re-approve after policy, project, delivery, or edit-plan
-changes. Packaging includes enabled routes only and never posts.
-
-`transcripts/raw.json` is immutable ASR/input evidence. `transcripts/reviewed.json`
-is explicit reviewer-owned truth; captions and publish-ready text fail closed
-when selected ranges are not covered or source bytes are stale. Configure
-optional per-output captions in `edit-plan.json` under `captions.long` and
-`captions.short`. A successful run writes `results/index.md` as the smallest
-human-facing file index. `examples/` contains only deliberately promoted
-demonstrations; production truth stays under `workspace/productions/`.
-
-After export, a designated reviewer records a bounded semantic judgment of the
-candidate against its approved promise, proof, and audience. It is separate
-from schema validation, deterministic verification, static review, and the
-read-only audit. A failed result is retained unchanged and replayed only from
-a new explicit recovery run; see `docs/SEMANTIC_EVALUATION.md`.
-
-See `docs/REAL_VIDEO_ACCEPTANCE.md` for the generic owner-recorded protocol,
-`docs/CLI.md` for command details, and `docs/ADAPTERS.md` for production and
-recovery boundaries.
-FreeCut is the normal video Studio; HyperFrames and other legacy editor
-material remain only for explicit migration/recovery.
-
-The proposed GitHub repository description is recorded in
-`docs/GITHUB_DESCRIPTION.md`; remote metadata is intentionally unchanged.
+See [Real-video acceptance](docs/REAL_VIDEO_ACCEPTANCE.md) for the next
+owner-recorded usability tracer. Generated fixtures prove contracts only.
