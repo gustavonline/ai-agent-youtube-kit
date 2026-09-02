@@ -2,7 +2,7 @@
   "contract_version": "acs-publisher-handoff/1.0",
   "family_id": "family-neutral-proof",
   "graph_version": 1,
-  "graph_sha256": "sha256:aa5044d8f631f0a6ece22158ea4c6ab3451c3fdca4fb3febb421bd877fdde0d8",
+  "graph_sha256": "sha256:196bbb9e50d143cb8849753cb1992bba45679ed8273ddc0dada494ec4e1ab03b",
   "status": "awaiting-separate-authorization",
   "supervised": true,
   "not_posted": true,
@@ -11,7 +11,7 @@
     {
       "node_id": "node-master",
       "version": 1,
-      "sha256": "sha256:f2e2af00da5a1f22636efb8e8121345cf712ef99915f3cd2d314eb5da0095ad3"
+      "sha256": "sha256:746b8786c2244490440105de76011be74288015d63f9eda06e965e9b2e3fe901"
     }
   ]
 }

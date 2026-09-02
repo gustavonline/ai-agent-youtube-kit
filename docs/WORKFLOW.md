@@ -4,8 +4,10 @@
 2. Draft the content brief and cut plan. Recording itself is an owner activity,
    not an automated ACS step.
 3. Keep source rights/provenance explicit. Add an optional local transcript.
-4. For ordinary video, edit in FreeCut on loopback under human supervision.
-5. Review the FreeCut export. Copy it into the production as an ordinary file.
+4. For ordinary video, edit through Diffusion's authoritative Electron/DAPI
+   route under human supervision. Use the local read-only browser companion for
+   inspection when useful.
+5. Review the Diffusion export. Copy it into the production as an ordinary file.
 6. Build/update `content-graph.json`: stable IDs, versions, real hashes,
    provenance, per-node review, and explicit edges.
 7. Validate, perform final editorial review, and resolve findings.

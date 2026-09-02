@@ -1,0 +1,493 @@
+{
+  "contract_version": "acs-content-graph/1.0",
+  "family": {
+    "id": "business-freedom-content-e2e",
+    "version": 2,
+    "review": {
+      "status": "approved",
+      "reviewer": "diffusion-content-family-r1",
+      "reference": "review/final-review.md"
+    }
+  },
+  "nodes": [
+    {
+      "id": "business-freedom-brief",
+      "version": 2,
+      "kind": "source",
+      "path": "content-brief.md",
+      "format": "text/markdown",
+      "sha256": "sha256:c0d815d3bc44681f05ab163745122596c264c4a7c48743a66faaa10bc9954989",
+      "provenance": {
+        "type": "owner-delegation",
+        "statement": "The reviewed brief expanded to the bounded content family while preserving owner truth and publishing limits.",
+        "references": [
+          "lead-task:01a06256-c246-77b2-b78e-11d6955ff099",
+          "owner-outcome:01a05799-b30b-7fa2-bb54-5cde3e0437f4",
+          "ads-handoff:ads-business-freedom-content-system-story-e0cfce24fd44"
+        ]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/editorial-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-cut-plan",
+      "version": 2,
+      "kind": "derivative",
+      "path": "cut-plan.md",
+      "format": "text/markdown",
+      "sha256": "sha256:22bb6e5f70b33b5df3c98aaaefc0a2068f3e2106623343ef5ba7218a9798925e",
+      "provenance": {
+        "type": "editorial-planning",
+        "statement": "The plan preserves the landscape story and defines two purpose-built vertical adaptations plus a dedicated post visual.",
+        "references": ["business-freedom-brief", "design-input/DESIGN.md"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/editorial-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-thesis",
+      "version": 1,
+      "kind": "thesis",
+      "path": "thesis.md",
+      "format": "text/markdown",
+      "sha256": "sha256:bc118bda6ca98708024bb04dd90b5f3e74e94872337831d7273d32da0ad153ed",
+      "provenance": {
+        "type": "editorial-judgment",
+        "statement": "The unchanged reviewed thesis names the founder-owned Demand-content constraint and retained human choice.",
+        "references": ["business-freedom-brief"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/editorial-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-script",
+      "version": 1,
+      "kind": "derivative",
+      "path": "script.md",
+      "format": "text/markdown",
+      "sha256": "sha256:445731d7a4a54591620c0922c32e85401df8907cc61ac09853c5e365f7c27e5f",
+      "provenance": {
+        "type": "script-authoring",
+        "statement": "The unchanged eight-beat landscape script adapts the reviewed thesis and plan into timed claims.",
+        "references": ["business-freedom-thesis", "business-freedom-cut-plan"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/editorial-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-captions",
+      "version": 1,
+      "kind": "transcript",
+      "path": "captions.vtt",
+      "format": "text/vtt",
+      "sha256": "sha256:f0154bbc5f2817b915c297989a66f064533334705cad45c601dd12e332800a30",
+      "provenance": {
+        "type": "caption-authoring",
+        "statement": "Timed WebVTT companion authored from the landscape open-caption script; no recorded speech is claimed.",
+        "references": ["business-freedom-script"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/editorial-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-motion-source",
+      "version": 1,
+      "kind": "derivative",
+      "path": "diffusion-project/index.tsx",
+      "format": "text/tsx",
+      "sha256": "sha256:d879ae2ecf2e3815628e0e53892f3f55a104c62f10d2ecb5a135a6cbc06f3edb",
+      "provenance": {
+        "type": "code-native-authoring",
+        "statement": "Unchanged ACS-owned Diffusion JSX for the reviewed 42-second landscape tracer.",
+        "references": ["business-freedom-script", "business-freedom-captions", "design-input/DESIGN.md"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/technical-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-master",
+      "version": 1,
+      "kind": "master",
+      "path": "artifacts/business-freedom-content-e2e-r1-master.mp4",
+      "format": "video/mp4",
+      "sha256": "sha256:ebbbdafebeaafa21b49b7776d4f1b7b05a8197a4111666c10e80b0955aeb26c9",
+      "channel_targets": ["gustav-online-demand-feed"],
+      "provenance": {
+        "type": "local-diffusion-export",
+        "statement": "Preserved reviewed r5 DAPI export; r6 check and separate proof-export did not overwrite these bytes.",
+        "references": ["business-freedom-motion-source", "business-freedom-captions", "business-freedom-runtime-provenance"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/final-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-keyframe-founder",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/keyframes/03s.png",
+      "format": "image/png",
+      "sha256": "sha256:1d748c468e388d3dccbc7cd8f26c1d2a471c27c42ef3a545c1f8f3bd1bb61fac",
+      "provenance": {
+        "type": "local-diffusion-capture",
+        "statement": "Preserved reviewed 00:03 human-source and public-learning keyframe.",
+        "references": ["business-freedom-master", "business-freedom-motion-source"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/packaging-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-keyframe-offer-menu",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/keyframes/18s.png",
+      "format": "image/png",
+      "sha256": "sha256:e9daa56ed974bae3caf1887d4b95d37bbc11be7f13582a5b303a5cab4f750163",
+      "provenance": {
+        "type": "local-diffusion-capture",
+        "statement": "Preserved reviewed DIY, done-with-you, and done-for-you offer-menu keyframe.",
+        "references": ["business-freedom-master", "business-freedom-motion-source"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/packaging-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-keyframe-close",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/keyframes/39s.png",
+      "format": "image/png",
+      "sha256": "sha256:3a2ce83dff2fd749eae97cc742d072966cbad66ac37265c2c3aeffcd4abda693",
+      "provenance": {
+        "type": "local-diffusion-capture",
+        "statement": "Preserved reviewed Business Freedom and retained-human-choice keyframe.",
+        "references": ["business-freedom-master", "business-freedom-motion-source"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/packaging-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-runtime-provenance",
+      "version": 1,
+      "kind": "source",
+      "path": "provenance/diffusion-runtime.md",
+      "format": "text/markdown",
+      "sha256": "sha256:ad7a87678eaed6b5630caba62ac79e7f73f8964558aafc9bbc7153e983ec7bfd",
+      "provenance": {
+        "type": "runtime-provenance-record",
+        "statement": "Pins the preserved r5 master provenance and the external r6 fork/upstream route used for family adaptations.",
+        "references": ["business-freedom-motion-source", "business-freedom-family-motion-source"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/technical-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-family-export-config",
+      "version": 1,
+      "kind": "source",
+      "path": "diffusion-family-project/package.json",
+      "format": "application/json",
+      "sha256": "sha256:a55d7d0e70a111d2b1f120f5541a2e8e1156bb2b0a1c88596921385ab6e0efaf",
+      "provenance": {
+        "type": "code-native-export-config",
+        "statement": "ACS-owned Diffusion project and exact 1080×1920 H.264 export settings for both vertical scenes.",
+        "references": ["business-freedom-cut-plan"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/technical-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-family-motion-source",
+      "version": 1,
+      "kind": "derivative",
+      "path": "diffusion-family-project/index.tsx",
+      "format": "text/tsx",
+      "sha256": "sha256:fcd2dc725815f4ea7042e5ee824f1673e21bf0896d686eb6f72ba70fa24a8c17",
+      "provenance": {
+        "type": "code-native-authoring",
+        "statement": "ACS-owned Diffusion JSX containing two distinct vertical scenes and one dedicated 4:5 post visual.",
+        "references": ["business-freedom-cut-plan", "business-freedom-script", "design-input/DESIGN.md"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/technical-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-short-01-script",
+      "version": 1,
+      "kind": "derivative",
+      "path": "short-01-script.md",
+      "format": "text/markdown",
+      "sha256": "sha256:b0f387b668c947cb8e038bf76c2646374634f54d813abd9728ba1e0bb8a276f0",
+      "provenance": {
+        "type": "script-adaptation",
+        "statement": "A vertical hook and six-beat script focused on the founder-owned Demand-content constraint.",
+        "references": ["business-freedom-thesis", "business-freedom-cut-plan"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/short-01-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-short-01-captions",
+      "version": 1,
+      "kind": "transcript",
+      "path": "short-01-captions.vtt",
+      "format": "text/vtt",
+      "sha256": "sha256:225c53aa3e2156f08244a12ddf205b1c97a437a711f5d8479ee1ca9a93b5d875",
+      "provenance": {
+        "type": "caption-authoring",
+        "statement": "Timed WebVTT companion authored from short 01's burned open-caption script.",
+        "references": ["business-freedom-short-01-script"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/short-01-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-short-01",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/shorts/business-freedom-short-founder-constraint.mp4",
+      "format": "video/mp4",
+      "sha256": "sha256:367e8897f6785e5a312cf5b7d5ce4aec124d9ec2212d22127c19f0969852e99f",
+      "channel_targets": ["gustav-online-demand-feed"],
+      "provenance": {
+        "type": "local-diffusion-export",
+        "statement": "Purpose-built 1080×1920 r6 DAPI export from the founder-constraint scene; not an FFmpeg crop.",
+        "references": ["business-freedom-family-motion-source", "business-freedom-short-01-script", "business-freedom-short-01-captions"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/short-01-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-short-02-script",
+      "version": 1,
+      "kind": "derivative",
+      "path": "short-02-script.md",
+      "format": "text/markdown",
+      "sha256": "sha256:7cdfd6f9f327c3a99f1e6d7bd42f54561e8d915b20cf3397ce82f558571bc070",
+      "provenance": {
+        "type": "script-adaptation",
+        "statement": "A distinct vertical hook and six-beat script focused on diagnosis and DIY/DWY/DFY delivery choice.",
+        "references": ["business-freedom-thesis", "business-freedom-cut-plan"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/short-02-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-short-02-captions",
+      "version": 1,
+      "kind": "transcript",
+      "path": "short-02-captions.vtt",
+      "format": "text/vtt",
+      "sha256": "sha256:9bcad32535139ccbf642d58b322d118a69b5510f3b5b2093c955e39211dac4ac",
+      "provenance": {
+        "type": "caption-authoring",
+        "statement": "Timed WebVTT companion authored from short 02's burned open-caption script.",
+        "references": ["business-freedom-short-02-script"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/short-02-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-short-02",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/shorts/business-freedom-short-offer-choice.mp4",
+      "format": "video/mp4",
+      "sha256": "sha256:e80d7f4ed91985f89da555c0552c8c9b3291df01234d96c9362585f837585e8d",
+      "channel_targets": ["gustav-online-demand-feed"],
+      "provenance": {
+        "type": "local-diffusion-export",
+        "statement": "Purpose-built 1080×1920 r6 DAPI export from the offer-choice scene; not an FFmpeg crop.",
+        "references": ["business-freedom-family-motion-source", "business-freedom-short-02-script", "business-freedom-short-02-captions"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/short-02-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-text-post",
+      "version": 1,
+      "kind": "derivative",
+      "path": "deliverables/text-post.md",
+      "format": "text/markdown",
+      "sha256": "sha256:b22a353d5eb8fe57c0d8abdb745183f7fe85f05564ae118f01c464af397b238f",
+      "channel_targets": ["gustav-online-demand-feed"],
+      "provenance": {
+        "type": "editorial-adaptation",
+        "statement": "Delivery-ready post adapting the thesis and family proof into a concise public-learning narrative.",
+        "references": ["business-freedom-thesis", "business-freedom-master"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/cross-format-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-post-visual",
+      "version": 1,
+      "kind": "derivative",
+      "path": "artifacts/post/01s15f.png",
+      "format": "image/png",
+      "sha256": "sha256:68f5d6e32d061ff20d1b1f657405cf1900bce489eb3e8448874570471cf2eced",
+      "channel_targets": ["gustav-online-demand-feed"],
+      "provenance": {
+        "type": "local-diffusion-capture",
+        "statement": "Dedicated 1080×1350 r6 DAPI render for the post; not a video-frame crop.",
+        "references": ["business-freedom-family-motion-source", "business-freedom-text-post"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/cross-format-review.md"
+      }
+    },
+    {
+      "id": "business-freedom-newsletter",
+      "version": 1,
+      "kind": "derivative",
+      "path": "deliverables/newsletter-draft.md",
+      "format": "text/markdown",
+      "sha256": "sha256:094272f52299849b3eaa5670b72fbf93982209dd775a44b708e258ba585a45b1",
+      "channel_targets": ["owner-newsletter"],
+      "provenance": {
+        "type": "editorial-adaptation",
+        "statement": "Newsletter draft adapting the thesis and family proof into a fuller mechanism with an owner-directed CTA.",
+        "references": ["business-freedom-thesis", "business-freedom-master", "business-freedom-text-post"]
+      },
+      "review": {
+        "status": "approved",
+        "reviewer": "diffusion-content-family-r1",
+        "reference": "review/cross-format-review.md"
+      }
+    }
+  ],
+  "edges": [
+    {"type": "adaptation_of", "from": "business-freedom-cut-plan", "to": "business-freedom-brief"},
+    {"type": "derived_from", "from": "business-freedom-thesis", "to": "business-freedom-brief"},
+    {"type": "adaptation_of", "from": "business-freedom-script", "to": "business-freedom-thesis"},
+    {"type": "derived_from", "from": "business-freedom-script", "to": "business-freedom-cut-plan"},
+    {"type": "derived_from", "from": "business-freedom-captions", "to": "business-freedom-script"},
+    {"type": "adaptation_of", "from": "business-freedom-motion-source", "to": "business-freedom-script"},
+    {"type": "companion_to", "from": "business-freedom-motion-source", "to": "business-freedom-captions"},
+    {"type": "derived_from", "from": "business-freedom-master", "to": "business-freedom-motion-source"},
+    {"type": "companion_to", "from": "business-freedom-master", "to": "business-freedom-captions"},
+    {"type": "excerpt_of", "from": "business-freedom-keyframe-founder", "to": "business-freedom-master"},
+    {"type": "excerpt_of", "from": "business-freedom-keyframe-offer-menu", "to": "business-freedom-master"},
+    {"type": "excerpt_of", "from": "business-freedom-keyframe-close", "to": "business-freedom-master"},
+    {"type": "companion_to", "from": "business-freedom-runtime-provenance", "to": "business-freedom-master"},
+    {"type": "adaptation_of", "from": "business-freedom-family-motion-source", "to": "business-freedom-script"},
+    {"type": "variant_of", "from": "business-freedom-family-motion-source", "to": "business-freedom-motion-source"},
+    {"type": "companion_to", "from": "business-freedom-family-export-config", "to": "business-freedom-family-motion-source"},
+    {"type": "adaptation_of", "from": "business-freedom-short-01-script", "to": "business-freedom-thesis"},
+    {"type": "derived_from", "from": "business-freedom-short-01-script", "to": "business-freedom-cut-plan"},
+    {"type": "derived_from", "from": "business-freedom-short-01-captions", "to": "business-freedom-short-01-script"},
+    {"type": "derived_from", "from": "business-freedom-short-01", "to": "business-freedom-family-motion-source"},
+    {"type": "adaptation_of", "from": "business-freedom-short-01", "to": "business-freedom-master"},
+    {"type": "companion_to", "from": "business-freedom-short-01", "to": "business-freedom-short-01-captions"},
+    {"type": "adaptation_of", "from": "business-freedom-short-02-script", "to": "business-freedom-thesis"},
+    {"type": "derived_from", "from": "business-freedom-short-02-script", "to": "business-freedom-cut-plan"},
+    {"type": "derived_from", "from": "business-freedom-short-02-captions", "to": "business-freedom-short-02-script"},
+    {"type": "derived_from", "from": "business-freedom-short-02", "to": "business-freedom-family-motion-source"},
+    {"type": "adaptation_of", "from": "business-freedom-short-02", "to": "business-freedom-master"},
+    {"type": "companion_to", "from": "business-freedom-short-02", "to": "business-freedom-short-02-captions"},
+    {"type": "adaptation_of", "from": "business-freedom-text-post", "to": "business-freedom-thesis"},
+    {"type": "promotes", "from": "business-freedom-text-post", "to": "business-freedom-master"},
+    {"type": "companion_to", "from": "business-freedom-post-visual", "to": "business-freedom-text-post"},
+    {"type": "derived_from", "from": "business-freedom-post-visual", "to": "business-freedom-family-motion-source"},
+    {"type": "adaptation_of", "from": "business-freedom-newsletter", "to": "business-freedom-thesis"},
+    {"type": "promotes", "from": "business-freedom-newsletter", "to": "business-freedom-master"},
+    {"type": "companion_to", "from": "business-freedom-newsletter", "to": "business-freedom-text-post"}
+  ],
+  "design_handoff": {
+    "revision": "r1+958ac18a0448",
+    "provenance": {
+      "type": "accepted-design-handoff",
+      "statement": "Byte-identical immutable copies selected from the lead-reviewed ADS portable handoff for this production only; runtime does not depend on ADS or OpenPencil.",
+      "references": [
+        "ads-business-freedom-content-system-story-e0cfce24fd44",
+        "ads-repo-commit:97449f2803a0d9bb98fc65cf3e4ebf81502a1731",
+        "source-handoff-sha256:cd8af2487cf3c2df199337682cfa7042279feee92376bd06e540307ba9df956d",
+        "ads-review:PASS"
+      ]
+    },
+    "review_reference": "design-acceptance.md",
+    "files": [
+      {
+        "role": "design",
+        "path": "design-input/DESIGN.md",
+        "sha256": "sha256:958ac18a044822e4c39116db36992887ddd2b99589ddd4b5d1721a2f0ad68905"
+      },
+      {
+        "role": "asset",
+        "path": "design-input/keyframe-01-founder-constraint.png",
+        "sha256": "sha256:8c8d07eda1fce269a5b527f960007db556eed115ce460e22f8c3c9c16666b9ee"
+      },
+      {
+        "role": "asset",
+        "path": "design-input/keyframe-02-smallest-complete-change.png",
+        "sha256": "sha256:47dff749c8140468229dba75cfc8fb94657c2b359018dc770244123b530fedbb"
+      },
+      {
+        "role": "asset",
+        "path": "design-input/keyframe-03-reviewed-handoff.png",
+        "sha256": "sha256:bff62e7fe4306a672c6c87fd69050949b4049765cf7fe6a4b64ea0b956174b5a"
+      }
+    ]
+  }
+}

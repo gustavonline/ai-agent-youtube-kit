@@ -58,7 +58,7 @@ approval.
 `design_handoff` may record exactly one immutable `DESIGN.md` plus selected
 assets. It requires a revision, provenance, review reference, relative paths,
 roles, and hashes. Omit the whole field when no accepted ADS/design-owner
-handoff exists; ACS and FreeCut remain fully usable.
+handoff exists; ACS and Diffusion remain fully usable.
 
 ## Publisher handoff
 

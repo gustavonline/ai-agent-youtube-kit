@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diffusion Studio"
+  short_description: "Operate the pinned external Diffusion Studio"
+  default_prompt: "Use $diffusion-studio to check or operate the reviewed external Studio route for this ACS video production."

@@ -9,8 +9,8 @@ dependency.
 
 A production directory owns its content brief, cut plan, local artifacts,
 content graph, final review, and optional publisher handoff. The graph points
-only to contained relative paths and binds their bytes. External FreeCut
-workspace/project paths stay in active task context, not ACS contracts.
+only to contained relative paths and binds their bytes. The ACS production may
+own its Diffusion project; the external editor checkout stays outside ACS.
 
 ## AIOS and callers
 
@@ -27,7 +27,7 @@ The handoff is optional and may come from any explicit design owner.
 
 ## Media and publishing
 
-FreeCut owns ordinary video editing. ACS owns lineage and review proof after an
+Diffusion owns ordinary video editing. ACS owns lineage and review proof after an
 export returns. A supervised publisher may later consume approved nodes only
 under separate authority. Scheduling or channel intent does not authorize a
 post.

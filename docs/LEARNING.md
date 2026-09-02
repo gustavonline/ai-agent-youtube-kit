@@ -13,6 +13,6 @@ Production-specific facts stay in that production's notes and review. Promote
 only concrete, reusable lessons after a finished outcome. Do not maintain
 hidden history state or a recovery ledger.
 
-FreeCut remains the ordinary Studio. HyperFrames lessons belong here only when
+Diffusion remains the ordinary Studio. HyperFrames lessons belong here only when
 a full specialist code-motion outcome or bounded overlay established a durable
 principle.

@@ -11,7 +11,7 @@ The product boundary is:
 - the versioned content-graph and supervised publisher-handoff files;
 - small zero-dependency Node validation;
 - optional local transcript/reference helpers; and
-- the external FreeCut browser Studio for ordinary video editing.
+- the pinned external Diffusion Studio fork for ordinary video editing.
 
 There is no ACS-owned Python application or media pipeline. Do not restore
 in-repository media rendering, derivative generation, package generation,
@@ -39,9 +39,11 @@ Use `workspace/content-pipeline/ideas.md` for lightweight planning and
 - Production work: use `.agents/skills/agentic-content-system/SKILL.md`.
 - Audit/readiness: use `.agents/skills/audit-content-system/SKILL.md` and remain
   read-only.
-- Ordinary video: use `.agents/skills/freecut-studio/SKILL.md`. FreeCut is the
-  only normal Studio for owner-recorded long-form, shorts, trims/cuts, audio,
-  music, captions, overlays, assets, and supervised export.
+- Ordinary video: use `.agents/skills/diffusion-studio/SKILL.md`. Diffusion is
+  the only normal Studio for owner-recorded long-form, shorts, trims/cuts,
+  audio, music, captions, overlays, assets, and supervised export. Electron and
+  DAPI are authoritative; the loopback browser companion is human-only and
+  read-only.
 - Code-native specialist motion: use the upstream HeyGen HyperFrames router
   only for an entire code-animated explainer/motion-graphics video or one
   bounded overlay asset. It is not an alternate timeline editor and is not the
@@ -70,7 +72,7 @@ optional, arbitrary stable IDs declared per node.
 
 ## Visual-direction boundary
 
-ADS is optional. ACS and FreeCut must work without it. When accepted direction
+ADS is optional. ACS and Diffusion must work without it. When accepted direction
 does arrive from ADS or another design owner, copy only the immutable
 `DESIGN.md` snapshot and selected assets needed by the production. Record their
 paths, revision, hashes, provenance, and review reference in the optional graph

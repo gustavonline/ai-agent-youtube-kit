@@ -70,10 +70,10 @@
       "kind": "master",
       "path": "artifacts/master-edit.txt",
       "format": "text/plain",
-      "sha256": "sha256:f2e2af00da5a1f22636efb8e8121345cf712ef99915f3cd2d314eb5da0095ad3",
+      "sha256": "sha256:746b8786c2244490440105de76011be74288015d63f9eda06e965e9b2e3fe901",
       "provenance": {
-        "type": "freecut-export",
-        "statement": "A contract-only stand-in for a supervised and reviewed FreeCut export.",
+        "type": "diffusion-export",
+        "statement": "A contract-only stand-in for a supervised and reviewed Diffusion export.",
         "references": ["node-source", "node-thesis"]
       },
       "review": {

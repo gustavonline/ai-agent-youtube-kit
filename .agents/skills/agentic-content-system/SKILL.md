@@ -10,8 +10,8 @@ Read `docs/ARCHITECTURE.md`, `docs/CONTENT_GRAPH.md`, `docs/WORKFLOW.md`, and
 
 ACS is the judgment, lineage, review, and handoff layer. It does not own a media
 editor or renderer. For an ordinary video, use the repository-local
-`freecut-studio` skill; the external FreeCut workspace remains canonical while
-editing.
+`diffusion-studio` skill; the external Diffusion project and authoritative
+Electron/DAPI runtime remain canonical while editing.
 
 ## Production sequence
 
@@ -22,8 +22,9 @@ editing.
 3. Put or reference local source files inside that production boundary. Record
    truthful provenance. Optional local transcription may create a transcript
    node; it is not required for every outcome.
-4. For ordinary video, use FreeCut for cuts, timing, audio/music, captions,
-   overlays/assets, and the supervised export. A human reviews the export.
+4. For ordinary video, use Diffusion for cuts, timing, audio/music, captions,
+   overlays/assets, and the supervised export. Use DAPI for authoritative work;
+   the browser companion is read-only. A human reviews the export.
 5. Register source, transcript, thesis, master, and useful derivative artifacts
    as needed in `content-graph.json`. Do not create placeholder nodes merely to
    satisfy a count. Each node has its own version, content hash, provenance, and

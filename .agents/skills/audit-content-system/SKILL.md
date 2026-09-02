@@ -31,10 +31,11 @@ Recompute hashes without changing files. Confirm node-level approval, optional
 targets, explicit edges, and the four supervised/not-posted handoff invariants.
 Missing evidence is not PASS.
 
-When FreeCut readiness is in scope, use the `freecut-studio` skill's read-only
-check. Report origin, pin, cleanliness, package manager, build, headless proof,
+When Diffusion readiness is in scope, use the `diffusion-studio` skill's
+read-only check. Report official origin/base, fork branch/pin, drift,
+cleanliness, package manager, build, authoritative DAPI status, browser limits,
 and public audit findings separately. Do not install, update, build, start, or
-repair FreeCut during an audit.
+repair Diffusion during an audit.
 
 Return exactly:
 

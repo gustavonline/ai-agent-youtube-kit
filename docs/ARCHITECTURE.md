@@ -1,7 +1,7 @@
 # Architecture
 
 ACS is a file-based orchestration and proof layer around human judgment and the
-external FreeCut browser Studio.
+external Diffusion Studio runtime.
 
 ```text
 bounded context + source material
@@ -10,7 +10,7 @@ bounded context + source material
 content brief / cut plan / optional transcript
           |
           v
-FreeCut supervised browser edit (ordinary video)
+Diffusion Electron/DAPI edit + supervised export (ordinary video)
           |
           v
 content-graph.json: artifacts + hashes + provenance + independent reviews
@@ -32,11 +32,18 @@ fixed graph shape, fixture count, or platform name.
 
 ## Studio boundary
 
-FreeCut is the only normal Studio for owner-recorded video. The checkout and
-native workspace stay outside ACS. Codex can validate and start its built Vite
-app on strict loopback, open it in the in-app browser, and participate in a
-revision-guarded human/agent/human workflow. The reviewed export returns as an
-ordinary graph node; ACS does not render it again.
+Diffusion is the only normal Studio for owner-recorded video. The pinned fork
+checkout and project stay outside ACS system code. Electron owns the project,
+compile/watch loop, DAPI, filesystem, AI, and export. Codex drives those
+authoritative operations through DAPI. The browser companion is a local-only,
+read-only human shell for preview, play/pause, scrub, and inspection; it has no
+browser DAPI, persistent edits, export, AI, checkout, authentication, arbitrary
+path access, or widened MAIN_WIRE. The reviewed export returns as an ordinary
+graph node; ACS does not render it again.
+
+The launcher pins the reviewed thin fork commit and its official upstream
+base. It exposes fork/upstream drift without updating silently. Re-pinning is a
+bounded rebase/retest operation in the fork, not a copied editor inside ACS.
 
 ## Optional helpers
 

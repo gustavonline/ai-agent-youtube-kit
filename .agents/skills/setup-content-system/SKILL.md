@@ -15,8 +15,8 @@ posting authority.
 3. Treat `workspace/channel/brand.json` as optional human-readable defaults;
    production graph validation never requires a named channel.
 4. Run `npm run check:repository`. Do not create a production fixture.
-5. For future video work, route FreeCut readiness through the `freecut-studio`
-   skill. Do not copy FreeCut into ACS.
+5. For future video work, route Diffusion readiness through the
+   `diffusion-studio` skill. Do not copy the editor into ACS.
 
 Accepted visual direction is optional. If setup exposes a material design gap,
 suggest the bounded ADS route without executing it automatically or blocking

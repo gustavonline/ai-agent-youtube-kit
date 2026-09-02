@@ -4,10 +4,10 @@ Use upstream [HeyGen HyperFrames](https://github.com/heygen-com/hyperframes)
 only when the requested deliverable is:
 
 - an entire code-animated explainer or motion-graphics video; or
-- one bounded overlay asset for the FreeCut timeline.
+- one bounded overlay asset for the Diffusion timeline.
 
 Do not use HyperFrames as a second editor for routine owner-recorded long-form,
-shorts, cuts, audio, captions, or general overlays. FreeCut owns that work.
+shorts, cuts, audio, captions, or general overlays. Diffusion owns that work.
 
 Start with the upstream `/hyperframes` router. Its current instructions and
 workflow skills are installed from the upstream repository:

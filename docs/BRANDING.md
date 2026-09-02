@@ -13,6 +13,6 @@ production, copy the immutable `DESIGN.md` plus selected assets into that
 production and record revision, hashes, provenance, and review reference in
 the graph. Do not copy editable design work or create a runtime dependency.
 
-For ordinary video, apply direction in FreeCut. For a specialist code-animated
+For ordinary video, apply direction in Diffusion. For a specialist code-animated
 video or bounded overlay, follow the upstream HyperFrames route. Do not retain
 branded HyperFrames project copies in ACS.

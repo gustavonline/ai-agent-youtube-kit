@@ -1,6 +1,6 @@
 # Motion philosophy
 
-FreeCut is the ordinary Studio. Use upstream HeyGen HyperFrames only for an
+Diffusion is the ordinary Studio. Use upstream HeyGen HyperFrames only for an
 entire code-animated explainer/motion-graphics video or one bounded overlay
 asset. It is not another editor or a normal long-form route.
 

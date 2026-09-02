@@ -22,16 +22,18 @@ Create `workspace/productions/<slug>/` and copy the relevant templates. Add or
 reference truthful local artifact files within that boundary, then write
 `content-graph.json` using `docs/CONTENT_GRAPH.md` and the neutral fixture.
 
-For ordinary video, use the `freecut-studio` skill:
+For ordinary video, use the `diffusion-studio` skill:
 
 ```text
-node workspace/engine/scripts/freecut-studio.mjs check
-node workspace/engine/scripts/freecut-studio.mjs serve
+node workspace/engine/scripts/diffusion-studio.mjs setup
+node workspace/engine/scripts/diffusion-studio.mjs check
+node workspace/engine/scripts/diffusion-studio.mjs open <production-project>
 ```
 
-Open the loopback URL in the Codex in-app browser. After the human reviews the
-FreeCut export, copy it into the production, register it as a master node, and
-register every derivative separately.
+Open the returned one-time loopback URL only in the Codex built-in browser.
+Make edits and exports through Electron/DAPI, not the browser shell. After the
+human reviews the Diffusion export, register it as a master node and register
+every derivative separately.
 
 Validate before handoff:
 

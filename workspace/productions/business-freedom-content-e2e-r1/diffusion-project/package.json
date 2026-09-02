@@ -1,0 +1,44 @@
+{
+  "name": "acs-business-freedom-content-e2e-r1",
+  "projectId": "acs-business-freedom-content-e2e-r1",
+  "displayName": "ACS · Business Freedom content E2E r1",
+  "private": true,
+  "type": "module",
+  "main": "index.tsx",
+  "diffusion": {
+    "export": {
+      "business-freedom-story": {
+        "format": "mp4",
+        "video": {
+          "enabled": true,
+          "codec": "avc",
+          "bitrate": 12000000,
+          "fps": 30,
+          "resolution": 1080
+        },
+        "audio": {
+          "enabled": false
+        }
+      }
+    }
+  },
+  "scripts": {
+    "open": "dapi open .",
+    "context": "dapi context",
+    "capture": "dapi capture",
+    "probe": "dapi media probe",
+    "transcribe": "dapi media transcribe",
+    "grab": "dapi media grab",
+    "filmstrip": "dapi media filmstrip",
+    "waveform": "dapi media waveform",
+    "listen": "dapi media listen",
+    "models": "dapi models",
+    "voices": "dapi voices",
+    "fonts": "dapi fonts",
+    "whoami": "dapi whoami",
+    "logs": "dapi logs",
+    "screenshot": "dapi screenshot",
+    "report": "dapi report",
+    "fetch": "dapi fetch"
+  }
+}

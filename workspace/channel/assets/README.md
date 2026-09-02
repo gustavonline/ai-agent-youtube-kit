@@ -6,5 +6,5 @@ when private or large.
 
 An ADS/design-owner handoff is optional. Copy only the accepted immutable
 `DESIGN.md` snapshot and selected production assets, then hash-bind them in the
-production graph. Do not store editable design projects, FreeCut workspaces, or
+production graph. Do not store editable design projects, editor checkouts, or
 HyperFrames project copies here.

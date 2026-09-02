@@ -28,9 +28,9 @@
 ## Production
 
 - Owner-recorded source:
-- FreeCut cuts/audio/captions/overlays:
+- Diffusion cuts/audio/captions/overlays:
 - Specialist full code-motion video or bounded overlay, if truly needed:
 - Human export reviewer:
 
-FreeCut is the only normal Studio. HyperFrames is used only for the explicitly
+Diffusion is the only normal Studio. HyperFrames is used only for the explicitly
 specialist output named above.

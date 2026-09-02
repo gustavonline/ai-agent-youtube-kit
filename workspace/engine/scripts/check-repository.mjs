@@ -13,17 +13,18 @@ const required = [
   "package.json",
   "docs/ARCHITECTURE.md",
   "docs/CONTENT_GRAPH.md",
-  "docs/FREECUT_STUDIO.md",
+  "docs/DIFFUSION_STUDIO.md",
   "docs/SPECIALIST_MOTION.md",
   ".agents/skills/agentic-content-system/SKILL.md",
-  ".agents/skills/freecut-studio/SKILL.md",
+  ".agents/skills/diffusion-studio/SKILL.md",
   "workspace/engine/scripts/check-content-graph.mjs",
-  "workspace/engine/scripts/freecut-studio.mjs",
+  "workspace/engine/scripts/diffusion-studio.mjs",
   "workspace/engine/templates/content-graph.json",
   "workspace/engine/templates/publisher-handoff.json",
   "workspace/engine/tests/fixtures/content-graph/content-graph.json",
   "workspace/engine/tests/fixtures/content-graph/publisher-handoff.json",
 ];
+const retiredEditor = ["free", "cut"].join("");
 const retired = [
   "pyproject.toml",
   "docs/ADAPTERS.md",
@@ -32,6 +33,10 @@ const retired = [
   "docs/RECOVERY.md",
   "docs/SEMANTIC_EVALUATION.md",
   "docs/SYSTEM_TEMPLATE_MAPPING.md",
+  `docs/${retiredEditor.toUpperCase()}_STUDIO.md`,
+  `.agents/skills/${retiredEditor}-studio`,
+  `workspace/engine/scripts/${retiredEditor}-studio.mjs`,
+  `workspace/engine/tests/${retiredEditor}-studio.test.mjs`,
   "workspace/engine/agentic_content_system",
   "workspace/engine/contracts/schemas",
   "workspace/engine/media",
@@ -42,6 +47,7 @@ const retired = [
   "workspace/runs",
 ];
 const stalePatterns = [
+  [new RegExp(`\\b${retiredEditor}\\b`, "gi"), "retired ordinary-editor route"],
   [/agentic_content_system/g, "retired Python package"],
   [/\bpython\s+-m\s+agentic-content-system\b/gi, "retired module invocation"],
   [/\bacs\s+(?:init|inspect|validate|render|derive|package|verify|review-report|export-result|semantic-eval|import-adapter)\b/gi, "retired application command"],

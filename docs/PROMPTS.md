@@ -12,10 +12,11 @@ the actual artifact.
 ## Ordinary video
 
 ```text
-Use the repository-local freecut-studio skill. Validate and start the pinned
-external FreeCut checkout on strict loopback, open it in the Codex in-app
-browser, preserve the human/agent/human revision-guarded workflow, and register
-the reviewed export as a content-graph node. Do not use a parallel editor.
+Use the repository-local diffusion-studio skill. Validate the pinned external
+fork and official upstream relationship, start the hidden Electron host, drive
+authoritative work through DAPI, and open only the returned one-time URL in the
+Codex built-in browser for read-only human inspection. Register the reviewed
+export as a content-graph node. Do not use a parallel editor.
 ```
 
 ## Contract proof
