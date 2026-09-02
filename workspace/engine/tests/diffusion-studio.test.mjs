@@ -93,6 +93,10 @@ test("packaged hidden-host paths and DAPI command construction stay platform-spe
     resolvePackagedHost("C:\\editor", "win32", "x64"),
     "C:\\editor\\apps\\desktop\\out\\Diffusion Studio-win32-x64\\Diffusion Studio.exe",
   );
+  assert.equal(
+    resolvePackagedHost("/editor", "linux", "x64"),
+    "/editor/apps/desktop/out/Diffusion Studio-linux-x64/diffusion-studio",
+  );
   assert.deepEqual(dapiInvocation("/editor", "status"), {
     command: process.execPath,
     args: ["/editor/apps/cli/dist/index.js", "browser", "--status"],

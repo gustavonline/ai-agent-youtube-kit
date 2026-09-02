@@ -82,10 +82,39 @@ export function resolveDapi(checkout, platform = process.platform) {
 }
 
 export function resolvePackagedHost(checkout, platform = process.platform, architecture = process.arch) {
-  const root = path.join(checkout, "apps", "desktop", "out", `Diffusion Studio-${platform}-${architecture}`);
-  if (platform === "darwin") return path.join(root, "Diffusion Studio.app", "Contents", "MacOS", "Diffusion Studio");
-  if (platform === "win32") return path.win32.join(root, "Diffusion Studio.exe");
-  if (platform === "linux") return path.join(root, "diffusion-studio");
+  if (platform === "darwin") {
+    return path.posix.join(
+      checkout,
+      "apps",
+      "desktop",
+      "out",
+      `Diffusion Studio-${platform}-${architecture}`,
+      "Diffusion Studio.app",
+      "Contents",
+      "MacOS",
+      "Diffusion Studio",
+    );
+  }
+  if (platform === "win32") {
+    return path.win32.join(
+      checkout,
+      "apps",
+      "desktop",
+      "out",
+      `Diffusion Studio-${platform}-${architecture}`,
+      "Diffusion Studio.exe",
+    );
+  }
+  if (platform === "linux") {
+    return path.posix.join(
+      checkout,
+      "apps",
+      "desktop",
+      "out",
+      `Diffusion Studio-${platform}-${architecture}`,
+      "diffusion-studio",
+    );
+  }
   throw new Error(`Unsupported platform: ${platform}`);
 }
 
