@@ -18,16 +18,23 @@ in-repository media rendering, derivative generation, package generation,
 adapter imports, run tracing, recovery ledgers, or static report generation as
 a hidden fallback.
 
-## Read before production work
+## Context by task
 
-1. `workspace/channel/DESIGN.md`
-2. `workspace/learning/PROJECT_MEMORY.md`
-3. `workspace/learning/MOTION_PHILOSOPHY.md`
-4. `workspace/channel/PROFILE.md`
-5. `workspace/channel/STYLE_GUIDE.md`
-6. `docs/ARCHITECTURE.md`
-7. `docs/CONTENT_GRAPH.md`
-8. `docs/WORKFLOW.md`
+Read the relevant context once; reuse it within the task.
+
+- Channel/editorial decisions: `workspace/channel/PROFILE.md`,
+  `workspace/channel/STYLE_GUIDE.md`, and relevant lessons in
+  `workspace/learning/PROJECT_MEMORY.md`.
+- Visual decisions or an accepted design handoff: `workspace/channel/DESIGN.md`.
+- Motion work: `workspace/learning/MOTION_PHILOSOPHY.md`; specialist routing
+  additionally uses `docs/SPECIALIST_MOTION.md`.
+- Creating or revising graph/lineage/handoff records: `docs/CONTENT_GRAPH.md`.
+- Starting a production: `docs/WORKFLOW.md` and `docs/INPUT_OWNERSHIP.md`.
+- Architecture changes or uncertainty about system ownership:
+  `docs/ARCHITECTURE.md`.
+
+A copy-only task does not require video, visual, or motion context. Read Studio
+instructions only for video work, through the router below.
 
 Use `workspace/content-pipeline/ideas.md` for lightweight planning and
 `workspace/references/` for reference analysis.

@@ -5,8 +5,7 @@ description: "Run a file-based ACS production from bounded context through indep
 
 # Agentic Content System
 
-Read `docs/ARCHITECTURE.md`, `docs/CONTENT_GRAPH.md`, `docs/WORKFLOW.md`, and
-`docs/INPUT_OWNERSHIP.md` before starting a production.
+Use `AGENTS.md`'s task-specific context routes; do not reload already-read docs.
 
 ACS is the judgment, lineage, review, and handoff layer. It does not own a media
 editor or renderer. For an ordinary video, use the repository-local
@@ -15,10 +14,10 @@ Electron/DAPI runtime remain canonical while editing.
 
 ## Production sequence
 
-1. Read the channel direction, memory, profile, style guide, and relevant
-   references listed in `AGENTS.md`.
+1. Resolve the requested outcome from accepted context and relevant references.
 2. Create `workspace/productions/<slug>/` only for a concrete outcome. Fill the
-   existing content brief and cut plan from the templates.
+   existing brief template; use the cut-plan template when editing timed media.
+   For an existing production, update only the artifacts the request affects.
 3. Put or reference local source files inside that production boundary. Record
    truthful provenance. Optional local transcription may create a transcript
    node; it is not required for every outcome.
@@ -31,8 +30,9 @@ Electron/DAPI runtime remain canonical while editing.
    review state.
 6. Record explicit graph edges. Approval is never inherited. A family or source
    may be approved while a derivative remains `in_review` or `rejected`.
-7. Run the graph validator. Complete the file-based final review. Fix the
-   artifact or graph and increment the affected version when bytes or meaning
+7. Run the graph validator. Complete the file-based final review using
+   `docs/FINAL_REVIEW.md`. Fix the artifact or graph and increment the affected
+   version when bytes or meaning
    change.
 8. Create `publisher-handoff.json` only for independently approved nodes. Run
    the validator with both files. Return exact paths and hashes to the caller.

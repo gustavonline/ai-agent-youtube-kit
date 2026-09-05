@@ -9,8 +9,9 @@ Resolve only missing business, audience, offer/promise, channel-policy,
 cadence, and delivery-default decisions. Keep unknowns unknown. Do not invent
 posting authority.
 
-1. Read `workspace/channel/PROFILE.md`, `STYLE_GUIDE.md`, `DESIGN.md`, and
-   `workspace/learning/PROJECT_MEMORY.md`.
+1. Read `workspace/channel/PROFILE.md`, `workspace/channel/STYLE_GUIDE.md`, and
+   relevant existing facts in `workspace/learning/PROJECT_MEMORY.md`. Read
+   `workspace/channel/DESIGN.md` only when resolving visual direction.
 2. Update the profile and style files with resolved durable facts only.
 3. Treat `workspace/channel/brand.json` as optional human-readable defaults;
    production graph validation never requires a named channel.

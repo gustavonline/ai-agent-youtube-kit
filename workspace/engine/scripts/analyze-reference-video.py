@@ -458,8 +458,8 @@ Use this folder as grounded input for a reference-video analysis:
 - Transcript: `transcript.md`
 - Draft report: `analysis.md`
 
-Read `workspace/channel/DESIGN.md`, `workspace/learning/PROJECT_MEMORY.md`, `workspace/learning/MOTION_PHILOSOPHY.md`,
-`workspace/channel/PROFILE.md`, and `workspace/channel/STYLE_GUIDE.md` first. Then inspect the
+Follow `docs/REFERENCE_ANALYSIS.md`, selecting context for the analysis question
+through `AGENTS.md`'s task-specific routes. Then inspect the
 frames listed in `frames_manifest.json`, cross-reference matching transcript
 timestamps, and fill `analysis.md`.
 

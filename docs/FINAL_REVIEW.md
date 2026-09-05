@@ -3,12 +3,14 @@
 Final review is a human-readable advisory gate before a node is approved and
 before any supervised publisher handoff is prepared.
 
-Read channel direction/style, the brief and cut plan, relevant transcript, the
-candidate artifact, its graph node, and packaging notes. Write
+Read the brief, candidate artifact, its graph node, and relevant channel/style
+context. Include visual direction, cut plan, transcript, and packaging notes
+when applicable to the candidate. Write
 `workspace/productions/<slug>/final-review.md` from the template.
 
-Score hook, pacing, clarity, visual fit, audio/captions, packaging fit, and
-truthfulness. Record timestamped findings and required fixes. If candidate
+Assess hook, pacing, clarity, visual fit, audio/captions, packaging fit, and
+truthfulness as applicable; mark inapplicable template fields N/A. Record
+findings by timestamp or content location and required fixes. If candidate
 bytes change, update the node hash/version and review again.
 
 Mark the node `approved` only when the designated reviewer accepts that exact

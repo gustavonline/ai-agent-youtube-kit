@@ -85,8 +85,9 @@ analysis.
 
 ## Agent Analysis Procedure
 
-1. Read `workspace/channel/DESIGN.md`, `workspace/learning/PROJECT_MEMORY.md`, `workspace/learning/MOTION_PHILOSOPHY.md`,
-   `workspace/channel/PROFILE.md`, and `workspace/channel/STYLE_GUIDE.md`.
+1. Use `AGENTS.md`'s context routes for the analysis question: channel/style
+   and relevant lessons for editorial comparison, design for visual comparison,
+   and motion philosophy for motion analysis.
 2. Read `source.json`, `transcript.md`, and `frames_manifest.json`.
 3. Inspect the frame paths listed in `frames_manifest.json`.
 4. Fill `analysis.md` using `workspace/engine/templates/reference-analysis.md`.

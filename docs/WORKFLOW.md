@@ -1,13 +1,15 @@
 # Workflow
 
-1. Choose the buyer problem, proof, practical content group, and capture format.
-2. Draft the content brief and cut plan. Recording itself is an owner activity,
-   not an automated ACS step.
+1. Choose the buyer problem, proof, and content format; for video, choose the
+   practical content group and capture format.
+2. Draft the content brief and, for timed-media edits, cut plan. Recording itself
+   is an owner activity, not an automated ACS step.
 3. Keep source rights/provenance explicit. Add an optional local transcript.
 4. For ordinary video, edit through Diffusion's authoritative Electron/DAPI
    route under human supervision. Use the local read-only browser companion for
    inspection when useful.
-5. Review the Diffusion export. Copy it into the production as an ordinary file.
+5. For video, review the Diffusion export and copy it into the production as an
+   ordinary file. For other formats, review the candidate artifact directly.
 6. Build/update `content-graph.json`: stable IDs, versions, real hashes,
    provenance, per-node review, and explicit edges.
 7. Validate, perform final editorial review, and resolve findings.
