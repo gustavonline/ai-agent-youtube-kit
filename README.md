@@ -1,3 +1,5 @@
+![Agentic Content System](assets/branding/acs-banner.png)
+
 # Agentic Content System
 
 Agentic Content System is a local-first, cloneable workspace for turning a
@@ -58,3 +60,5 @@ workflow is in [Workflow](docs/WORKFLOW.md), and Studio setup/runtime is in
 
 See [Real-video acceptance](docs/REAL_VIDEO_ACCEPTANCE.md) for the next
 owner-recorded usability tracer. Generated fixtures prove contracts only.
+
+<a href="assets/branding/acs-icon.png"><img src="assets/branding/acs-icon.png" alt="ACS icon" width="32" height="32"></a>
