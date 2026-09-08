@@ -13,6 +13,12 @@
 - Candidate artifact:
 - Packaging:
 
+## Evidence
+
+- Exact candidate bytes / hash checked:
+- Review boundary and result:
+- Constraints or unresolved limitations:
+
 ## Score
 
 - Hook: /10

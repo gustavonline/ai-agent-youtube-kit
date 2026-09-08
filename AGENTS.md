@@ -51,6 +51,8 @@ Use `workspace/content-pipeline/ideas.md` for lightweight planning and
 - Reference analysis: follow `docs/REFERENCE_ANALYSIS.md`.
 - Local transcription: follow `docs/LOCAL_TRANSCRIPTION.md`.
 - Real owner-video acceptance: follow `docs/REAL_VIDEO_ACCEPTANCE.md`.
+- Repository instruction, documentation, template, or existing-helper maintenance:
+  follow `docs/WORKING_DISCIPLINE.md`. It does not authorize production work.
 
 ## Content truth
 

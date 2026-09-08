@@ -40,6 +40,12 @@ Electron/DAPI runtime remain canonical while editing.
 The handoff must remain `awaiting-separate-authorization`, `supervised: true`,
 `not_posted: true`, and `external_posting: false`. Do not post.
 
+For a material production decision, reported content-domain defect, or final
+review needing extra judgment or proof, use
+[`docs/WORKING_DISCIPLINE.md`](../../../docs/WORKING_DISCIPLINE.md) and record
+the result in the existing production record. Routine execution does not need
+it.
+
 ## Optional visual handoff
 
 ACS works without ADS. If ADS or another design owner supplied accepted

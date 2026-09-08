@@ -16,6 +16,12 @@
 10. Stop. Publishing requires separate human authorization and remains outside
     ACS.
 
+At the decision, graph/handoff, and final-review steps, use [Working
+discipline](WORKING_DISCIPLINE.md) only for a material decision, reported
+content-domain defect, or evidence that needs its specific judgment. Record the
+result in the existing production record; routine content work needs no new
+process or notes file.
+
 No step invokes in-repository media rendering, derivative generation, package
 generation, a recovery ledger, or an automatic publisher. Repeats are ordinary graph revisions: preserve
 stable IDs, increment changed versions, refresh hashes/reviews, and retain the

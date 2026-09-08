@@ -12,8 +12,9 @@
 
 ## Decisions
 
-- Decision:
-  - Reason:
+| Decision | Context and constraints | Alternatives considered | Rationale and consequences | Supersedes / review reference |
+| --- | --- | --- | --- | --- |
+| | | | | |
 
 ## Graph revisions
 
